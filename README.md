@@ -1,2 +1,2 @@
-# hello-world
-Hello world new project template.
+# Harmony-Puzzle
+Harmony Puzzle Game - Mobile Ver.

@@ -9,26 +9,26 @@
     "default"
   ],
   "start-scene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
-  "design-resolution-width": 960,
-  "design-resolution-height": 640,
-  "fit-width": false,
-  "fit-height": true,
+  "design-resolution-width": 375,
+  "design-resolution-height": 812,
+  "fit-width": true,
+  "fit-height": false,
   "use-project-simulator-setting": false,
   "simulator-orientation": false,
-  "use-customize-simulator": false,
+  "use-customize-simulator": true,
   "simulator-resolution": {
-    "width": 960,
-    "height": 640
+    "height": 640,
+    "width": 960
   },
   "last-module-event-record-time": 1582282112797,
   "assets-sort-type": "name",
   "facebook": {
-    "enable": false,
     "appID": "",
-    "live": {
+    "audience": {
       "enable": false
     },
-    "audience": {
+    "enable": false,
+    "live": {
       "enable": false
     }
   }

@@ -3,25 +3,28 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        i: -1,
-        j: -1,
+        x: -1,
+        y: -1,
         number: cc.Label,
-        bg:cc.Sprite,
+        sprite:cc.Sprite,
+        selected: cc.Sprite,
         animationNode: cc.Node,
     },
 
-    
-
     onLoad () {
-
     },
 
     setNumberAndColor: function(value, spriteFrame){
         this.number.string = value;
-        this.bg.spriteFrame = spriteFrame;      
+        this.sprite.spriteFrame = spriteFrame;
     },
     
     setNumber: function(value){
         this.number.string = value;
+    },
+
+    setSelected: function(val){
+        this.selected.enabled = val;
     }
+
 });

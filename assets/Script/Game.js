@@ -1,3 +1,5 @@
+var levelGenerator = require('level_generator.js');
+
 var TOTAL_BLOCK = 9;
 var BLOCK_PER_LINE = 3;
 
@@ -16,6 +18,9 @@ cc.Class({
         btnPlay: cc.Button,
         btnUndo: cc.Button,
         lblError: {default: null, type: cc.Label},
+        themeMusic: {default: null, type: cc.AudioClip},
+        soundMove: {default: null, type: cc.AudioClip},
+        soundCantMove: {default: null, type: cc.AudioClip},
     },
     
     onLoad () {
@@ -25,13 +30,12 @@ cc.Class({
         this.nodeWidth = (this.node.width - (2 * padding + 2 * spaceX))/3;
         this.nodeHeight = (this.node.height - (2 * padding + 2 * spaceY))/3;
 
+        this._allLevels = levelGenerator.levels();
+        cc.log("[All Levels] ", this._allLevels);
+
         this.listBlockScripts = [];
 
-        this.boardData = [
-                            [2, 1, 1],
-                            [2, 2, 1],
-                            [2, 2, 1]
-                        ];
+        this._level = this._allLevels[this._currentLevel];
 
         this._currentBlock = null;
 
@@ -48,24 +52,18 @@ cc.Class({
                 this.node.addChild(block);
 
                 let blockScript = block.getComponent('Block');
-                let number = this.boardData[i][j];
-                blockScript.setNumberAndColor(number, this.numberBgArray[number]);
-                
-
-                this.listBlockScripts.push(blockScript);
-
-                if (this._currentBlock == null){
-                    this._currentBlock = block;
-                }
+                this.listBlockScripts.push(blockScript);                
             }
         }
-
-        this.indicator.position = this._currentBlock.position;
 
         this.currentScore = 0;
         this.step = 0;
 
         this.reset();
+
+        if (this.themeMusic != null){
+            cc.audioEngine.playMusic(this.themeMusic, true);
+        }
     },
 
     
@@ -88,48 +86,49 @@ cc.Class({
     },
 
     reset: function () {
-        let k = 0;
-        for (let i = 0; i < BLOCK_PER_LINE; i++) {
-            for (let j = 0; j < BLOCK_PER_LINE; j++){
-                let number = this.boardData[i][j];
-                let blockScript = this.listBlockScripts[k];
-                blockScript.i = i;
-                blockScript.j = j;
-                
-                blockScript.setNumberAndColor(number, this.numberBgArray[number]);
-                k++;
-            }
-        }
+        this._currentLevel = 0;
+
+        let level = this._allLevels[this._currentLevel];
+
+        this.loadLevel(level);
+
+        //this.indicator.position = this._currentBlock.position;
+
         this.currentScore = 0;
         this.step = 0;
 
-        this._currentBlock = null;
+        this._currentBlock = this.findBlock(this.selectedX, this.selectedY);
+        this._currentBlock.setSelected(true);
 
         this.enableTouch();
     },
+    
+    loadLevel: function(level){
+        let index = 0;
+        for (let x = 0; x < BLOCK_PER_LINE; x++) {
+            for (let y = 0; y < BLOCK_PER_LINE; y++){
+                let number = level.contents[x*y + y];
+                let blockScript = this.listBlockScripts[index];
+                blockScript.x = x;
+                blockScript.y = y;
+                
+                blockScript.setNumberAndColor(number, this.getSpriteByIndex(number));
+                blockScript.setSelected(false);
+                index++;
+            }
+        }
 
-    randomNode: function () {
-        // let zeroArr = [];
-        // for (let i = 0; i < this.listBlockScripts.length; i++) {
-        //     if (this.listBlockScripts[i].number === 0) {
-        //         zeroArr.push(i);
-        //     }
-        // }
-        // if (zeroArr.length !== 0) {
-        //     let index = Math.floor(Math.random() * zeroArr.length);
-        //     if (index === zeroArr.length) {
-        //         index = zeroArr.length - 1;
-        //     }
-        //     let ranNum = Math.random() < 0.5 ? 1 : 2;
-        //     let tmpNumberPrefab = this.listBlockScripts[zeroArr[index]];
-        //     tmpNumberPrefab.setNumberAndColor(ranNum, this.numberBgArray[ranNum]);
-        //     if (this.newNodeShowAnimation) {
-        //         let node = tmpNumberPrefab.node;
-        //         node.scale = 0.1;
-        //         let action1 = cc.scaleTo(0.05,1.0,1.0).easing(cc.easeInOut(3));
-        //         node.runAction(action1);
-        //     }
-        // }
+        this.selectedX = level.initialSelected.x;
+        this.selectedY = level.initialSelected.y;
+        cc.log("SELECTED " + this.selectedX + "-" + this.selectedY);
+    },
+
+    getSpriteByIndex: function(number){
+        if (number < 0 || number >= this.numberBgArray.length){
+            return this.numberBgArray[this.numberBgArray.length-1];
+        }
+
+        return this.numberBgArray[number];
     },
 
     enableTouch: function () {
@@ -152,7 +151,7 @@ cc.Class({
         let deltaX = endPos.x - this.startPos.x;
         let deltaY = endPos.y - this.startPos.y;
 
-        let offset = 100;
+        let offset = 80;
         if (Math.abs(deltaX) < offset && 
             Math.abs(deltaY) < offset) {
             return;
@@ -170,67 +169,63 @@ cc.Class({
         this.tryMove(direction);
     },
     
-    findBlock: function(i, j){
-        cc.log("findBlock at (" + i + ", " + j + ")", this.listBlockScripts);
-        for(var k = 0; k < this.listBlockScripts.length; k++){
-            let element = this.listBlockScripts[k];
+    findBlock: function(x, y){
+        cc.log("findBlock at (" + x + ", " + y + ")", this.listBlockScripts);
+        for(var i = 0; i < this.listBlockScripts.length; i++){
+            let block = this.listBlockScripts[i];
             
-            if (element.i == i && element.j == j) return element;
+            if (block.x == x && block.y == y) return block;
         }
     },
 
     tryMove: function (direction) {
-        
-        let script = this.listBlockScripts[0];
-        let i = script.i;
-        let j = script.j;
-
-        cc.log(i, j);
         let canMove = false;
+
+        let currentBlock = this.findBlock(this.selectedX, this.selectedY);
+
         switch (direction){
             case 'up':
-                if (i == 0) {
-                    alert("can't move");
-                    return;
-                }
+                if (this.selectedX == 0) break;
 
-                i--;
+                this.selectedX--;
                 canMove = true;
                 break;
             case 'down':
-                if (i == BLOCK_PER_LINE - 1) {
-                    alert("can't move");
-                    return;
-                }
+                if (this.selectedX == BLOCK_PER_LINE - 1) break;
 
-                i++;
+                this.selectedX++;
                 canMove = true;
                 break;
             case 'left':
-                if (j == 0) {
-                    alert("can't move");
-                    return;
-                }
+                if (this.selectedY == 0) break;
 
-                j--;
+                this.selectedY--;
                 canMove = true;
                 break;
             case 'right':
-                if (j == BLOCK_PER_LINE - 1) {
-                    alert("can't move");
-                    return;
-                }
+                if (this.selectedY == BLOCK_PER_LINE - 1) break;
 
-                j++;
+                this.selectedY++;
                 canMove = true;
                 break;
         }
 
         if (canMove){
-            let nextBlock = this.findBlock(i, j);                
+            let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
             let newValue = parseInt(nextBlock.number.string) + 1;
             //cc.log("found one, with value: " + nextBlock.number)
-            nextBlock.setNumber(newValue);
+            //nextBlock.setNumber(newValue);
+            nextBlock.setNumberAndColor(newValue, this.getSpriteByIndex(newValue));
+
+            currentBlock.setSelected(false);
+            nextBlock.setSelected(true);
+
+            this.playMoveSound();
+
+            let action = cc.scaleTo(0.05, 1.0, 1.0).easing(cc.easeInOut(3));
+            nextBlock.animationNode.runAction(action);
+        } else {
+            this.playCantMoveSound();
         }
         
         // if (this.canMove) {
@@ -254,7 +249,19 @@ cc.Class({
         // }
     },
 
+    playMoveSound: function(){
+        if (this.soundMove == null) return;
+        cc.audioEngine.playEffect(this.soundMove);
+    },
+
+    playCantMoveSound: function(){
+        if (this.soundCantMove == null) return;
+
+        cc.audioEngine.playEffect(this.soundCantMove);
+    },
+
     showMoveAnimation: function () {
+        
         this._currentBlock.runAction(cc.moveTo(0.05, this._nextBlock));
     },
 
@@ -264,7 +271,7 @@ cc.Class({
         //     let j = i%3;
         //     let numberPrefab = this.listBlockScripts[i];
         //     numberPrefab.node.position = this.getNodePos(k,j);
-        //     numberPrefab.setNumberAndColor(, );
+        //     numberPrefab.setNumberxxAndxColor(, );
         // }
     },
 

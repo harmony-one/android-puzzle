@@ -87,6 +87,8 @@ cc.Class({
         this.loadLevel(level);
 
         this.disableTouch();
+
+        this.animatePlayButton();
     },
     
     loadLevel: function(level){
@@ -267,7 +269,24 @@ cc.Class({
     },
     
     onPlayClicked: function(){        
-        this.enableTouch();
+        this.enableTouch();        
+        this.tween4PlayButton.stop();
+        this.btnPlay.node.scale = 1;
+
+        let selectedBlock = this.findBlock(this.selectedX, this.selectedY);
+        selectedBlock.animate();
+    },
+
+    onUndoClicked: function(){
+
+    },
+
+    animatePlayButton: function(){
+        this.tween4PlayButton = cc.tween(this.btnPlay.node)
+        .to(0.5, { scale: 1.2 }, { easing: 'sineOutIn'})
+        .to(0.5, { scale: 1 }, { easing: 'sineInOut'})
+        .call(()=>{ this.animatePlayButton();})
+        .start()
     },
 
     update (dt) {

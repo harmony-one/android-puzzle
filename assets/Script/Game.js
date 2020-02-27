@@ -1,9 +1,7 @@
 var levelGenerator = require('level_generator.js');
 
-var TOTAL_BLOCK = 9;
-var BLOCK_PER_LINE = 3;
-
-
+var BLOCKS_PER_ROW = 3;
+var BLOCK_WIDTH = 18;
 
 cc.Class({
     extends: cc.Component,   
@@ -11,7 +9,6 @@ cc.Class({
     properties: {
         prefabBlock: {default: null, type: cc.Prefab},
         numberBgArray: {default: [], type: cc.SpriteFrame},
-        indicator: cc.Sprite,
         lblScore: cc.Label,
         lblTime: cc.Label,
         lblLevel: cc.Label,
@@ -22,7 +19,7 @@ cc.Class({
         soundMove: {default: null, type: cc.AudioClip},
         soundCantMove: {default: null, type: cc.AudioClip},
     },
-    
+
     onLoad () {
         let spaceX = 11;
         let spaceY = 11;
@@ -30,34 +27,13 @@ cc.Class({
         this.nodeWidth = (this.node.width - (2 * padding + 2 * spaceX))/3;
         this.nodeHeight = (this.node.height - (2 * padding + 2 * spaceY))/3;
 
-        this._allLevels = levelGenerator.levels();
-        cc.log("[All Levels] ", this._allLevels);
+        this.generateAllLevels();        
+        
+        this._currentLevel = 0;
 
-        this.listBlockScripts = [];
+        let level = this._allLevels[this._currentLevel];
 
-        this._level = this._allLevels[this._currentLevel];
-
-        this._currentBlock = null;
-
-        for (let i = 0; i < BLOCK_PER_LINE; i++) {
-            for (let j = 0; j < BLOCK_PER_LINE; j++){
-
-                let block = cc.instantiate(this.prefabBlock);
-                
-                block.position = this.getNodePos(i,j);
-                block.width = this.nodeWidth;
-                block.height = this.nodeHeight;
-                block.i = i;
-                block.j = j;
-                this.node.addChild(block);
-
-                let blockScript = block.getComponent('Block');
-                this.listBlockScripts.push(blockScript);                
-            }
-        }
-
-        this.currentScore = 0;
-        this.step = 0;
+        this.instantiateBlocks(level);        
 
         this.reset();
 
@@ -66,65 +42,80 @@ cc.Class({
         }
     },
 
-    
-
-    getNumberBgForValue: function (value) {
-        let index = 0;
-        switch (value) {
-            default:
-            case 0: index = 0; break;
-            case 1: index = 1; break;
-            case 2: index = 2; break;
-            
-        }
-        return this.numberBgArray[index];
+    generateAllLevels: function(){
+        // Generate all Levels for this Run.
+        this._allLevels = levelGenerator.levels();
+        cc.log("[All Levels] ", this._allLevels);
     },
 
-    getNodePos: function (i, j) {
+    instantiateBlocks: function(){
+        this.listBlockScripts = [];
+
+        // Create 9 Blocks for all level, then reuse them with this.listBlockScripts
+        for (let i = 0; i < BLOCKS_PER_ROW * BLOCKS_PER_ROW; i++) {
+            let block = cc.instantiate(this.prefabBlock);
+            
+            block.width = this.nodeWidth;
+            block.height = this.nodeHeight;
+            
+            let x = i % BLOCKS_PER_ROW;
+            let y = Math.floor(i / BLOCKS_PER_ROW);
+            block.position = this.getNodePosition(x, y);
+
+            this.node.addChild(block);
+
+            let script = block.getComponent('Block');
+            script.x = x;
+            script.y = y;
+            this.listBlockScripts.push(script);                
+        }
+    },
+
+    getNodePosition: function (x, y) {
         let w = this.nodeWidth;
-        return cc.v2(18*(j + 1) + w*j + w/2, -(18*(i+1) + w*i + w/2));
+        return cc.v2(BLOCK_WIDTH*(y + 1) + w*y + w/2, -(BLOCK_WIDTH*(x+1) + w*x + w/2));
     },
 
     reset: function () {
+        this.score = 0;
         this._currentLevel = 0;
+        this._timer = 30;
 
         let level = this._allLevels[this._currentLevel];
 
         this.loadLevel(level);
 
-        this.currentScore = 0;
-        this.step = 0;
-
-        this._currentBlock = this.findBlock(this.selectedX, this.selectedY);
-        this._currentBlock.setSelected(true);
-
         this.enableTouch();
     },
     
     loadLevel: function(level){
-        let index = 0;
-        for (let x = 0; x < BLOCK_PER_LINE; x++) {
-            for (let y = 0; y < BLOCK_PER_LINE; y++){
-                let number = level.contents[x*y + y];
-                let blockScript = this.listBlockScripts[index];
-                blockScript.x = x;
-                blockScript.y = y;
-                
-                blockScript.setColorAndValue(this.getSpriteByIndex(number), number);
-                blockScript.setSelected(false);
-                index++;
-            }
+        for (let i = 0; i < level.contents.length; i++) {
+            let value = level.contents[i];
+
+            let y = i % BLOCKS_PER_ROW;
+            let x = Math.floor(i / BLOCKS_PER_ROW);
+
+            let block = this.findBlock(x, y);
+            block.setSelected(false);
+            
+            block.setColorAndValue(this.getSpriteByValue(value), value);
         }
 
         this.selectedX = level.initialSelected.x;
         this.selectedY = level.initialSelected.y;
-        cc.log("SELECTED " + this.selectedX + "-" + this.selectedY);
+        cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
+
+        let selectedBlock = this.findBlock(this.selectedX, this.selectedY);
+        if (selectedBlock != null){
+            selectedBlock.setSelected(true);
+        }
+
+        this.lblLevel.string = (this._currentLevel + 1) + "/100";
     },
 
-    getSpriteByIndex: function(number){
-        let value = number + 1;
+    getSpriteByValue: function(number){
         if (number < 0 || number >= this.numberBgArray.length){
-            return this.numberBgArray[0]; // "no-number" sprite
+            return this.numberBgArray[this.numberBgArray.length-1]; // "no-number" sprite
         }
 
         return this.numberBgArray[number];
@@ -168,13 +159,17 @@ cc.Class({
         this.tryMove(direction);
     },
     
-    findBlock: function(x, y){
-        cc.log("findBlock at (" + x + ", " + y + ")", this.listBlockScripts);
+    findBlock: function(x, y){        
         for(var i = 0; i < this.listBlockScripts.length; i++){
             let block = this.listBlockScripts[i];
             
-            if (block.x == x && block.y == y) return block;
+            if (block.x == x && block.y == y) {
+                cc.log("findBlock: FOUND at (" + x + ", " + y + ")", block);
+                return block;
+            }
         }
+
+        cc.log("findBlock: FAILED at index ", i);
     },
 
     tryMove: function (direction) {
@@ -190,7 +185,7 @@ cc.Class({
                 canMove = true;
                 break;
             case 'down':
-                if (this.selectedX == BLOCK_PER_LINE - 1) break;
+                if (this.selectedX == BLOCKS_PER_ROW - 1) break;
 
                 this.selectedX++;
                 canMove = true;
@@ -202,14 +197,19 @@ cc.Class({
                 canMove = true;
                 break;
             case 'right':
-                if (this.selectedY == BLOCK_PER_LINE - 1) break;
+                if (this.selectedY == BLOCKS_PER_ROW - 1) break;
 
                 this.selectedY++;
                 canMove = true;
                 break;
         }
 
-        if (canMove){
+        if (!canMove){
+            this.playInvalidMoveSound();
+            this.btnPlay.enabled = false;
+            this.btnUndo.enabled = true;
+        } else {
+            
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
             let newValue = nextBlock.value + 1;
             //cc.log("found one, with value: " + nextBlock.number)
@@ -217,7 +217,7 @@ cc.Class({
             if (newValue >= this.numberBgArray.length){
                 nextBlock.setNumber(newValue);
             }
-            nextBlock.setColorAndValue(this.getSpriteByIndex(newValue), newValue);
+            nextBlock.setColorAndValue(this.getSpriteByValue(newValue), newValue);
 
             currentBlock.setSelected(false);
             nextBlock.setSelected(true);
@@ -225,31 +225,32 @@ cc.Class({
             this.playMoveSound();
 
             let action = cc.scaleTo(0.05, 1.0, 1.0).easing(cc.easeInOut(3));
-            let act = cc.sequence(actionBy, cc.delayTime(0.25), actionBy.reverse());
-            nextBlock.parent.runAction(act);
-        } else {
-            this.playCantMoveSound();
-        }
-        
-        // if (this.canMove) {
-        //     this.step++;
-        //     this.showMoveAnimation();
-            
-        //     //playAudio('move');
+            nextBlock.node.runAction(action);
 
-        //     this.scheduleOnce(()=>{
-        //         this.updateBoard();
-        //         this.showScaleAnimation(direction);
-        //         if (!this.isOver()) {
-        //             this.randomNode();
-        //             if (this.isOver()) {
-        //                 this.disableTouch();
-                        
-        //                 //this.parent.gameOver();
-        //             }
-        //         }
-        //     }, 0.05);
-        // }
+            if (this.isPlayerWin()){
+                this.gotoNextLevel();
+            }
+        }
+    },
+
+    gotoNextLevel: function(){
+        this._currentLevel ++;
+        this._timer = 30;
+        this.score += 100;
+        this.lblScore.string = this.score;
+        this.lblLevel.string = (this._currentLevel + 1) + "/100";
+        
+        let level = this._allLevels[this._currentLevel];
+        this.loadLevel(level);
+    },
+
+    isPlayerWin: function(){
+        let value0 = this.listBlockScripts[0].value;
+        for(var i = 1; i < this.listBlockScripts.length; i++){
+            if (this.listBlockScripts[i].value != value0) return false;
+        }
+
+        return true;
     },
 
     playMoveSound: function(){
@@ -257,72 +258,25 @@ cc.Class({
         cc.audioEngine.playEffect(this.soundMove);
     },
 
-    playCantMoveSound: function(){
+    playInvalidMoveSound: function(){
         if (this.soundCantMove == null) return;
 
         cc.audioEngine.playEffect(this.soundCantMove);
-    },
-
-    showMoveAnimation: function () {
-        
-        this._currentBlock.runAction(cc.moveTo(0.05, this._nextBlock));
-    },
-
-    updateBoard: function () {
-        // for (let i = 0; i < this.listBlockScripts.length; i++) {
-        //     let k = parseInt(i/3);
-        //     let j = i%3;
-        //     let numberPrefab = this.listBlockScripts[i];
-        //     numberPrefab.node.position = this.getNodePos(k,j);
-        //     numberPrefab.setNumberxxAndxColor(, );
-        // }
-    },
-
-    showScaleAnimation: function (direction) {
-        // for (let i = 0; i < this.isNeedAnimateArr.length; i++) {
-        //     if (this.isNeedAnimateArr[i] !== 0) {
-                
-        //         let node = this.listBlockScripts[i].node;
-        //         let action1 = cc.scaleTo(0.05, 1.2, 1.2);
-        //         let action2 = cc.scaleTo(0.05, 1.0, 1.0);
-        //         node.runAction(cc.sequence(action1, action2));
-                
-        //         let animationNode = this.listBlockScripts[i].animationNode;
-        //         let positon3 = cc.v2(node.x, node.y);
-        //         let positon4 = cc.v2(node.x, node.y);
-        //         let amplitude = 10;
-        //         switch(direction){
-        //         case 'up':
-        //             animationNode.rotation = 90;
-        //             positon3 = cc.v2(node.x, node.y + amplitude);
-        //             break;
-        //         case 'down':
-        //             animationNode.rotation = -90;
-        //             positon3 = cc.v2(node.x, node.y - amplitude);
-        //             break;
-        //         case 'left':
-        //             animationNode.rotation = 0;
-        //             positon3 = cc.v2(node.x - amplitude, node.y);
-        //             break;
-        //         case 'right':
-        //             animationNode.rotation = 180;
-        //             positon3 = cc.v2(node.x + amplitude, node.y);
-        //             break;
-        //         }
-        //         animationNode.active = true;
-        //         // Configure.playAnimation(animationNode, 'impact', 'Normal', function () {
-        //         //     animationNode.active = false;
-        //         // });
-        //         let action3 = cc.moveTo(0.05, positon3);
-        //         let action4 = cc.moveTo(0.05, positon4);
-        //         node.runAction(cc.sequence(action3, action4));
-        //     }
-        // }
     },
 
     isOver: function () {
         return false;
     },
 
-    // update (dt) {},
+    update (dt) {
+        this._timer -= dt;
+
+        if (this._timer > 0){
+            let floored = Math.floor(this._timer);
+            let formattedNumber = ("0" + floored).slice(-2);
+            this.lblTime.string = '00:' + formattedNumber;
+        } else {
+
+        }
+    },
 });

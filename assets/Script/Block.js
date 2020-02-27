@@ -13,11 +13,7 @@ cc.Class({
     },
 
     onLoad () {
-        let rect = new cc.DrawNode();
-        rect.drawRect(cc.p(0, 0), cc.p(20, 20), cc.color(0,0,0,100), 1, cc.color(200,0,0,255));
-        this.parent.addChild(rect);
-
-        this.number.enableOutline(cc.color(255, 255, 255, 255), 1);
+       
     },
 
     setColorAndValue: function(sprite, value){

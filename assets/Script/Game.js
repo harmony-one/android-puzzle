@@ -15,6 +15,7 @@ cc.Class({
         btnPlay: cc.Button,
         btnUndo: cc.Button,
         lblError: {default: null, type: cc.Label},
+        tutorialLine: {default: null, type: cc.Sprite},
         themeMusic: {default: null, type: cc.AudioClip},
         soundMove: {default: null, type: cc.AudioClip},
         soundCantMove: {default: null, type: cc.AudioClip},
@@ -85,7 +86,7 @@ cc.Class({
 
         this.loadLevel(level);
 
-        this.enableTouch();
+        this.disableTouch();
     },
     
     loadLevel: function(level){
@@ -205,11 +206,13 @@ cc.Class({
         }
 
         if (!canMove){
-            this.playInvalidMoveSound();
-            this.btnPlay.enabled = false;
-            this.btnUndo.enabled = true;
+            this.playInvalidMoveSound();            
         } else {
-            
+            if (this.btnPlay.enabled){
+                this.btnPlay.node.enabled = false;
+                this.btnUndo.node.enabled = true;
+            }
+
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
             let newValue = nextBlock.value + 1;
             //cc.log("found one, with value: " + nextBlock.number)
@@ -263,9 +266,10 @@ cc.Class({
 
         cc.audioEngine.playEffect(this.soundCantMove);
     },
-
-    isOver: function () {
-        return false;
+    
+    onPlayClicked: function(){
+        this.tutorialLine.enabled = false;
+        this.enableTouch();
     },
 
     update (dt) {

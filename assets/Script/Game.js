@@ -206,11 +206,13 @@ cc.Class({
         }
 
         if (!canMove){
-            this.playInvalidMoveSound();            
+            currentBlock.animate();
+            this.playInvalidMoveSound();
         } else {
             if (this.btnPlay.enabled){
-                this.btnPlay.node.enabled = false;
-                this.btnUndo.node.enabled = true;
+                this.btnPlay.node.active = false;
+                this.btnUndo.node.active = true;
+                this.tutorialLine.enabled = false;
             }
 
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
@@ -226,9 +228,6 @@ cc.Class({
             nextBlock.setSelected(true);
 
             this.playMoveSound();
-
-            let action = cc.scaleTo(0.05, 1.0, 1.0).easing(cc.easeInOut(3));
-            nextBlock.node.runAction(action);
 
             if (this.isPlayerWin()){
                 this.gotoNextLevel();
@@ -267,8 +266,7 @@ cc.Class({
         cc.audioEngine.playEffect(this.soundCantMove);
     },
     
-    onPlayClicked: function(){
-        this.tutorialLine.enabled = false;
+    onPlayClicked: function(){        
         this.enableTouch();
     },
 

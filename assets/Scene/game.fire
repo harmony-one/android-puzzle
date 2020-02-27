@@ -198,7 +198,7 @@
       "array": [
         0,
         0,
-        618.3421383020892,
+        676.3658403556466,
         0,
         0,
         0,
@@ -1149,13 +1149,19 @@
       "__id__": 34
     },
     "themeMusic": {
-      "__uuid__": "7c75078e-87a9-492f-8312-340963af9ff4"
+      "__uuid__": "54c70633-ac91-4ce3-99b5-692afc22d289"
     },
     "soundMove": {
       "__uuid__": "c8d655a7-c846-49e9-9d97-c2eed26c0396"
     },
     "soundCantMove": {
       "__uuid__": "57906ddb-3759-4bc6-904c-e70ef5bd46a9"
+    },
+    "soundWin": {
+      "__uuid__": "ae9d81ed-f840-4af8-9f67-e94171269ce1"
+    },
+    "soundButtonClick": {
+      "__uuid__": "19005b80-31f2-4765-93f5-3b5f5b4e364a"
     },
     "_id": "80hG+GC0hB2aC6SWJER59t"
   },

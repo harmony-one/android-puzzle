@@ -19,6 +19,8 @@ cc.Class({
         themeMusic: {default: null, type: cc.AudioClip},
         soundMove: {default: null, type: cc.AudioClip},
         soundCantMove: {default: null, type: cc.AudioClip},
+        soundWin: {default: null, type: cc.AudioClip},
+        soundButtonClick: {default: null, type: cc.AudioClip},
     },
 
     onLoad () {
@@ -232,6 +234,7 @@ cc.Class({
             this.playMoveSound();
 
             if (this.isPlayerWin()){
+                cc.audioEngine.playEffect(this.soundWin);
                 this.gotoNextLevel();
             }
         }
@@ -272,6 +275,8 @@ cc.Class({
         this.enableTouch();        
         this.tween4PlayButton.stop();
         this.btnPlay.node.scale = 1;
+
+        cc.audioEngine.playEffect(this.soundButtonClick);
 
         let selectedBlock = this.findBlock(this.selectedX, this.selectedY);
         selectedBlock.animate();

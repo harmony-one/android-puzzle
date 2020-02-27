@@ -92,8 +92,6 @@ cc.Class({
 
         this.loadLevel(level);
 
-        //this.indicator.position = this._currentBlock.position;
-
         this.currentScore = 0;
         this.step = 0;
 
@@ -112,7 +110,7 @@ cc.Class({
                 blockScript.x = x;
                 blockScript.y = y;
                 
-                blockScript.setNumberAndColor(number, this.getSpriteByIndex(number));
+                blockScript.setColorAndValue(this.getSpriteByIndex(number), number);
                 blockScript.setSelected(false);
                 index++;
             }
@@ -124,8 +122,9 @@ cc.Class({
     },
 
     getSpriteByIndex: function(number){
+        let value = number + 1;
         if (number < 0 || number >= this.numberBgArray.length){
-            return this.numberBgArray[this.numberBgArray.length-1];
+            return this.numberBgArray[0]; // "no-number" sprite
         }
 
         return this.numberBgArray[number];
@@ -212,10 +211,13 @@ cc.Class({
 
         if (canMove){
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
-            let newValue = parseInt(nextBlock.number.string) + 1;
+            let newValue = nextBlock.value + 1;
             //cc.log("found one, with value: " + nextBlock.number)
-            //nextBlock.setNumber(newValue);
-            nextBlock.setNumberAndColor(newValue, this.getSpriteByIndex(newValue));
+
+            if (newValue >= this.numberBgArray.length){
+                nextBlock.setNumber(newValue);
+            }
+            nextBlock.setColorAndValue(this.getSpriteByIndex(newValue), newValue);
 
             currentBlock.setSelected(false);
             nextBlock.setSelected(true);
@@ -223,7 +225,8 @@ cc.Class({
             this.playMoveSound();
 
             let action = cc.scaleTo(0.05, 1.0, 1.0).easing(cc.easeInOut(3));
-            nextBlock.animationNode.runAction(action);
+            let act = cc.sequence(actionBy, cc.delayTime(0.25), actionBy.reverse());
+            nextBlock.parent.runAction(act);
         } else {
             this.playCantMoveSound();
         }

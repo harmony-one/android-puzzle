@@ -83,7 +83,7 @@ cc.Class({
     reset: function () {
         this.score = 0;
         this._currentLevel = 0;
-        this._timer = 30;
+        this._timer = 0;
 
         let level = this._allLevels[this._currentLevel];
 
@@ -236,6 +236,10 @@ cc.Class({
 
             if (this.isPlayerWin()){
                 cc.audioEngine.playEffect(this.soundWin);
+                
+                this.score += this.calculateScore();
+                this.lblScore.string = this.score;
+
                 this.gotoNextLevel();
             }
         }
@@ -243,13 +247,25 @@ cc.Class({
 
     gotoNextLevel: function(){
         this._currentLevel ++;
-        this._timer = 30;
-        this.score += 100;
-        this.lblScore.string = this.score;
+        this._timer = this.getTimeByLevel(this._currentLevel);
+        
         this.lblLevel.string = (this._currentLevel + 1) + "/100";
         
         let level = this._allLevels[this._currentLevel];
         this.loadLevel(level);
+    },
+
+    calculateScore: function(){
+        return (this._currentLevel + 1) * Math.floor(this._timer);
+    },
+
+    getTimeByLevel: function(level){
+        if (level <= 2) return 20;
+        if (level <= 5) return 30;
+        if (level <= 10) return 25;
+        if (level <= 20) return 20;
+        
+        return 15;
     },
 
     isPlayerWin: function(){
@@ -273,9 +289,11 @@ cc.Class({
     },
     
     onPlayClicked: function(){        
-        this.enableTouch();        
+        this.enableTouch();
         this.tween4PlayButton.stop();
         this.btnPlay.node.scale = 1;
+
+        this._timer = this.getTimeByLevel(this._currentLevel);
 
         cc.audioEngine.playEffect(this.soundButtonClick);
 

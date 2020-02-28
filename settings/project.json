@@ -4,7 +4,17 @@
       true
     ]
   ],
-  "excluded-modules": [],
+  "excluded-modules": [
+    "DragonBones",
+    "Geom Utils",
+    "MotionStreak",
+    "Spine Skeleton",
+    "TiledMap",
+    "VideoPlayer",
+    "WebView",
+    "3D",
+    "3D Primitive"
+  ],
   "group-list": [
     "default"
   ],

@@ -1,5 +1,3 @@
-var levelGenerator = require('level_generator.js');
-
 var BLOCKS_PER_ROW = 3;
 var BLOCK_WIDTH = 18;
 
@@ -8,6 +6,7 @@ cc.Class({
 
     properties: {
         prefabBlock: {default: null, type: cc.Prefab},
+        levelGenerator: {default: null, type: cc.Node},
         numberBgArray: {default: [], type: cc.SpriteFrame},
         lblScore: cc.Label,
         lblTime: cc.Label,
@@ -46,8 +45,10 @@ cc.Class({
     },
 
     generateAllLevels: function(){
-        // Generate all Levels for this Run.
-        this._allLevels = levelGenerator.levels();
+        // Generate all Levels for this whole Run.
+        let script = this.levelGenerator.getComponent('LevelGenerator');
+
+        this._allLevels = script.levels();
         cc.log("[All Levels] ", this._allLevels);
     },
 
@@ -288,8 +289,8 @@ cc.Class({
 
     animatePlayButton: function(){
         this.tween4PlayButton = cc.tween(this.btnPlay.node)
-        .to(0.5, { scale: 1.2 }, { easing: 'sineOutIn'})
-        .to(0.5, { scale: 1 }, { easing: 'sineInOut'})
+        .to(0.5, { scale: 1.2 })
+        .to(0.5, { scale: 1 })
         .call(()=>{ this.animatePlayButton();})
         .start()
     },

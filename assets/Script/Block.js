@@ -19,6 +19,8 @@ cc.Class({
     setColorAndValue: function(sprite, value){
         this.value = value;
         this.sprite.spriteFrame = sprite;
+
+        this.setNumber(value);
     },
     
     setNumber: function(value){

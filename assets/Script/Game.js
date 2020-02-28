@@ -120,11 +120,9 @@ cc.Class({
     },
 
     getSpriteByValue: function(number){
-        if (number < 0 || number >= this.numberBgArray.length){
-            return this.numberBgArray[this.numberBgArray.length-1]; // "no-number" sprite
-        }
+        let index = number % this.numberBgArray.length;
 
-        return this.numberBgArray[number];
+        return this.numberBgArray[index];
     },
 
     enableTouch: function () {
@@ -224,9 +222,9 @@ cc.Class({
             let newValue = nextBlock.value + 1;
             //cc.log("found one, with value: " + nextBlock.number)
 
-            if (newValue >= this.numberBgArray.length){
-                nextBlock.setNumber(newValue);
-            }
+            // if (newValue >= this.numberBgArray.length){
+            //     nextBlock.setNumber(newValue);
+            // }
             nextBlock.setColorAndValue(this.getSpriteByValue(newValue), newValue);
 
             currentBlock.setSelected(false);

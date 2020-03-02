@@ -1,5 +1,10 @@
 var BLOCKS_PER_ROW = 3;
 var BLOCK_WIDTH = 18;
+const STATE = {
+    TUTORIAL: 0,
+    STARTED: 1,
+    END: 2
+}
 
 cc.Class({
     extends: cc.Component,   
@@ -21,6 +26,8 @@ cc.Class({
         soundWin: {default: null, type: cc.AudioClip},
         soundButtonClick: {default: null, type: cc.AudioClip},
     },
+
+    state: STATE.TUTORIAL,
 
     onLoad () {
         let spaceX = 11;
@@ -81,6 +88,7 @@ cc.Class({
     },
 
     reset: function () {
+        this.state = STATE.TUTORIAL;
         this.score = 0;
         this._currentLevel = 0;
         this._timer = 0;
@@ -216,6 +224,8 @@ cc.Class({
                 this.btnPlay.node.active = false;
                 this.btnUndo.node.active = true;
                 this.tutorialLine.enabled = false;
+
+                this.state = STATE.STARTED;
             }
 
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
@@ -318,8 +328,9 @@ cc.Class({
             let floored = Math.floor(this._timer);
             let formattedNumber = ("0" + floored).slice(-2);
             this.lblTime.string = '00:' + formattedNumber;
-        } else {
-
+        } else if (this.state == STATE.STARTED) {
+            cc.director.loadScene("end_game");
+            this.state = STATE.END;
         }
     },
 });

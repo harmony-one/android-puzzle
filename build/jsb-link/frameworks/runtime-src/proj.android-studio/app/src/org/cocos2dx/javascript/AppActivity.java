@@ -26,13 +26,31 @@ package org.cocos2dx.javascript;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
+import org.jetbrains.annotations.NotNull;
 
 import android.os.Bundle;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.util.Log;
+
+import com.samsung.android.sdk.blockchain.*;
+import com.samsung.android.sdk.blockchain.coinservice.CoinNetworkInfo;
+import com.samsung.android.sdk.blockchain.coinservice.CoinServiceFactory;
+import com.samsung.android.sdk.blockchain.coinservice.ethereum.EthereumService;
+import com.samsung.android.sdk.blockchain.exception.HardwareWalletException;
+import com.samsung.android.sdk.blockchain.exception.RootSeedChangedException;
+import com.samsung.android.sdk.blockchain.exception.SsdkUnsupportedException;
+import com.samsung.android.sdk.blockchain.network.EthereumNetworkType;
+import com.samsung.android.sdk.blockchain.wallet.HardwareWallet;
+import com.samsung.android.sdk.blockchain.wallet.HardwareWalletManager;
+import com.samsung.android.sdk.blockchain.wallet.HardwareWalletType;
+
+import java.util.concurrent.ExecutionException;
 
 public class AppActivity extends Cocos2dxActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +151,80 @@ public class AppActivity extends Cocos2dxActivity {
     protected void onStart() {
         SDKWrapper.getInstance().onStart();
         super.onStart();
+    }
+
+    /// BLOCKCHAIN Code
+    SBlockchain mSblockchain;
+    private static final int VENDOR_NOT_SUPPORTED = -1;
+    public void initBlockchain(){
+        try {
+            mSblockchain = new SBlockchain();
+            mSblockchain.initialize(getContext());
+        } catch (SsdkUnsupportedException e) {
+            if (e.getErrorType() == VENDOR_NOT_SUPPORTED){
+                Log.e("error", "Platform SDK is not support this device");
+            }
+        }
+    }
+    CoinNetworkInfo mCoinNetworkInfo;
+    public void getCoinNetwork(){
+        mCoinNetworkInfo =
+                new CoinNetworkInfo(
+                        CoinType.ETH,
+                        EthereumNetworkType.MAINNET,
+                        "https://infura.io/" //ex. https://mainnet.infura.io/v3/xxxxx
+                );
+    }
+
+    public void getCointService() {
+        EthereumService etherService =
+                (EthereumService) CoinServiceFactory
+                        .getCoinService(
+                                getContext(),
+                                mCoinNetworkInfo
+                        );
+
+    }
+
+    HardwareWalletManager hardwareWalletManager;
+    public void getHardwareWalletManager(){
+        try {
+            hardwareWalletManager = mSblockchain.getHardwareWalletManager();
+        } catch (IllegalStateException e) {
+            // handling exception
+        }
+
+    }
+
+    public void connect(){
+        HardwareWalletType hardwareWalletType = HardwareWalletType.SAMSUNG;
+        ListenableFutureTask<HardwareWallet> connectionTask = hardwareWalletManager.connect(hardwareWalletType, true);
+
+        connectionTask.setCallback(
+                new ListenableFutureTask.Callback<HardwareWallet>() {
+                    @Override
+                    public void onSuccess(HardwareWallet hardwareWallet) {
+                        // Disconnect
+                        //hardwareWalletManager.disconnect(hardwareWallet);
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ExecutionException e) {
+                        Throwable cause = e.getCause();
+
+                        if (cause instanceof HardwareWalletException) {
+                            // handling hardware wallet error
+                        } else if (cause instanceof RootSeedChangedException) {
+                            // handling root seed changed exception
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NotNull InterruptedException e) {
+
+                    }
+                });
+
     }
 
     public static int sum(int a, int b){

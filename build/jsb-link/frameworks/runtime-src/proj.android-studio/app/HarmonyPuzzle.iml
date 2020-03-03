@@ -54,8 +54,41 @@
     <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support">
       <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support" isTestSource="false" />
     </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones-creator-support">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones-creator-support" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/animation">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/animation" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/armature">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/armature" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/core">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/core" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/event">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/event" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/factory">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/factory" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/geom">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/geom" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/model">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/model" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/parser">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/dragonbones/parser" isTestSource="false" />
+    </content>
     <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/particle">
       <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/particle" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/spine">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/spine" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/spine-creator-support">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/editor-support/spine-creator-support" isTestSource="false" />
     </content>
     <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/math">
       <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/math" isTestSource="false" />
@@ -110,6 +143,12 @@
     </content>
     <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/ui/edit-box">
       <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/ui/edit-box" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/ui/videoplayer">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/ui/videoplayer" isTestSource="false" />
+    </content>
+    <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/ui/webview">
+      <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/ui/webview" isTestSource="false" />
     </content>
     <content url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/extensions/assets-manager">
       <sourceFolder url="file://C:/CocosCreator_2.2.2/resources/cocos2d-x/extensions/assets-manager" isTestSource="false" />
@@ -212,9 +251,120 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.12@jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.sf.kxml:kxml2:2.3.0@jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.squareup:javawriter:2.1.1@jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-integration:1.3@jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-library:1.3@jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.code.findbugs:jsr305:2.0.1@jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3@jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.test.espresso:espresso-core:3.2.0@aar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.test:runner:1.2.0@aar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.test:monitor:1.2.0@aar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.test.espresso:espresso-idling-resource:3.2.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator_2.2.2\resources\cocos2d-x\cocos\platform\android\java\libs\com.android.vending.expansion.zipfile.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator_2.2.2\resources\cocos2d-x\cocos\platform\android\java\libs\okhttp-3.12.3.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator_2.2.2\resources\cocos2d-x\cocos\platform\android\java\libs\okio-1.15.0.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.41@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.retrofit2:converter-gson:2.6.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.retrofit2:retrofit:2.6.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:core:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:logging-interceptor:3.8.1@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.5@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.ini4j:ini4j:0.5.4@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.dagger:dagger:2.21@jar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.collection:collection:1.0.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-common:2.0.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.arch.core:core-common:2.0.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.annotation:annotation:1.0.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.constraintlayout:constraintlayout-solver:1.1.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.41@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:3.12.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:abi:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:crypto:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:tuples:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:rlp:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:utils:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:compat:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: net.sourceforge.streamsupport:streamsupport:1.7.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-unixsocket:0.21@jar" level="project" />
+    <orderEntry type="library" name="Gradle: io.reactivex.rxjava2:rxjava:2.2.2@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.java-websocket:Java-WebSocket:1.3.8@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.8.5@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.25@jar" level="project" />
+    <orderEntry type="library" name="Gradle: javax.inject:javax.inject:1@jar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.core:common:1.1.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.lifecycle:common:1.1.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.zxing:core:3.3.2@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okio:okio:1.15.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-enxio:0.19@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-posix:3.0.47@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-ffi:2.1.9@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-constants:0.9.11@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.2@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.8.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.8.5@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-annotations:26.1.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.bouncycastle:bcprov-jdk15on:1.60@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jffi:1.2.17@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-commons:5.0.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-analysis:5.0.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-util:5.0.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-tree:5.0.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm:5.0.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-a64asm:1.0.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-x86asm:1.0.2@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.material:material:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-v4:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.appcompat:appcompat:1.0.2@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.constraintlayout:constraintlayout:1.1.3@aar" level="project" />
+    <orderEntry type="library" name="Gradle: :BlockchainPlatformSDK_1.0.00:@aar" level="project" />
+    <orderEntry type="library" name="Gradle: :KeystoreSDK_v1.2.0:@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.ledger.lib:ledger-android-library:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.lifecycle:extensions:1.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.journeyapps:zxing-android-embedded:3.6.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.fragment:fragment:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.recyclerview:recyclerview:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.vectordrawable:vectordrawable-animated:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-core-ui:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-core-utils:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.transition:transition:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.cardview:cardview:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.media:media:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.vectordrawable:vectordrawable:1.0.1@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.viewpager:viewpager:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.coordinatorlayout:coordinatorlayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.drawerlayout:drawerlayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.slidingpanelayout:slidingpanelayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.customview:customview:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.swiperefreshlayout:swiperefreshlayout:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.asynclayoutinflater:asynclayoutinflater:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.loader:loader:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.core:core:1.0.1@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.versionedparcelable:versionedparcelable:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.cursoradapter:cursoradapter:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.interpolator:interpolator:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.documentfile:documentfile:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.localbroadcastmanager:localbroadcastmanager:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.print:print:1.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-viewmodel:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-runtime:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-livedata:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-livedata-core:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.arch.core:core-runtime:2.0.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-v4:25.3.1@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-fragment:26.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-core-ui:26.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-core-utils:26.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-media-compat:25.3.1@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-compat:26.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.lifecycle:runtime:1.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.lifecycle:livedata:1.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.lifecycle:livedata-core:1.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.core:runtime:1.1.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: android.arch.lifecycle:viewmodel:1.1.0@aar" level="project" />
     <orderEntry type="module" module-name="libcocos2dx" />
   </component>
 </module>

@@ -49,6 +49,12 @@ cc.Class({
         if (this.themeMusic != null){
             cc.audioEngine.playMusic(this.themeMusic, true);
         }
+
+        // Call java function
+        var result = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", 159, 357);
+        this.lblError.string = result + "-" + (cc.sys.os == cc.sys.ANDROID);
+        
+
     },
 
     generateAllLevels: function(){

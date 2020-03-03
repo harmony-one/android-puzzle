@@ -1,0 +1,4 @@
+include ':libcocos2dx'
+project(':libcocos2dx').projectDir = new File('C:/CocosCreator_2.2.2/resources/cocos2d-x/cocos/platform/android/libcocos2dx')
+include ':HarmonyPuzzle'
+project(':HarmonyPuzzle').projectDir = new File(settingsDir, 'app')

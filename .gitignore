@@ -5,7 +5,14 @@
 /library/
 /temp/
 /local/
-/build/
+/build/jsb-link/res/
+/build/jsb-link/publish/
+/build/jsb-link/frameworks/runtime-src/proj.ios_mac/
+/build/jsb-link/frameworks/runtime-src/proj.win32/
+/build/jsb-link/frameworks/runtime-src/proj.android-studio/.gradle/
+/build/jsb-link/frameworks/runtime-src/proj.android-studio/.idea/
+/build/jsb-link/frameworks/runtime-src/proj.android-studio/app/build/
+/build/jsb-link/frameworks/runtime-src/proj.android-studio/app/.externalNativeBuild/
 
 #/////////////////////////////////////////////////////////////////////////////
 # npm files

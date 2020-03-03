@@ -1,0 +1,7 @@
+{
+  "engine_version": "2.2.2-release",
+  "has_native": true,
+  "project_type": "js",
+  "projectName": "HarmonyPuzzle",
+  "packageName": "com.harmony.one"
+}

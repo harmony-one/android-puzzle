@@ -6,6 +6,10 @@ android {
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
     buildToolsVersion PROP_BUILD_TOOLS_VERSION
 
+    configurations {
+        all*.exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+
     defaultConfig {
         applicationId "com.harmony.one"
         minSdkVersion PROP_MIN_SDK_VERSION
@@ -184,5 +188,11 @@ dependencies {
 
     //Required for QR Code related tasks
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+
+//    implementation ('org.eclipse.paho:org.eclipse.paho.android.service:1.0.2') {
+//        exclude group: 'com.android.support', module: 'support-v4'
+//        exclude group: 'com.android.support', module: 'support-annotation'
+//        exclude group: 'com.android.support', module: 'support-compat'
+//    }
 }
 

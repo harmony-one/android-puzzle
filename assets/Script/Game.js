@@ -50,11 +50,32 @@ cc.Class({
             cc.audioEngine.playMusic(this.themeMusic, true);
         }
 
-        // Call java function
-        var result = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", 159, 357);
-        this.lblError.string = result + "-" + (cc.sys.os == cc.sys.ANDROID);
-        
+        if (this.isAndroid()){            
+            let result = this.sum2NumbersFromJava(123, 456);
+            this.lblError.string = result;
 
+            this.apiInitBlockchain();
+        }
+        
+        
+        // let ii = 10;
+        // this.schedule(function(){
+        //     this.lblError.string = ii;
+        //     ii+= 10;
+        // }, 2);
+
+    },
+
+    isAndroid: function() {
+        return cc.sys.os == cc.sys.OS_ANDROID;
+    },
+
+    sum2NumbersFromJava: function(a, b){        
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", a, b);
+    },
+
+    apiInitBlockchain: function() {
+        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "initBlockchain", "()V");
     },
 
     generateAllLevels: function(){
@@ -182,7 +203,6 @@ cc.Class({
             let block = this.listBlockScripts[i];
             
             if (block.x == x && block.y == y) {
-                cc.log("findBlock: FOUND at (" + x + ", " + y + ")", block);
                 return block;
             }
         }

@@ -139,8 +139,20 @@ var e = this._allLevels[this._currentLevel];
 this.instantiateBlocks(e);
 this.reset();
 null != this.themeMusic && cc.audioEngine.playMusic(this.themeMusic, !0);
-var t = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", 159, 357);
-this.lblError.string = t + "-" + (cc.sys.os == cc.sys.ANDROID);
+if (this.isAndroid()) {
+var t = this.sum2NumbersFromJava(123, 456);
+this.lblError.string = t;
+this.apiInitBlockchain();
+}
+},
+isAndroid: function() {
+return cc.sys.os == cc.sys.OS_ANDROID;
+},
+sum2NumbersFromJava: function(e, t) {
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", e, t);
+},
+apiInitBlockchain: function() {
+jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "initBlockchain", "()V");
 },
 generateAllLevels: function() {
 var e = this.levelGenerator.getComponent("LevelGenerator");
@@ -216,10 +228,7 @@ this.tryMove(c);
 findBlock: function(e, t) {
 for (var i = 0; i < this.listBlockScripts.length; i++) {
 var n = this.listBlockScripts[i];
-if (n.x == e && n.y == t) {
-cc.log("findBlock: FOUND at (" + e + ", " + t + ")", n);
-return n;
-}
+if (n.x == e && n.y == t) return n;
 }
 cc.log("findBlock: FAILED at index ", i);
 },
@@ -348,8 +357,6 @@ LevelGenerator: [ function(e, t, i) {
 cc._RF.push(t, "3ffbfo+zY9GiJgho3eM08Wb", "LevelGenerator");
 cc.Class({
 extends: cc.Component,
-properties: {},
-start: function() {},
 randRange: function(e, t) {
 return Math.floor(Math.random() * (t - e) + e);
 },

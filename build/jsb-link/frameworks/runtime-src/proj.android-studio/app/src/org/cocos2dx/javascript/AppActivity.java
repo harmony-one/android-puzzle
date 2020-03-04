@@ -154,9 +154,9 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     /// BLOCKCHAIN Code
-    SBlockchain mSblockchain;
+    static SBlockchain mSblockchain;
     private static final int VENDOR_NOT_SUPPORTED = -1;
-    public void initBlockchain(){
+    public static void initBlockchain(){
         try {
             mSblockchain = new SBlockchain();
             mSblockchain.initialize(getContext());
@@ -166,6 +166,7 @@ public class AppActivity extends Cocos2dxActivity {
             }
         }
     }
+
     CoinNetworkInfo mCoinNetworkInfo;
     public void getCoinNetwork(){
         mCoinNetworkInfo =

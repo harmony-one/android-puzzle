@@ -27,7 +27,19 @@ cc.Class({
 
     },
 
-    // update (dt) {},
+    isAndroid: function() {
+        return cc.sys.os == cc.sys.OS_ANDROID;
+    },
+
+    apiInitBlockchain: function() {
+        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "initBlockchain", "()V");
+    },
+
+    onLoginClicked(){
+        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "toast", "(Ljava/lang/String;)V", "Login clicked");
+
+        this.apiInitBlockchain();
+    },
 
     onPlayAgainClicked(){
         cc.director.loadScene("game");

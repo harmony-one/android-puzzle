@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.samsung.android.sdk.blockchain.*;
 import com.samsung.android.sdk.blockchain.coinservice.CoinNetworkInfo;
@@ -65,6 +66,8 @@ public class AppActivity extends Cocos2dxActivity {
         }
         // DO OTHER INITIALIZATION BELOW
         SDKWrapper.getInstance().init(this);
+
+        currentContext = this;
 
     }
     
@@ -153,7 +156,16 @@ public class AppActivity extends Cocos2dxActivity {
         super.onStart();
     }
 
+    // Test java call
+    static AppActivity currentContext;
+
+    public static void toast(String msg){
+        Toast.makeText(currentContext, msg, Toast.LENGTH_LONG);
+    }
+
     /// BLOCKCHAIN Code
+
+
     static SBlockchain mSblockchain;
     private static final int VENDOR_NOT_SUPPORTED = -1;
     public static void initBlockchain(){

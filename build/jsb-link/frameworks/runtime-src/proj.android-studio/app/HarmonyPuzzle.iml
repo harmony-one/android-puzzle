@@ -265,11 +265,11 @@
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator_2.2.2\resources\cocos2d-x\cocos\platform\android\java\libs\com.android.vending.expansion.zipfile.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator_2.2.2\resources\cocos2d-x\cocos\platform\android\java\libs\okhttp-3.12.3.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator_2.2.2\resources\cocos2d-x\cocos\platform\android\java\libs\okio-1.15.0.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: org.web3j:core:4.2.0-android@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:logging-interceptor:3.8.1@jar" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.41@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.retrofit2:converter-gson:2.6.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.retrofit2:retrofit:2.6.0@jar" level="project" />
-    <orderEntry type="library" name="Gradle: org.web3j:core:4.2.0-android@jar" level="project" />
-    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:logging-interceptor:3.8.1@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.5@jar" level="project" />
     <orderEntry type="library" name="Gradle: org.ini4j:ini4j:0.5.4@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.dagger:dagger:2.21@jar" level="project" />

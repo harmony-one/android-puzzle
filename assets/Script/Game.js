@@ -54,7 +54,7 @@ cc.Class({
             let result = this.sum2NumbersFromJava(123, 456);
             this.lblError.string = result;
 
-            this.apiInitBlockchain();
+            //this.apiInitBlockchain();
         }
         
         

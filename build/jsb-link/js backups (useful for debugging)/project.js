@@ -67,6 +67,16 @@ cc.Class({
 extends: cc.Component,
 properties: {},
 start: function() {},
+isAndroid: function() {
+return cc.sys.os == cc.sys.OS_ANDROID;
+},
+apiInitBlockchain: function() {
+jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "initBlockchain", "()V");
+},
+onLoginClicked: function() {
+jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "toast", "(Ljava/lang/String;)V", "Login clicked");
+this.apiInitBlockchain();
+},
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
 },
@@ -142,7 +152,6 @@ null != this.themeMusic && cc.audioEngine.playMusic(this.themeMusic, !0);
 if (this.isAndroid()) {
 var t = this.sum2NumbersFromJava(123, 456);
 this.lblError.string = t;
-this.apiInitBlockchain();
 }
 },
 isAndroid: function() {

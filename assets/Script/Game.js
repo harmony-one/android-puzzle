@@ -12,6 +12,7 @@ cc.Class({
     properties: {
         prefabBlock: {default: null, type: cc.Prefab},
         levelGenerator: {default: null, type: cc.Node},
+        stopwatch: {default: null, type: cc.Node},
         numberBgArray: {default: [], type: cc.SpriteFrame},
         lblScore: cc.Label,
         lblTime: cc.Label,
@@ -154,6 +155,8 @@ cc.Class({
 
         this.lblLevel.string = (this._currentLevel + 1) + "/100";
         this.btnUndo.interactable = false;
+        
+        if (this.tween4Stopwatch != null) this.tween4Stopwatch.stop();
     },
 
     getSpriteByValue: function(number){
@@ -382,6 +385,7 @@ cc.Class({
         .start()
     },
 
+    isClockRinging: false,
     update (dt) {
         this._timer -= dt;
 
@@ -389,6 +393,19 @@ cc.Class({
             let floored = Math.floor(this._timer);
             let formattedNumber = ("0" + floored).slice(-2);
             this.lblTime.string = '00:' + formattedNumber;
+
+            if (this._timer <= 10 && !this.isClockRinging){
+                this.tween4Stopwatch = cc.tween(this.stopwatch)
+                    .repeat(
+                        10,
+                        cc.tween()
+                            .by(0.5, { angle: -20 })
+                            .by(0.5, { angle: 20 })
+                    )
+                .start();
+
+                this.isClockRinging = true;
+            }
         } else if (this.state == STATE.STARTED) {
             cc.director.loadScene("end_game");
             this.state = STATE.END;

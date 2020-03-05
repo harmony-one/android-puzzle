@@ -96,7 +96,7 @@
         "__id__": 23
       },
       {
-        "__id__": 39
+        "__id__": 40
       },
       {
         "__id__": 28
@@ -108,13 +108,13 @@
         "__id__": 31
       },
       {
-        "__id__": 38
+        "__id__": 39
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 40
+        "__id__": 41
       }
     ],
     "_prefab": null,
@@ -1279,7 +1279,7 @@
       "__id__": 11
     },
     "tutorialLine": {
-      "__id__": 37
+      "__id__": 38
     },
     "themeMusic": {
       "__uuid__": "54c70633-ac91-4ce3-99b5-692afc22d289"
@@ -1681,15 +1681,21 @@
       "__id__": 35
     },
     "_enabled": true,
-    "_normalMaterial": null,
+    "_normalMaterial": {
+      "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+    },
     "_grayMaterial": null,
     "duration": 0.1,
     "zoomScale": 1.2,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 37
+      }
+    ],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
-    "_N$transition": 0,
-    "transition": 0,
+    "_N$transition": 1,
+    "transition": 1,
     "_N$normalColor": {
       "__type__": "cc.Color",
       "r": 255,
@@ -1841,11 +1847,21 @@
     "_id": "b8kwHuYThG+YLgF4vvtuqe"
   },
   {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 23
+    },
+    "component": "",
+    "_componentId": "918870dx+VCSJisaYjAnxgN",
+    "handler": "onUndoClicked",
+    "customEventData": ""
+  },
+  {
     "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 38
+      "__id__": 39
     },
     "_enabled": true,
     "_materials": [
@@ -1883,7 +1899,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 37
+        "__id__": 38
       }
     ],
     "_prefab": null,

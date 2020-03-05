@@ -28,6 +28,7 @@ cc.Class({
     },
 
     state: STATE.TUTORIAL,
+    lastMove: null,
 
     onLoad () {
         let spaceX = 11;
@@ -118,7 +119,7 @@ cc.Class({
         this.state = STATE.TUTORIAL;
         this.score = 0;
         this._currentLevel = 0;
-        this._timer = 0;
+        this._timer = 0;        
 
         let level = this._allLevels[this._currentLevel];
 
@@ -152,6 +153,7 @@ cc.Class({
         }
 
         this.lblLevel.string = (this._currentLevel + 1) + "/100";
+        this.btnUndo.interactable = false;
     },
 
     getSpriteByValue: function(number){
@@ -254,6 +256,9 @@ cc.Class({
                 this.state = STATE.STARTED;
             }
 
+            this.lastMove = direction;
+            this.btnUndo.interactable = true;
+
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
             let newValue = nextBlock.value + 1;
             //cc.log("found one, with value: " + nextBlock.number)
@@ -336,7 +341,37 @@ cc.Class({
     },
 
     onUndoClicked: function(){
+        if (this.lastMove == null) return;
 
+        // Deselect + substract value
+        let currentBlock = this.findBlock(this.selectedX, this.selectedY);                
+        let oldValue = currentBlock.value - 1;
+
+        currentBlock.setColorAndValue(this.getSpriteByValue(oldValue), oldValue);
+        currentBlock.setSelected(false);
+
+        // back to previous selected block
+        switch (this.lastMove){
+            case 'up':
+                this.selectedX++;
+                break;
+            case 'down':
+                this.selectedX--;
+                break;
+            case 'left':
+                this.selectedY++;
+                break;
+            case 'right':
+                this.selectedY--;
+                break;
+        }
+        
+        this.lastMove = null;
+
+        let previousBlock = this.findBlock(this.selectedX, this.selectedY);                
+        previousBlock.setSelected(true);
+
+        this.btnUndo.interactable = false;
     },
 
     animatePlayButton: function(){

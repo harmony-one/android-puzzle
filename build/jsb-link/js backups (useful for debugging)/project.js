@@ -1,5 +1,5 @@
-window.__require = function e(t, i, n) {
-function c(o, l) {
+window.__require = function e(t, i, c) {
+function n(o, l) {
 if (!i[o]) {
 if (!t[o]) {
 var a = o.split("/");
@@ -15,13 +15,13 @@ var h = i[o] = {
 exports: {}
 };
 t[o][0].call(h.exports, function(e) {
-return c(t[o][1][e] || e);
-}, h, h.exports, e, t, i, n);
+return n(t[o][1][e] || e);
+}, h, h.exports, e, t, i, c);
 }
 return i[o].exports;
 }
-for (var s = "function" == typeof __require && __require, o = 0; o < n.length; o++) c(n[o]);
-return c;
+for (var s = "function" == typeof __require && __require, o = 0; o < c.length; o++) n(c[o]);
+return n;
 }({
 Block: [ function(e, t, i) {
 "use strict";
@@ -63,19 +63,23 @@ cc._RF.pop();
 EndGame: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "83178yEnslO66ZUZISIERtM", "EndGame");
+e("Global");
 cc.Class({
 extends: cc.Component,
-properties: {},
+properties: {
+score: {
+default: null,
+type: cc.Label
+}
+},
 start: function() {},
 isAndroid: function() {
 return cc.sys.os == cc.sys.OS_ANDROID;
 },
-apiInitBlockchain: function() {
-jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "initBlockchain", "()V");
-},
 onLoginClicked: function() {
-jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "toast", "(Ljava/lang/String;)V", "Login clicked");
-this.apiInitBlockchain();
+var e = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
+this.score = e;
+jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "toast", "(Ljava/lang/String;)V", e);
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
@@ -85,11 +89,13 @@ cc.director.loadScene("leader_board");
 }
 });
 cc._RF.pop();
-}, {} ],
+}, {
+Global: "Global"
+} ],
 Game: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var n = 0, c = 1, s = 2;
+var c = 0, n = 1, s = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -98,6 +104,10 @@ default: null,
 type: cc.Prefab
 },
 levelGenerator: {
+default: null,
+type: cc.Node
+},
+stopwatch: {
 default: null,
 type: cc.Node
 },
@@ -139,7 +149,8 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: n,
+state: c,
+lastMove: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
 this.nodeHeight = (this.node.height - 66) / 3;
@@ -149,19 +160,6 @@ var e = this._allLevels[this._currentLevel];
 this.instantiateBlocks(e);
 this.reset();
 null != this.themeMusic && cc.audioEngine.playMusic(this.themeMusic, !0);
-if (this.isAndroid()) {
-var t = this.sum2NumbersFromJava(123, 456);
-this.lblError.string = t;
-}
-},
-isAndroid: function() {
-return cc.sys.os == cc.sys.OS_ANDROID;
-},
-sum2NumbersFromJava: function(e, t) {
-return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", e, t);
-},
-apiInitBlockchain: function() {
-jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "initBlockchain", "()V");
 },
 generateAllLevels: function() {
 var e = this.levelGenerator.getComponent("LevelGenerator");
@@ -174,13 +172,13 @@ for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var i = e % 3, n = Math.floor(e / 3);
-t.position = this.getNodePosition(i, n);
+var i = e % 3, c = Math.floor(e / 3);
+t.position = this.getNodePosition(i, c);
 this.node.addChild(t);
-var c = t.getComponent("Block");
-c.x = i;
-c.y = n;
-this.listBlockScripts.push(c);
+var n = t.getComponent("Block");
+n.x = i;
+n.y = c;
+this.listBlockScripts.push(n);
 }
 },
 getNodePosition: function(e, t) {
@@ -188,7 +186,7 @@ var i = this.nodeWidth;
 return cc.v2(18 * (t + 1) + i * t + i / 2, -(18 * (e + 1) + i * e + i / 2));
 },
 reset: function() {
-this.state = n;
+this.state = c;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
@@ -199,7 +197,7 @@ this.animatePlayButton();
 },
 loadLevel: function(e) {
 for (var t = 0; t < e.contents.length; t++) {
-var i = e.contents[t], n = t % 3, c = Math.floor(t / 3), s = this.findBlock(c, n);
+var i = e.contents[t], c = t % 3, n = Math.floor(t / 3), s = this.findBlock(n, c);
 s.setSelected(!1);
 s.setColorAndValue(this.getSpriteByValue(i), i);
 }
@@ -209,6 +207,9 @@ cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
 var o = this.findBlock(this.selectedX, this.selectedY);
 null != o && o.setSelected(!0);
 this.lblLevel.string = this._currentLevel + 1 + "/100";
+this.btnUndo.interactable = !1;
+null != this.tween4Stopwatch && this.tween4Stopwatch.stop();
+this.isClockRinging = !1;
 },
 getSpriteByValue: function(e) {
 var t = e % this.numberBgArray.length;
@@ -226,18 +227,18 @@ onTouchStart: function(e) {
 this.startPos = e.getLocation();
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
-if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
-var c = void 0;
-c = Math.abs(i) >= Math.abs(n) ? i > 0 ? "right" : "left" : n > 0 ? "up" : "down";
-this.lblError.string = c;
-this.tryMove(c);
+var t = e.getLocation(), i = t.x - this.startPos.x, c = t.y - this.startPos.y;
+if (!(Math.abs(i) < 80 && Math.abs(c) < 80)) {
+var n = void 0;
+n = Math.abs(i) >= Math.abs(c) ? i > 0 ? "right" : "left" : c > 0 ? "up" : "down";
+this.lblError.string = n;
+this.tryMove(n);
 }
 },
 findBlock: function(e, t) {
 for (var i = 0; i < this.listBlockScripts.length; i++) {
-var n = this.listBlockScripts[i];
-if (n.x == e && n.y == t) return n;
+var c = this.listBlockScripts[i];
+if (c.x == e && c.y == t) return c;
 }
 cc.log("findBlock: FAILED at index ", i);
 },
@@ -272,12 +273,14 @@ if (this.btnPlay.enabled) {
 this.btnPlay.node.active = !1;
 this.btnUndo.node.active = !0;
 this.tutorialLine.enabled = !1;
-this.state = c;
+this.state = n;
 }
-var n = this.findBlock(this.selectedX, this.selectedY), s = n.value + 1;
-n.setColorAndValue(this.getSpriteByValue(s), s);
+this.lastMove = e;
+this.btnUndo.interactable = !0;
+var c = this.findBlock(this.selectedX, this.selectedY), s = c.value + 1;
+c.setColorAndValue(this.getSpriteByValue(s), s);
 i.setSelected(!1);
-n.setSelected(!0);
+c.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -321,7 +324,32 @@ this._timer = this.getTimeByLevel(this._currentLevel);
 cc.audioEngine.playEffect(this.soundButtonClick);
 this.findBlock(this.selectedX, this.selectedY).animate();
 },
-onUndoClicked: function() {},
+onUndoClicked: function() {
+if (null != this.lastMove) {
+var e = this.findBlock(this.selectedX, this.selectedY), t = e.value - 1;
+e.setColorAndValue(this.getSpriteByValue(t), t);
+e.setSelected(!1);
+switch (this.lastMove) {
+case "up":
+this.selectedX++;
+break;
+
+case "down":
+this.selectedX--;
+break;
+
+case "left":
+this.selectedY++;
+break;
+
+case "right":
+this.selectedY--;
+}
+this.lastMove = null;
+this.findBlock(this.selectedX, this.selectedY).setSelected(!0);
+this.btnUndo.interactable = !1;
+}
+},
 animatePlayButton: function() {
 var e = this;
 this.tween4PlayButton = cc.tween(this.btnPlay.node).to(.5, {
@@ -332,17 +360,49 @@ scale: 1
 e.animatePlayButton();
 }).start();
 },
+isClockRinging: !1,
 update: function(e) {
 this._timer -= e;
 if (this._timer > 0) {
 var t = ("0" + Math.floor(this._timer)).slice(-2);
 this.lblTime.string = "00:" + t;
-} else if (this.state == c) {
+if (this._timer <= 10 && !this.isClockRinging) {
+this.tween4Stopwatch = cc.tween(this.stopwatch).repeat(10, cc.tween().by(.5, {
+angle: -20
+}).by(.5, {
+angle: 20
+})).start();
+this.isClockRinging = !0;
+}
+} else if (this.state == n) {
 cc.director.loadScene("end_game");
 this.state = s;
 }
 }
 });
+cc._RF.pop();
+}, {} ],
+Global: [ function(e, t, i) {
+"use strict";
+cc._RF.push(t, "9bf09yemltMJ6LDPqxBrroN", "Global");
+var c = "", n = {
+getKeystore: function() {
+cc.log("xxx : call java.getKeystore()");
+c = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
+cc.log("xxx : java.getKeystore() returns: " + c);
+return c;
+},
+getScore: function() {
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", c);
+},
+updateScore: function(e) {
+jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(Ljava/lang/String;I)", c, e);
+},
+getLeaderboard: function() {
+jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
+}
+};
+t.exports = n;
 cc._RF.pop();
 }, {} ],
 Leadearboard: [ function(e, t, i) {
@@ -377,7 +437,7 @@ return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.f
 },
 levels: function() {
 for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var n = 3 * (e = this.getDifficulty(i)), c = 4 * e, s = i + 3, o = this.randRange(n, c), l = {}, a = [];
+var c = 3 * (e = this.getDifficulty(i)), n = 4 * e, s = i + 3, o = this.randRange(c, n), l = {}, a = [];
 if (1 == i) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
 l.contents = a;
@@ -387,40 +447,40 @@ l.initialSelected.y = 0;
 t[i - 1] = l;
 } else {
 for (var r = 0; r < 9; r++) a.push(s);
-var h = this.randRange(0, 9), u = [];
+var h = this.randRange(0, 9), d = [];
 a[h] -= 1;
 for (r = 0; r < o; r++) {
-var d = -1;
+var u = -1;
 do {
-d = this.randRange(0, 4);
-} while (!this.possible(a, h, d));
-switch (d) {
+u = this.randRange(0, 4);
+} while (!this.possible(a, h, u));
+switch (u) {
 case 0:
 h -= 3;
-u.push('"d"');
+d.push('"d"');
 r + 1 != o && (a[h] -= 1);
 break;
 
 case 1:
 h += 3;
-u.push('"u"');
+d.push('"u"');
 r + 1 != o && (a[h] -= 1);
 break;
 
 case 2:
 h -= 1;
-u.push('"r"');
+d.push('"r"');
 r + 1 != o && (a[h] -= 1);
 break;
 
 case 3:
 h += 1;
-u.push('"l"');
+d.push('"l"');
 r + 1 != o && (a[h] -= 1);
 }
 }
 var f = h % 3, p = Math.floor(h / 3);
-u = u.reverse();
+d = d.reverse();
 l.contents = a;
 l.initialSelected = {};
 l.initialSelected.x = p;
@@ -449,4 +509,4 @@ update: function(e) {}
 });
 cc._RF.pop();
 }, {} ]
-}, {}, [ "Block", "EndGame", "Game", "Leadearboard", "LevelGenerator", "SplashScript" ]);
+}, {}, [ "Block", "EndGame", "Game", "Global", "Leadearboard", "LevelGenerator", "SplashScript" ]);

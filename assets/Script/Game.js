@@ -52,32 +52,12 @@ cc.Class({
             cc.audioEngine.playMusic(this.themeMusic, true);
         }
 
-        if (this.isAndroid()){            
-            let result = this.sum2NumbersFromJava(123, 456);
-            this.lblError.string = result;
-
-            //this.apiInitBlockchain();
-        }
-        
-        
         // let ii = 10;
         // this.schedule(function(){
         //     this.lblError.string = ii;
         //     ii+= 10;
         // }, 2);
 
-    },
-
-    isAndroid: function() {
-        return cc.sys.os == cc.sys.OS_ANDROID;
-    },
-
-    sum2NumbersFromJava: function(a, b){        
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", a, b);
-    },
-
-    apiInitBlockchain: function() {
-        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "initBlockchain", "()V");
     },
 
     generateAllLevels: function(){
@@ -157,6 +137,7 @@ cc.Class({
         this.btnUndo.interactable = false;
         
         if (this.tween4Stopwatch != null) this.tween4Stopwatch.stop();
+        this.isClockRinging = false;
     },
 
     getSpriteByValue: function(number){

@@ -26,6 +26,7 @@ package org.cocos2dx.javascript;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
+import org.json.JSONObject;
 //import org.jetbrains.annotations.NotNull;
 
 import android.os.Bundle;
@@ -49,6 +50,8 @@ import android.widget.Toast;
 
 import java.util.Hashtable;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class AppActivity extends Cocos2dxActivity {
@@ -246,12 +249,20 @@ public class AppActivity extends Cocos2dxActivity {
         return a + b;
     }
 
-    public static void toast(String msg){
-        Toast.makeText(currentContext, msg, Toast.LENGTH_LONG);
+    public static void toast(final String msg){
+        currentContext.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(currentContext, msg, Toast.LENGTH_LONG);
+            }
+        });
+
     }
 
     public static String getKeystore(){
-        return currentContext.blockchainApi.getCurrentAccountKeystore();
+        String keystore = currentContext.blockchainApi.getCurrentAccountKeystore();
+        Log.d("Puzzle","Keystore: " + keystore);
+        return keystore;
     }
 
     public static int getScore(String keycode){
@@ -262,6 +273,11 @@ public class AppActivity extends Cocos2dxActivity {
         currentContext.blockchainApi.updateScore(keycode, score);
     }
 
+//    return [{
+//        "garlam": 300,
+//                "minh": 10
+//
+//    }]
     public static String getLeaderboard(){
         return currentContext.blockchainApi.getLeaderboard();
     }
@@ -284,18 +300,18 @@ public class AppActivity extends Cocos2dxActivity {
         public void init() {
             String myKeystore = getCurrentAccountKeystore();
 
-            leaderboard.put(myKeystore, new Player("Champion", myKeystore, 100000));
-            leaderboard.put("queen_keycode", new Player("Queen", "queen_keycode", 80000));
-            leaderboard.put("jack_keycode", new Player("Joker", "jack_keycode", 60000));
-            leaderboard.put("some_guy1", new Player("some guy 1", "some_guy1", 55000));
-            leaderboard.put("some_guy2", new Player("try harder", "some_guy2", 45000));
-            leaderboard.put("some_guy3", new Player("guy 3", "some_guy3", 40000));
-            leaderboard.put("some_guy4", new Player("random guy 4", "some_guy4", 36000));
-            leaderboard.put("some_guy5", new Player("some guy 5", "some_guy5", 33000));
-            leaderboard.put("some_guy6", new Player("guy 6", "some_guy6", 28000));
-            leaderboard.put("some_guy7", new Player("clone 7", "some_guy7", 27500));
-            leaderboard.put("some_guy8", new Player("guy 8", "some_guy8", 20000));
-            leaderboard.put("some_guy9", new Player("random guy 9", "some_guy9", 14000));
+            leaderboard.put(myKeystore, new Player("Champion", myKeystore, 100));
+            leaderboard.put("queen_keycode", new Player("Queen", "queen_keycode", 80));
+            leaderboard.put("jack_keycode", new Player("Joker", "jack_keycode", 78));
+            leaderboard.put("some_guy1", new Player("some guy 1", "some_guy1", 75));
+            leaderboard.put("some_guy2", new Player("try harder", "some_guy2", 70));
+            leaderboard.put("some_guy3", new Player("guy 3", "some_guy3", 66));
+            leaderboard.put("some_guy4", new Player("random guy 4", "some_guy4", 55));
+            leaderboard.put("some_guy5", new Player("some guy 5", "some_guy5", 44));
+            leaderboard.put("some_guy6", new Player("guy 6", "some_guy6", 33));
+            leaderboard.put("some_guy7", new Player("clone 7", "some_guy7", 22));
+            leaderboard.put("some_guy8", new Player("guy 8", "some_guy8", 20));
+            leaderboard.put("some_guy9", new Player("random guy 9", "some_guy9", 15));
         }
 
         public String getCurrentAccountKeystore(){
@@ -306,17 +322,17 @@ public class AppActivity extends Cocos2dxActivity {
             return leaderboard.toString();
         }
 
-        public int getScoreByKeycode(String keycode){
-            if (leaderboard.containsKey(keycode)){
-                return leaderboard.get(keycode).score;
+        public int getScoreByKeycode(String keystore){
+            if (leaderboard.containsKey(keystore)){
+                return leaderboard.get(keystore).score;
             }
 
             return 0;
         }
 
-        public void updateScore(String keycode, int score){
-            if (leaderboard.containsKey(keycode)){
-                leaderboard.get(keycode).score = score;
+        public void updateScore(String keystore, int score){
+            if (leaderboard.containsKey(keystore)){
+                leaderboard.get(keystore).score = score;
             }
         }
     }

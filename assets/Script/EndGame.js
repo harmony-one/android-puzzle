@@ -1,5 +1,3 @@
-var BlockchainApi = require('Global')
-
 cc.Class({
     extends: cc.Component,
 
@@ -12,18 +10,23 @@ cc.Class({
     // onLoad () {},
 
     start () {
+        if (Global.isAndroid()){
+            Global.getKeystore();
+            //jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");//
+            //let sum = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", 1, 2);
+            
 
+            let score = Global.getScore();
+            this.score.string = Global.newScore;
+
+            //jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "toast", "(Ljava/lang/String;)V", sum);
+        }
     },
 
-    isAndroid: function() {
-        return cc.sys.os == cc.sys.OS_ANDROID;
-    },
+    
 
     onLoginClicked(){
-        let keystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");//BlockchainApi.getKeystore();
-        this.score = keystore;
-
-        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "toast", "(Ljava/lang/String;)V", keystore);
+        Global.updateScore();
     },
 
     onPlayAgainClicked(){

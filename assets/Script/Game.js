@@ -179,7 +179,7 @@ cc.Class({
             direction = deltaY > 0 ? 'up' : 'down';
         }
 
-        this.lblError.string = direction;
+        //this.lblError.string = direction;
 
         this.tryMove(direction);
     },
@@ -388,6 +388,8 @@ cc.Class({
                 this.isClockRinging = true;
             }
         } else if (this.state == STATE.STARTED) {
+            Global.newScore = this.score;
+
             cc.director.loadScene("end_game");
             this.state = STATE.END;
         }

@@ -1,26 +1,33 @@
-var myKeystore = "";
-var leaderboard = "";
+window.Global = {
+    myKeystore: "",
+    leaderboard: "",
+    newScore: 0,
 
-var BlockchainApi = {
+    isAndroid: function() {
+        return cc.sys.os == cc.sys.OS_ANDROID;
+    },
+
     getKeystore: function(){
-        cc.log("xxx : call java.getKeystore()");
-        myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
+        this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
 
-        cc.log("xxx : java.getKeystore() returns: " + myKeystore);
-        return myKeystore;
+        return this.myKeystore;
     },
 
     getScore: function(){
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", myKeystore);
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", this.myKeystore);
     },
 
-    updateScore: function(score){
-        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(Ljava/lang/String;I)", myKeystore, score);
+    updateScore: function(){
+        if (this.newScore <= 0) return;
+
+        let currentScore = this.getScore();
+
+        if (this.newScore > currentScore){
+            jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(Ljava/lang/String;I)V", this.myKeystore, this.newScore);
+        }
     },
 
     getLeaderboard: function(){
-        leaderboard = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
+        this.leaderboard = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
     }
 }
-
-module.exports = BlockchainApi;

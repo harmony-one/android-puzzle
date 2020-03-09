@@ -6,12 +6,8 @@ cc.Class({
     
     },
 
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {},
-
     start () {
-
+        let json = Global.getLeaderboard();
     },
 
     // update (dt) {},

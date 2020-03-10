@@ -17,6 +17,11 @@ window.Global = {
         return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", this.myKeystore);
     },
 
+    getUserName: function(){
+        // return "Joe";
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "(Ljava/lang/String;)Ljava/lang/String;", this.myKeystore);
+    },
+
     updateScore: function(){
         if (this.newScore <= 0) return;
 

@@ -10,6 +10,7 @@ if (!l && r) return r(a, !0);
 if (s) return s(a, !0);
 throw new Error("Cannot find module '" + o + "'");
 }
+o = a;
 }
 var h = i[o] = {
 exports: {}
@@ -69,17 +70,39 @@ properties: {
 score: {
 default: null,
 type: cc.Label
+},
+score2: {
+default: null,
+type: cc.Label
+},
+lblWelcome: {
+default: null,
+type: cc.Label
+},
+panelGuest: {
+default: null,
+type: cc.Node
+},
+panelAuthenticated: {
+default: null,
+type: cc.Node
 }
 },
 start: function() {
-if (Global.isAndroid()) {
-Global.getKeystore();
-Global.getScore();
 this.score.string = Global.newScore;
-}
+this.score2.string = Global.newScore;
 },
 onLoginClicked: function() {
-Global.updateScore();
+if (Global.isAndroid()) {
+Global.getKeystore();
+var e = Global.getUserName();
+this.lblWelcome.string = "Welcome, " + e;
+}
+this.panelGuest.active = !1;
+this.panelAuthenticated.active = !0;
+},
+onSaveClicked: function() {
+Global.isAndroid() && Global.updateScore();
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
@@ -227,7 +250,7 @@ this.startPos = e.getLocation();
 onTouchEnd: function(e) {
 var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
 if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
-var c = void 0;
+var c;
 c = Math.abs(i) >= Math.abs(n) ? i > 0 ? "right" : "left" : n > 0 ? "up" : "down";
 this.tryMove(c);
 }
@@ -396,6 +419,9 @@ return this.myKeystore;
 },
 getScore: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", this.myKeystore);
+},
+getUserName: function() {
+return "Joe";
 },
 updateScore: function() {
 if (!(this.newScore <= 0)) {

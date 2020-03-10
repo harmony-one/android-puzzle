@@ -26,7 +26,6 @@ package org.cocos2dx.javascript;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
-import org.json.JSONObject;
 //import org.jetbrains.annotations.NotNull;
 
 import android.os.Bundle;
@@ -49,9 +48,6 @@ import android.widget.Toast;
 //import com.samsung.android.sdk.blockchain.wallet.HardwareWalletType;
 
 import java.util.Hashtable;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class AppActivity extends Cocos2dxActivity {
@@ -266,7 +262,11 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public static int getScore(String keycode){
-        return currentContext.blockchainApi.getScoreByKeycode(keycode);
+        return currentContext.blockchainApi.getScoreByKeystore(keycode);
+    }
+
+    public static String getUserName(String keycode){
+        return currentContext.blockchainApi.getUserNameByKeystore(keycode);
     }
 
     public static void updateScore(String keycode, int score){
@@ -315,14 +315,22 @@ public class AppActivity extends Cocos2dxActivity {
         }
 
         public String getCurrentAccountKeystore(){
-            return "your_keystore_here";
+            return "one1y5n7p8a845v96xyx2gh75wn5eyhtw5002lah27";
         }
 
         public String getLeaderboard(){
             return leaderboard.toString();
         }
 
-        public int getScoreByKeycode(String keystore){
+        public String getUserNameByKeystore(String keystore){
+            if (leaderboard.containsKey(keystore)){
+                return leaderboard.get(keystore).name;
+            }
+
+            return "";
+        }
+
+        public int getScoreByKeystore(String keystore){
             if (leaderboard.containsKey(keystore)){
                 return leaderboard.get(keystore).score;
             }

@@ -1,5 +1,5 @@
 {
-  "ver": "2.3.3",
+  "ver": "2.3.4",
   "uuid": "5e5fcb63-75f7-4ece-bf74-058dbc26e4dd",
   "type": "sprite",
   "wrapMode": "clamp",
@@ -7,6 +7,8 @@
   "premultiplyAlpha": false,
   "genMipmaps": false,
   "packable": true,
+  "width": 295,
+  "height": 63,
   "platformSettings": {},
   "subMetas": {
     "create key store": {

@@ -2,31 +2,34 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        score: {default: null, type: cc.Label}
+        score: { default: null, type: cc.Label },
+        score2: { default: null, type: cc.Label },
+        lblWelcome: {default: null, type: cc.Label},
+        panelGuest: {default: null, type: cc.Node},
+        panelAuthenticated: {default: null, type: cc.Node},
     },
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {},
 
     start () {
-        if (Global.isAndroid()){
-            Global.getKeystore();
-            //jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");//
-            //let sum = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "sum", "(II)I", 1, 2);
-            
-
-            let score = Global.getScore();
-            this.score.string = Global.newScore;
-
-            //jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "toast", "(Ljava/lang/String;)V", sum);
-        }
+        this.score.string = Global.newScore;
+        this.score2.string = Global.newScore;
     },
 
-    
-
     onLoginClicked(){
-        Global.updateScore();
+        if (Global.isAndroid()){
+            Global.getKeystore();
+
+            let name = Global.getUserName();
+            this.lblWelcome.string = "Welcome, " + name;
+        }
+
+        this.panelGuest.active = false;
+        this.panelAuthenticated.active = true;
+    },
+
+    onSaveClicked(){ 
+        if (Global.isAndroid()){
+            Global.updateScore();
+        }
     },
 
     onPlayAgainClicked(){
@@ -36,4 +39,6 @@ cc.Class({
     onLeaderboardClicked(){
         cc.director.loadScene("leader_board");
     },
+
+
 });

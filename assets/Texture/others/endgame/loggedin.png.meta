@@ -1,5 +1,5 @@
 {
-  "ver": "2.3.3",
+  "ver": "2.3.4",
   "uuid": "94349809-87f8-4cfe-acce-0e8c9aa56dc2",
   "type": "sprite",
   "wrapMode": "clamp",
@@ -7,6 +7,8 @@
   "premultiplyAlpha": false,
   "genMipmaps": false,
   "packable": true,
+  "width": 225,
+  "height": 274,
   "platformSettings": {},
   "subMetas": {
     "loggedin": {
@@ -17,12 +19,12 @@
       "trimThreshold": 1,
       "rotated": false,
       "offsetX": 0,
-      "offsetY": 7,
+      "offsetY": 6,
       "trimX": 0,
       "trimY": 0,
-      "width": 221,
-      "height": 260,
-      "rawWidth": 221,
+      "width": 225,
+      "height": 262,
+      "rawWidth": 225,
       "rawHeight": 274,
       "borderTop": 0,
       "borderBottom": 0,

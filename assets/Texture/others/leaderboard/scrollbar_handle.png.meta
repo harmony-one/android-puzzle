@@ -1,5 +1,5 @@
 {
-  "ver": "2.3.3",
+  "ver": "2.3.4",
   "uuid": "f7edc69e-1362-4dbb-9559-c165aab141a4",
   "type": "sprite",
   "wrapMode": "clamp",
@@ -7,6 +7,8 @@
   "premultiplyAlpha": false,
   "genMipmaps": false,
   "packable": true,
+  "width": 6,
+  "height": 34,
   "platformSettings": {},
   "subMetas": {
     "scrollbar_handle": {

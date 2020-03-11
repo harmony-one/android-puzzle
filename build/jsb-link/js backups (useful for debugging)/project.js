@@ -10,7 +10,6 @@ if (!l && r) return r(a, !0);
 if (s) return s(a, !0);
 throw new Error("Cannot find module '" + o + "'");
 }
-o = a;
 }
 var h = i[o] = {
 exports: {}
@@ -250,7 +249,7 @@ this.startPos = e.getLocation();
 onTouchEnd: function(e) {
 var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
 if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
-var c;
+var c = void 0;
 c = Math.abs(i) >= Math.abs(n) ? i > 0 ? "right" : "left" : n > 0 ? "up" : "down";
 this.tryMove(c);
 }
@@ -421,7 +420,7 @@ getScore: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", this.myKeystore);
 },
 getUserName: function() {
-return "Joe";
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "(Ljava/lang/String;)Ljava/lang/String;", this.myKeystore);
 },
 updateScore: function() {
 if (!(this.newScore <= 0)) {

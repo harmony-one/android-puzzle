@@ -1,5 +1,5 @@
 {
-  "ver": "2.3.4",
+  "ver": "2.3.3",
   "uuid": "8f8f68f7-f519-486e-841a-fa933894e5bb",
   "type": "sprite",
   "wrapMode": "clamp",
@@ -7,8 +7,6 @@
   "premultiplyAlpha": false,
   "genMipmaps": false,
   "packable": true,
-  "width": 22,
-  "height": 22,
   "platformSettings": {},
   "subMetas": {
     "Ellipse 1": {

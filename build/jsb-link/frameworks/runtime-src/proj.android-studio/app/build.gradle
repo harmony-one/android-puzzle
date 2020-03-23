@@ -158,37 +158,37 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 
-    // library for Blockchain Platform SDK
-//    implementation name: 'BlockchainPlatformSDK_1.0.00', ext: 'aar'
-//    implementation name: 'KeystoreSDK_v1.2.0', ext: 'aar'
-//
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.41"
-//
-//    // library for network
-//    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-//    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
-//    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-//    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-//    implementation 'com.google.code.gson:gson:2.8.5'
-//
-//    // web3j
-//    implementation 'org.web3j:core:4.2.0-android'
-//
-//    //for checking developer mode
-//    implementation 'org.ini4j:ini4j:0.5.4'
-//
-//    // ledger
-//    implementation 'com.ledger.lib:ledger-android-library:1.0.0'
-//
-//    // dagger
-//    implementation 'com.google.dagger:dagger:2.21'
-//    annotationProcessor 'com.google.dagger:dagger-compiler:2.21'
-//
-//    //Required for android lifecycle libs
-//    implementation "android.arch.lifecycle:extensions:1.1.0"
-//
-//    //Required for QR Code related tasks
-//    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+//     library for Blockchain Platform SDK
+    implementation name: 'BlockchainPlatformSDK_1.0.00', ext: 'aar'
+    implementation name: 'KeystoreSDK_v1.2.0', ext: 'aar'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.41"
+
+    // library for network
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    // web3j
+    implementation 'org.web3j:core:4.2.0-android'
+
+    //for checking developer mode
+    implementation 'org.ini4j:ini4j:0.5.4'
+
+    // ledger
+    implementation 'com.ledger.lib:ledger-android-library:1.0.0'
+
+    // dagger
+    implementation 'com.google.dagger:dagger:2.21'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.21'
+
+    //Required for android lifecycle libs
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+
+    //Required for QR Code related tasks
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
 
 }
 

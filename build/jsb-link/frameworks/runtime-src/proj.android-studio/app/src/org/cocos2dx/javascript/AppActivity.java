@@ -1,53 +1,48 @@
 /****************************************************************************
-Copyright (c) 2015-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
-http://www.cocos2d-x.org
+ Copyright (c) 2015-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ http://www.cocos2d-x.org
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-****************************************************************************/
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
 package org.cocos2dx.javascript;
-
-import org.cocos2dx.lib.Cocos2dxActivity;
-import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
-//import org.jetbrains.annotations.NotNull;
-
-import android.os.Bundle;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-//import com.samsung.android.sdk.blockchain.*;
-//import com.samsung.android.sdk.blockchain.coinservice.CoinNetworkInfo;
-//import com.samsung.android.sdk.blockchain.coinservice.CoinServiceFactory;
-//import com.samsung.android.sdk.blockchain.coinservice.ethereum.EthereumService;
-//import com.samsung.android.sdk.blockchain.exception.HardwareWalletException;
-//import com.samsung.android.sdk.blockchain.exception.RootSeedChangedException;
-//import com.samsung.android.sdk.blockchain.exception.SsdkUnsupportedException;
-//import com.samsung.android.sdk.blockchain.network.EthereumNetworkType;
-//import com.samsung.android.sdk.blockchain.wallet.HardwareWallet;
-//import com.samsung.android.sdk.blockchain.wallet.HardwareWalletManager;
-//import com.samsung.android.sdk.blockchain.wallet.HardwareWalletType;
+import androidx.annotation.Nullable;
 
+import com.samsung.android.sdk.blockchain.SBlockchain;
+import com.samsung.android.sdk.blockchain.exception.SsdkUnsupportedException;
+import com.samsung.android.sdk.coldwallet.ScwCoinType;
+import com.samsung.android.sdk.coldwallet.ScwService;
+
+import org.cocos2dx.lib.Cocos2dxActivity;
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 
 
 public class AppActivity extends Cocos2dxActivity {
@@ -56,6 +51,8 @@ public class AppActivity extends Cocos2dxActivity {
 
     FakeBlockchainApi blockchainApi = new FakeBlockchainApi();
 
+    private ScwService.ScwGetAddressListCallback mScwGetAddressListCallback;
+    String publicKey = "";
 
 
     @Override
@@ -74,7 +71,130 @@ public class AppActivity extends Cocos2dxActivity {
 
         currentContext = this;
 
-        blockchainApi.init();
+        if (isKeystoreApiSupported()) {
+            blockchainApi.init();
+
+            if (isWalletInitialized()) {
+
+                ScwService scwServiceInstance = ScwService.getInstance();
+
+
+                String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
+
+                String supportedCoins = getSupportedCoins();
+                Log.i("Harmony - coins", supportedCoins);
+                Log.i("Harmony - ethereumHdPath", ethereumHdPath);
+
+                getPublicAddress(ethereumHdPath);
+
+//                ScwService.ScwGetAddressListCallback callback =
+//                        new ScwService.ScwGetAddressListCallback() {
+//                            @Override
+//                            public void onSuccess(List<String> addressList) {
+//
+//                                for (int i = 0; i < addressList.size(); i++) {
+//                                    Log.i("Puzzle", addressList.get(i));
+//                                }
+//
+//                                publicKey = addressList.get(0);
+//                            }
+//
+//                            @Override
+//                            public void onFailure(int errorCode, String errorMessage) {
+//                                //handle errors
+//                                Log.e("Puzzle", errorMessage);
+//                            }
+//                        };
+//
+//
+//                ArrayList<String> hdPathList = new ArrayList<>();
+//                hdPathList.add(ethereumHdPath);
+//
+//                ScwService.getInstance().getAddressList(callback, hdPathList);
+
+//                ScwService.ScwGetExtendedPublicKeyListCallback publicKeyCallback =
+//                        new ScwService.ScwGetExtendedPublicKeyListCallback() {
+//                            @Override
+//                            public void onSuccess(List<byte[]> extendedPublicKeyList) {
+//                                Log.i("Puzzle", extendedPublicKeyList.size() + "");
+//                            }
+//
+//                            @Override
+//                            public void onFailure(int errorCode, String errorMessage) {
+//                                //handle errors
+//
+//                            }
+//                        };
+//
+//
+//                ScwService.getInstance().getExtendedPublicKeyList(publicKeyCallback, hdPathList);
+            }
+
+//            ScwService.ScwCheckForMandatoryAppUpdateCallback callback =
+//                new ScwService.ScwCheckForMandatoryAppUpdateCallback() {
+//                    @Override
+//                    public void onMandatoryAppUpdateNeeded(boolean needed) {
+//                        if(needed){
+//                            //startDeepLink(ScwDeepLink.GALAXY_STORE);
+//                            Toast.makeText(currentContext, "You should Update: Samsung Blockchain Keystore app", Toast.LENGTH_LONG);
+//                        }
+//                    }
+//                };
+//
+//            ScwService.getInstance().checkForMandatoryAppUpdate(callback);
+
+
+        }
+    }
+
+    private boolean isWalletInitialized(){
+        String seedHash = ScwService.getInstance().getSeedHash();
+        boolean initialized =  (seedHash != null && seedHash.length() > 0);
+
+        return initialized;
+    }
+
+    public void getPublicAddress(String hdPath) {
+
+        ScwService.getInstance().getAddressList(getSCWGetAddressListCallback(), stringToArrayList(hdPath));
+
+    }
+
+    public static ArrayList<String> stringToArrayList(String inputString) {
+        return new ArrayList<String>(Arrays.asList(inputString));
+    }
+
+    private ScwService.ScwGetAddressListCallback getSCWGetAddressListCallback() {
+        //Code for creating callback if not already created
+        if (mScwGetAddressListCallback == null) {
+            mScwGetAddressListCallback = new ScwService.ScwGetAddressListCallback() {
+
+                @Override
+                public void onSuccess(List<String> addressList) {
+                    publicKey = addressList.get(0);
+                }
+
+                @Override
+                public void onFailure(int i, @Nullable String s) {
+
+                }
+            };
+        }
+        return mScwGetAddressListCallback;
+    }
+
+    public String getSupportedCoins(){
+        int[] supportedCoins = ScwService.getInstance().getSupportedCoins();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Supported coins").append('\n');
+        for (int i = 0; i < supportedCoins.length; i++ ) {
+            sb.append('[').append(i).append("] ").append(supportedCoins[i]).append('\n');
+        }
+
+        String s = sb.toString();
+
+        return s;
     }
 
     @Override
@@ -131,7 +251,7 @@ public class AppActivity extends Cocos2dxActivity {
         super.onStop();
         SDKWrapper.getInstance().onStop();
     }
-        
+
     @Override
     public void onBackPressed() {
         SDKWrapper.getInstance().onBackPressed();
@@ -166,99 +286,28 @@ public class AppActivity extends Cocos2dxActivity {
 
     /// BLOCKCHAIN Code
 
-
-//    static SBlockchain mSblockchain;
-//    private static final int VENDOR_NOT_SUPPORTED = -1;
-//    public static void initBlockchain(){
-//        try {
-//            mSblockchain = new SBlockchain();
-//            mSblockchain.initialize(getContext());
-//        } catch (SsdkUnsupportedException e) {
-//            if (e.getErrorType() == VENDOR_NOT_SUPPORTED){
-//                Log.e("error", "Platform SDK is not support this device");
-//            }
-//        }
-//    }
-//
-//    CoinNetworkInfo mCoinNetworkInfo;
-//    public void getCoinNetwork(){
-//        mCoinNetworkInfo =
-//                new CoinNetworkInfo(
-//                        CoinType.ETH,
-//                        EthereumNetworkType.MAINNET,
-//                        "https://infura.io/" //ex. https://mainnet.infura.io/v3/xxxxx
-//                );
-//    }
-//
-//    public void getCointService() {
-//        EthereumService etherService =
-//                (EthereumService) CoinServiceFactory
-//                        .getCoinService(
-//                                getContext(),
-//                                mCoinNetworkInfo
-//                        );
-//
-//    }
-//
-//    HardwareWalletManager hardwareWalletManager;
-//    public void getHardwareWalletManager(){
-//        try {
-//            hardwareWalletManager = mSblockchain.getHardwareWalletManager();
-//        } catch (IllegalStateException e) {
-//            // handling exception
-//        }
-//
-//    }
-//
-//    public void connect(){
-//        HardwareWalletType hardwareWalletType = HardwareWalletType.SAMSUNG;
-//        ListenableFutureTask<HardwareWallet> connectionTask = hardwareWalletManager.connect(hardwareWalletType, true);
-//
-//        connectionTask.setCallback(
-//                new ListenableFutureTask.Callback<HardwareWallet>() {
-//                    @Override
-//                    public void onSuccess(HardwareWallet hardwareWallet) {
-//                        // Disconnect
-//                        //hardwareWalletManager.disconnect(hardwareWallet);
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@NotNull ExecutionException e) {
-//                        Throwable cause = e.getCause();
-//
-//                        if (cause instanceof HardwareWalletException) {
-//                            // handling hardware wallet error
-//                        } else if (cause instanceof RootSeedChangedException) {
-//                            // handling root seed changed exception
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NotNull InterruptedException e) {
-//
-//                    }
-//                });
-//
-//    }
-
-    public static int sum(int a, int b){
-        return a + b;
+    public boolean isKeystoreApiSupported() {
+        int keystoreApiLevel = ScwService.getInstance().getKeystoreApiLevel();
+        return keystoreApiLevel > 0;
     }
 
-    public static void toast(final String msg){
-        currentContext.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(currentContext, msg, Toast.LENGTH_LONG);
+    static SBlockchain mSblockchain;
+    private static final int VENDOR_NOT_SUPPORTED = -1;
+    public static void initBlockchain(){
+        try {
+            mSblockchain = new SBlockchain();
+            mSblockchain.initialize(currentContext);
+        } catch (SsdkUnsupportedException e) {
+            if (e.getErrorType() == VENDOR_NOT_SUPPORTED){
+                Log.e("error", "Platform SDK is not support this device");
             }
-        });
-
+        }
     }
+
 
     public static String getKeystore(){
-        String keystore = currentContext.blockchainApi.getCurrentAccountKeystore();
-        Log.d("Puzzle","Keystore: " + keystore);
-        return keystore;
+        Log.i("Puzzle","Keystore: " + currentContext.publicKey);
+        return currentContext.publicKey;
     }
 
     public static int getScore(String keycode){
@@ -273,7 +322,7 @@ public class AppActivity extends Cocos2dxActivity {
         currentContext.blockchainApi.updateScore(keycode, score);
     }
 
-//    return [{
+    //    return [{
 //        "garlam": 300,
 //                "minh": 10
 //

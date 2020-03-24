@@ -31,8 +31,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.samsung.android.sdk.blockchain.SBlockchain;
-import com.samsung.android.sdk.blockchain.exception.SsdkUnsupportedException;
 import com.samsung.android.sdk.coldwallet.ScwCoinType;
 import com.samsung.android.sdk.coldwallet.ScwService;
 
@@ -58,12 +56,7 @@ public class AppActivity extends Cocos2dxActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Workaround in https://stackoverflow.com/questions/16283079/re-launch-of-activity-on-home-button-but-only-the-first-time/16447508
         if (!isTaskRoot()) {
-            // Android launched another instance of the root activity into an existing task
-            //  so just quietly finish and go away, dropping the user back into the activity
-            //  at the top of the stack (ie: the last state of this task)
-            // Don't need to finish it again since it's finished in super.onCreate .
             return;
         }
         // DO OTHER INITIALIZATION BELOW
@@ -75,10 +68,6 @@ public class AppActivity extends Cocos2dxActivity {
             blockchainApi.init();
 
             if (isWalletInitialized()) {
-
-                ScwService scwServiceInstance = ScwService.getInstance();
-
-
                 String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
 
                 String supportedCoins = getSupportedCoins();
@@ -86,115 +75,8 @@ public class AppActivity extends Cocos2dxActivity {
                 Log.i("Harmony - ethereumHdPath", ethereumHdPath);
 
                 getPublicAddress(ethereumHdPath);
-
-//                ScwService.ScwGetAddressListCallback callback =
-//                        new ScwService.ScwGetAddressListCallback() {
-//                            @Override
-//                            public void onSuccess(List<String> addressList) {
-//
-//                                for (int i = 0; i < addressList.size(); i++) {
-//                                    Log.i("Puzzle", addressList.get(i));
-//                                }
-//
-//                                publicKey = addressList.get(0);
-//                            }
-//
-//                            @Override
-//                            public void onFailure(int errorCode, String errorMessage) {
-//                                //handle errors
-//                                Log.e("Puzzle", errorMessage);
-//                            }
-//                        };
-//
-//
-//                ArrayList<String> hdPathList = new ArrayList<>();
-//                hdPathList.add(ethereumHdPath);
-//
-//                ScwService.getInstance().getAddressList(callback, hdPathList);
-
-//                ScwService.ScwGetExtendedPublicKeyListCallback publicKeyCallback =
-//                        new ScwService.ScwGetExtendedPublicKeyListCallback() {
-//                            @Override
-//                            public void onSuccess(List<byte[]> extendedPublicKeyList) {
-//                                Log.i("Puzzle", extendedPublicKeyList.size() + "");
-//                            }
-//
-//                            @Override
-//                            public void onFailure(int errorCode, String errorMessage) {
-//                                //handle errors
-//
-//                            }
-//                        };
-//
-//
-//                ScwService.getInstance().getExtendedPublicKeyList(publicKeyCallback, hdPathList);
             }
-
-//            ScwService.ScwCheckForMandatoryAppUpdateCallback callback =
-//                new ScwService.ScwCheckForMandatoryAppUpdateCallback() {
-//                    @Override
-//                    public void onMandatoryAppUpdateNeeded(boolean needed) {
-//                        if(needed){
-//                            //startDeepLink(ScwDeepLink.GALAXY_STORE);
-//                            Toast.makeText(currentContext, "You should Update: Samsung Blockchain Keystore app", Toast.LENGTH_LONG);
-//                        }
-//                    }
-//                };
-//
-//            ScwService.getInstance().checkForMandatoryAppUpdate(callback);
-
-
         }
-    }
-
-    private boolean isWalletInitialized(){
-        String seedHash = ScwService.getInstance().getSeedHash();
-        boolean initialized =  (seedHash != null && seedHash.length() > 0);
-
-        return initialized;
-    }
-
-    public void getPublicAddress(String hdPath) {
-
-        ScwService.getInstance().getAddressList(getSCWGetAddressListCallback(), stringToArrayList(hdPath));
-
-    }
-
-    public static ArrayList<String> stringToArrayList(String inputString) {
-        return new ArrayList<String>(Arrays.asList(inputString));
-    }
-
-    private ScwService.ScwGetAddressListCallback getSCWGetAddressListCallback() {
-        //Code for creating callback if not already created
-        if (mScwGetAddressListCallback == null) {
-            mScwGetAddressListCallback = new ScwService.ScwGetAddressListCallback() {
-
-                @Override
-                public void onSuccess(List<String> addressList) {
-                    publicKey = addressList.get(0);
-                }
-
-                @Override
-                public void onFailure(int i, @Nullable String s) {
-
-                }
-            };
-        }
-        return mScwGetAddressListCallback;
-    }
-
-    public String getSupportedCoins(){
-        int[] supportedCoins = ScwService.getInstance().getSupportedCoins();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Supported coins").append('\n');
-        for (int i = 0; i < supportedCoins.length; i++ ) {
-            sb.append('[').append(i).append("] ").append(supportedCoins[i]).append('\n');
-        }
-
-        String s = sb.toString();
-
-        return s;
     }
 
     @Override
@@ -211,21 +93,18 @@ public class AppActivity extends Cocos2dxActivity {
     protected void onResume() {
         super.onResume();
         SDKWrapper.getInstance().onResume();
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         SDKWrapper.getInstance().onPause();
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         SDKWrapper.getInstance().onDestroy();
-
     }
 
     @Override
@@ -285,24 +164,70 @@ public class AppActivity extends Cocos2dxActivity {
 
 
     /// BLOCKCHAIN Code
+    private boolean isWalletInitialized(){
+        String seedHash = ScwService.getInstance().getSeedHash();
+        boolean initialized =  (seedHash != null && seedHash.length() > 0);
+
+        return initialized;
+    }
+
+    public void getPublicAddress(String hdPath) {
+        ScwService.getInstance().getAddressList(getSCWGetAddressListCallback(), stringToArrayList(hdPath));
+    }
+
+    public static ArrayList<String> stringToArrayList(String inputString) {
+        return new ArrayList<String>(Arrays.asList(inputString));
+    }
+
+    private ScwService.ScwGetAddressListCallback getSCWGetAddressListCallback() {
+        if (mScwGetAddressListCallback == null) {
+            mScwGetAddressListCallback = new ScwService.ScwGetAddressListCallback() {
+                @Override
+                public void onSuccess(List<String> addressList) {
+                    publicKey = addressList.get(0);
+                }
+
+                @Override
+                public void onFailure(int i, @Nullable String s) {
+
+                }
+            };
+        }
+
+        return mScwGetAddressListCallback;
+    }
+
+    public String getSupportedCoins(){
+        int[] supportedCoins = ScwService.getInstance().getSupportedCoins();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Supported coins").append('\n');
+        for (int i = 0; i < supportedCoins.length; i++ ) {
+            sb.append('[').append(i).append("] ").append(supportedCoins[i]).append('\n');
+        }
+
+        String s = sb.toString();
+
+        return s;
+    }
 
     public boolean isKeystoreApiSupported() {
         int keystoreApiLevel = ScwService.getInstance().getKeystoreApiLevel();
         return keystoreApiLevel > 0;
     }
 
-    static SBlockchain mSblockchain;
-    private static final int VENDOR_NOT_SUPPORTED = -1;
-    public static void initBlockchain(){
-        try {
-            mSblockchain = new SBlockchain();
-            mSblockchain.initialize(currentContext);
-        } catch (SsdkUnsupportedException e) {
-            if (e.getErrorType() == VENDOR_NOT_SUPPORTED){
-                Log.e("error", "Platform SDK is not support this device");
-            }
-        }
-    }
+//    static SBlockchain mSblockchain;
+//    private static final int VENDOR_NOT_SUPPORTED = -1;
+//    public static void initBlockchain(){
+//        try {
+//            mSblockchain = new SBlockchain();
+//            mSblockchain.initialize(currentContext);
+//        } catch (SsdkUnsupportedException e) {
+//            if (e.getErrorType() == VENDOR_NOT_SUPPORTED){
+//                Log.e("error", "Platform SDK is not support this device");
+//            }
+//        }
+//    }
 
 
     public static String getKeystore(){
@@ -347,9 +272,7 @@ public class AppActivity extends Cocos2dxActivity {
         private Hashtable<String, Player> leaderboard = new Hashtable();
 
         public void init() {
-            String myKeystore = getCurrentAccountKeystore();
 
-            leaderboard.put(myKeystore, new Player("Champion", myKeystore, 100));
             leaderboard.put("queen_keycode", new Player("Queen", "queen_keycode", 80));
             leaderboard.put("jack_keycode", new Player("Joker", "jack_keycode", 78));
             leaderboard.put("some_guy1", new Player("some guy 1", "some_guy1", 75));
@@ -361,10 +284,6 @@ public class AppActivity extends Cocos2dxActivity {
             leaderboard.put("some_guy7", new Player("clone 7", "some_guy7", 22));
             leaderboard.put("some_guy8", new Player("guy 8", "some_guy8", 20));
             leaderboard.put("some_guy9", new Player("random guy 9", "some_guy9", 15));
-        }
-
-        public String getCurrentAccountKeystore(){
-            return "one1y5n7p8a845v96xyx2gh75wn5eyhtw5002lah27";
         }
 
         public String getLeaderboard(){
@@ -390,6 +309,8 @@ public class AppActivity extends Cocos2dxActivity {
         public void updateScore(String keystore, int score){
             if (leaderboard.containsKey(keystore)){
                 leaderboard.get(keystore).score = score;
+            } else {
+                leaderboard.put(keystore, new Player(keystore, keystore, score));
             }
         }
     }

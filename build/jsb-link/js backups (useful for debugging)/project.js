@@ -103,6 +103,7 @@ this.panelAuthenticated.active = !0;
 },
 onCreateKeystoreClicked: function() {
 Global.showAlertDialog("Please go to Settings > Biometrics & Security > Samsung Blockchain Keystore \n To create your keystore");
+Global.gotoSamsungBlockchainKeystoreMenu();
 },
 onSaveClicked: function() {
 if (Global.isAndroid()) {
@@ -440,6 +441,9 @@ this.leaderboard = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppA
 },
 showAlertDialog: function(e) {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", e);
+},
+gotoSamsungBlockchainKeystoreMenu: function() {
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "gotoSamsungBlockchainKeystoreMenu", "()V");
 }
 };
 cc._RF.pop();
@@ -488,40 +492,40 @@ l.initialSelected.y = 0;
 t[i - 1] = l;
 } else {
 for (var r = 0; r < 9; r++) a.push(o);
-var h = this.randRange(0, 9), d = [];
+var h = this.randRange(0, 9), u = [];
 a[h] -= 1;
 for (r = 0; r < s; r++) {
-var u = -1;
+var d = -1;
 do {
-u = this.randRange(0, 4);
-} while (!this.possible(a, h, u));
-switch (u) {
+d = this.randRange(0, 4);
+} while (!this.possible(a, h, d));
+switch (d) {
 case 0:
 h -= 3;
-d.push('"d"');
+u.push('"d"');
 r + 1 != s && (a[h] -= 1);
 break;
 
 case 1:
 h += 3;
-d.push('"u"');
+u.push('"u"');
 r + 1 != s && (a[h] -= 1);
 break;
 
 case 2:
 h -= 1;
-d.push('"r"');
+u.push('"r"');
 r + 1 != s && (a[h] -= 1);
 break;
 
 case 3:
 h += 1;
-d.push('"l"');
+u.push('"l"');
 r + 1 != s && (a[h] -= 1);
 }
 }
 var f = h % 3, p = Math.floor(h / 3);
-d = d.reverse();
+u = u.reverse();
 l.contents = a;
 l.initialSelected = {};
 l.initialSelected.x = p;

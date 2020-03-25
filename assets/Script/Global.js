@@ -38,4 +38,8 @@ window.Global = {
     showAlertDialog: function(message){
         return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", message);
     },
+
+    gotoSamsungBlockchainKeystoreMenu: function(){
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "gotoSamsungBlockchainKeystoreMenu", "()V");
+    },
 }

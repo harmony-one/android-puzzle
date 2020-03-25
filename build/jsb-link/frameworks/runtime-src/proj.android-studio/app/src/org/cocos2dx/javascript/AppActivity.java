@@ -27,12 +27,14 @@ package org.cocos2dx.javascript;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.samsung.android.sdk.coldwallet.ScwCoinType;
+import com.samsung.android.sdk.coldwallet.ScwDeepLink;
 import com.samsung.android.sdk.coldwallet.ScwService;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
@@ -281,6 +283,14 @@ public class AppActivity extends Cocos2dxActivity {
                 alertDialog.show();
             }
         });
+    }
+
+    public static void gotoSamsungBlockchainKeystoreMenu(){
+        Uri uri = Uri.parse(ScwDeepLink.MAIN);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        currentContext.startActivity(intent);
     }
 
     class Player {

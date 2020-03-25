@@ -29,7 +29,9 @@ cc.Class({
     },
 
     onCreateKeystoreClicked(){
-        Global.showAlertDialog("Please go to Settings > Biometrics & Security > Samsung Blockchain Keystore \n To create your keystore");
+        //Global.showAlertDialog("Please go to Settings > Biometrics & Security > Samsung Blockchain Keystore \n To create your keystore");
+
+        Global.gotoSamsungBlockchainKeystoreMenu();
     },
 
     onSaveClicked(){ 

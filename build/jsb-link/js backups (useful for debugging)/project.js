@@ -1,27 +1,27 @@
-window.__require = function e(t, i, n) {
-function c(o, l) {
-if (!i[o]) {
-if (!t[o]) {
-var a = o.split("/");
+window.__require = function e(t, i, c) {
+function n(s, l) {
+if (!i[s]) {
+if (!t[s]) {
+var a = s.split("/");
 a = a[a.length - 1];
 if (!t[a]) {
 var r = "function" == typeof __require && __require;
 if (!l && r) return r(a, !0);
-if (s) return s(a, !0);
-throw new Error("Cannot find module '" + o + "'");
+if (o) return o(a, !0);
+throw new Error("Cannot find module '" + s + "'");
 }
 }
-var h = i[o] = {
+var h = i[s] = {
 exports: {}
 };
-t[o][0].call(h.exports, function(e) {
-return c(t[o][1][e] || e);
-}, h, h.exports, e, t, i, n);
+t[s][0].call(h.exports, function(e) {
+return n(t[s][1][e] || e);
+}, h, h.exports, e, t, i, c);
 }
-return i[o].exports;
+return i[s].exports;
 }
-for (var s = "function" == typeof __require && __require, o = 0; o < n.length; o++) c(n[o]);
-return c;
+for (var o = "function" == typeof __require && __require, s = 0; s < c.length; s++) n(c[s]);
+return n;
 }({
 Block: [ function(e, t, i) {
 "use strict";
@@ -96,12 +96,19 @@ if (Global.isAndroid()) {
 Global.getKeystore();
 var e = Global.getUserName();
 this.lblWelcome.string = "Welcome, " + e;
+Global.showAlertDialog("Hello, " + e);
 }
 this.panelGuest.active = !1;
 this.panelAuthenticated.active = !0;
 },
+onCreateKeystoreClicked: function() {
+Global.showAlertDialog("Please go to Settings > Biometrics & Security > Samsung Blockchain Keystore \n To create your keystore");
+},
 onSaveClicked: function() {
-Global.isAndroid() && Global.updateScore();
+if (Global.isAndroid()) {
+Global.updateScore();
+Global.showAlertDialog("Your score has been updated");
+}
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
@@ -115,7 +122,7 @@ cc._RF.pop();
 Game: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var n = 0, c = 1, s = 2;
+var c = 0, n = 1, o = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -169,7 +176,7 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: n,
+state: c,
 lastMove: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
@@ -192,13 +199,13 @@ for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var i = e % 3, n = Math.floor(e / 3);
-t.position = this.getNodePosition(i, n);
+var i = e % 3, c = Math.floor(e / 3);
+t.position = this.getNodePosition(i, c);
 this.node.addChild(t);
-var c = t.getComponent("Block");
-c.x = i;
-c.y = n;
-this.listBlockScripts.push(c);
+var n = t.getComponent("Block");
+n.x = i;
+n.y = c;
+this.listBlockScripts.push(n);
 }
 },
 getNodePosition: function(e, t) {
@@ -206,7 +213,7 @@ var i = this.nodeWidth;
 return cc.v2(18 * (t + 1) + i * t + i / 2, -(18 * (e + 1) + i * e + i / 2));
 },
 reset: function() {
-this.state = n;
+this.state = c;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
@@ -217,15 +224,15 @@ this.animatePlayButton();
 },
 loadLevel: function(e) {
 for (var t = 0; t < e.contents.length; t++) {
-var i = e.contents[t], n = t % 3, c = Math.floor(t / 3), s = this.findBlock(c, n);
-s.setSelected(!1);
-s.setColorAndValue(this.getSpriteByValue(i), i);
+var i = e.contents[t], c = t % 3, n = Math.floor(t / 3), o = this.findBlock(n, c);
+o.setSelected(!1);
+o.setColorAndValue(this.getSpriteByValue(i), i);
 }
 this.selectedX = e.initialSelected.x;
 this.selectedY = e.initialSelected.y;
 cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
-var o = this.findBlock(this.selectedX, this.selectedY);
-null != o && o.setSelected(!0);
+var s = this.findBlock(this.selectedX, this.selectedY);
+null != s && s.setSelected(!0);
 this.lblLevel.string = this._currentLevel + 1 + "/100";
 this.btnUndo.interactable = !1;
 null != this.tween4Stopwatch && this.tween4Stopwatch.stop();
@@ -247,17 +254,17 @@ onTouchStart: function(e) {
 this.startPos = e.getLocation();
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
-if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
-var c = void 0;
-c = Math.abs(i) >= Math.abs(n) ? i > 0 ? "right" : "left" : n > 0 ? "up" : "down";
-this.tryMove(c);
+var t = e.getLocation(), i = t.x - this.startPos.x, c = t.y - this.startPos.y;
+if (!(Math.abs(i) < 80 && Math.abs(c) < 80)) {
+var n = void 0;
+n = Math.abs(i) >= Math.abs(c) ? i > 0 ? "right" : "left" : c > 0 ? "up" : "down";
+this.tryMove(n);
 }
 },
 findBlock: function(e, t) {
 for (var i = 0; i < this.listBlockScripts.length; i++) {
-var n = this.listBlockScripts[i];
-if (n.x == e && n.y == t) return n;
+var c = this.listBlockScripts[i];
+if (c.x == e && c.y == t) return c;
 }
 cc.log("findBlock: FAILED at index ", i);
 },
@@ -292,14 +299,14 @@ if (this.btnPlay.enabled) {
 this.btnPlay.node.active = !1;
 this.btnUndo.node.active = !0;
 this.tutorialLine.enabled = !1;
-this.state = c;
+this.state = n;
 }
 this.lastMove = e;
 this.btnUndo.interactable = !0;
-var n = this.findBlock(this.selectedX, this.selectedY), s = n.value + 1;
-n.setColorAndValue(this.getSpriteByValue(s), s);
+var c = this.findBlock(this.selectedX, this.selectedY), o = c.value + 1;
+c.setColorAndValue(this.getSpriteByValue(o), o);
 i.setSelected(!1);
-n.setSelected(!0);
+c.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -393,10 +400,10 @@ angle: 20
 })).start();
 this.isClockRinging = !0;
 }
-} else if (this.state == c) {
+} else if (this.state == n) {
 Global.newScore = this.score;
 cc.director.loadScene("end_game");
-this.state = s;
+this.state = o;
 }
 }
 });
@@ -417,19 +424,22 @@ this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppAc
 return this.myKeystore;
 },
 getScore: function() {
-return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", this.myKeystore);
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
 },
 getUserName: function() {
-return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "(Ljava/lang/String;)Ljava/lang/String;", this.myKeystore);
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "()Ljava/lang/String;");
 },
 updateScore: function() {
 if (!(this.newScore <= 0)) {
 var e = this.getScore();
-this.newScore > e && jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(Ljava/lang/String;I)V", this.myKeystore, this.newScore);
+this.newScore > e && jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(I)V", this.newScore);
 }
 },
 getLeaderboard: function() {
 this.leaderboard = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
+},
+showAlertDialog: function(e) {
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", e);
 }
 };
 cc._RF.pop();
@@ -468,7 +478,7 @@ return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.f
 },
 levels: function() {
 for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var n = 3 * (e = this.getDifficulty(i)), c = 4 * e, s = i + 3, o = this.randRange(n, c), l = {}, a = [];
+var c = 3 * (e = this.getDifficulty(i)), n = 4 * e, o = i + 3, s = this.randRange(c, n), l = {}, a = [];
 if (1 == i) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
 l.contents = a;
@@ -477,10 +487,10 @@ l.initialSelected.x = 0;
 l.initialSelected.y = 0;
 t[i - 1] = l;
 } else {
-for (var r = 0; r < 9; r++) a.push(s);
+for (var r = 0; r < 9; r++) a.push(o);
 var h = this.randRange(0, 9), d = [];
 a[h] -= 1;
-for (r = 0; r < o; r++) {
+for (r = 0; r < s; r++) {
 var u = -1;
 do {
 u = this.randRange(0, 4);
@@ -489,25 +499,25 @@ switch (u) {
 case 0:
 h -= 3;
 d.push('"d"');
-r + 1 != o && (a[h] -= 1);
+r + 1 != s && (a[h] -= 1);
 break;
 
 case 1:
 h += 3;
 d.push('"u"');
-r + 1 != o && (a[h] -= 1);
+r + 1 != s && (a[h] -= 1);
 break;
 
 case 2:
 h -= 1;
 d.push('"r"');
-r + 1 != o && (a[h] -= 1);
+r + 1 != s && (a[h] -= 1);
 break;
 
 case 3:
 h += 1;
 d.push('"l"');
-r + 1 != o && (a[h] -= 1);
+r + 1 != s && (a[h] -= 1);
 }
 }
 var f = h % 3, p = Math.floor(h / 3);

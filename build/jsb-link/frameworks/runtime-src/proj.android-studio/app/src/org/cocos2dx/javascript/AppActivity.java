@@ -24,6 +24,7 @@
  ****************************************************************************/
 package org.cocos2dx.javascript;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -75,6 +76,8 @@ public class AppActivity extends Cocos2dxActivity {
                 Log.i("Harmony - ethereumHdPath", ethereumHdPath);
 
                 getPublicAddress(ethereumHdPath);
+
+
             }
         }
     }
@@ -185,6 +188,14 @@ public class AppActivity extends Cocos2dxActivity {
                 @Override
                 public void onSuccess(List<String> addressList) {
                     publicKey = addressList.get(0);
+
+
+                    int currentScore = currentContext.blockchainApi.getScoreByKeystore(publicKey);
+
+                    // this account never save score, or new player
+                    if (currentScore == 0) {
+                        blockchainApi.updateScore(publicKey, 0);
+                    }
                 }
 
                 @Override
@@ -235,16 +246,16 @@ public class AppActivity extends Cocos2dxActivity {
         return currentContext.publicKey;
     }
 
-    public static int getScore(String keycode){
-        return currentContext.blockchainApi.getScoreByKeystore(keycode);
+    public static int getScore(){
+        return currentContext.blockchainApi.getScoreByKeystore(currentContext.publicKey);
     }
 
-    public static String getUserName(String keycode){
-        return currentContext.blockchainApi.getUserNameByKeystore(keycode);
+    public static String getUserName(){
+        return currentContext.blockchainApi.getUserName();
     }
 
-    public static void updateScore(String keycode, int score){
-        currentContext.blockchainApi.updateScore(keycode, score);
+    public static void updateScore(int score){
+        currentContext.blockchainApi.updateScore(currentContext.publicKey, score);
     }
 
     //    return [{
@@ -253,7 +264,23 @@ public class AppActivity extends Cocos2dxActivity {
 //
 //    }]
     public static String getLeaderboard(){
+
         return currentContext.blockchainApi.getLeaderboard();
+    }
+
+    public static void showAlertDialog(final String message) {
+
+        //we must use runOnUiThread here
+        currentContext.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog alertDialog = new AlertDialog.Builder(currentContext).create();
+                alertDialog.setTitle("Message");
+                alertDialog.setMessage(message);
+                //alertDialog.setIcon(R.drawable.ic_close);
+                alertDialog.show();
+            }
+        });
     }
 
     class Player {
@@ -290,9 +317,9 @@ public class AppActivity extends Cocos2dxActivity {
             return leaderboard.toString();
         }
 
-        public String getUserNameByKeystore(String keystore){
-            if (leaderboard.containsKey(keystore)){
-                return leaderboard.get(keystore).name;
+        public String getUserName(){
+            if (leaderboard.containsKey(currentContext.publicKey)){
+                return leaderboard.get(currentContext.publicKey).name;
             }
 
             return "";
@@ -308,7 +335,9 @@ public class AppActivity extends Cocos2dxActivity {
 
         public void updateScore(String keystore, int score){
             if (leaderboard.containsKey(keystore)){
-                leaderboard.get(keystore).score = score;
+                if (score > leaderboard.get(keystore).score) {
+                    leaderboard.get(keystore).score = score;
+                }
             } else {
                 leaderboard.put(keystore, new Player(keystore, keystore, score));
             }

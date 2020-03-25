@@ -20,15 +20,23 @@ cc.Class({
 
             let name = Global.getUserName();
             this.lblWelcome.string = "Welcome, " + name;
+
+            Global.showAlertDialog("Hello, " + name);
         }
 
         this.panelGuest.active = false;
         this.panelAuthenticated.active = true;
     },
 
+    onCreateKeystoreClicked(){
+        Global.showAlertDialog("Please go to Settings > Biometrics & Security > Samsung Blockchain Keystore \n To create your keystore");
+    },
+
     onSaveClicked(){ 
         if (Global.isAndroid()){
             Global.updateScore();
+
+            Global.showAlertDialog("Your score has been updated");
         }
     },
 

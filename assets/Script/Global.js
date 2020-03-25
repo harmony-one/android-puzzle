@@ -14,12 +14,11 @@ window.Global = {
     },
 
     getScore: function(){
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "(Ljava/lang/String;)I", this.myKeystore);
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
     },
 
     getUserName: function(){
-        // return "Joe";
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "(Ljava/lang/String;)Ljava/lang/String;", this.myKeystore);
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "()Ljava/lang/String;");
     },
 
     updateScore: function(){
@@ -28,11 +27,15 @@ window.Global = {
         let currentScore = this.getScore();
 
         if (this.newScore > currentScore){
-            jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(Ljava/lang/String;I)V", this.myKeystore, this.newScore);
+            jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(I)V", this.newScore);
         }
     },
 
     getLeaderboard: function(){
         this.leaderboard = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
-    }
+    },
+
+    showAlertDialog: function(message){
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", message);
+    },
 }

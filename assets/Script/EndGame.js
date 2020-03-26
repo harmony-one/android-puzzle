@@ -7,21 +7,26 @@ cc.Class({
         lblWelcome: {default: null, type: cc.Label},
         panelGuest: {default: null, type: cc.Node},
         panelAuthenticated: {default: null, type: cc.Node},
+        
     },
 
     start () {
         this.score.string = Global.newScore;
         this.score2.string = Global.newScore;
+
+        if (Global.isLoggedIn()){
+            this.panelGuest.active = false;
+            this.panelAuthenticated.active = true;    
+        }
     },
 
     onLoginClicked(){
         if (Global.isAndroid()){
             Global.getKeystore();
 
-            let name = Global.getUserName();
-            this.lblWelcome.string = "Welcome, " + name;
+            this.lblWelcome.string = "Welcome!";
 
-            Global.showAlertDialog("Hello, " + name);
+            Global.showAlertDialog("Welcome!, your public key: \n" + Global.myKeystore);
         }
 
         this.panelGuest.active = false;
@@ -29,9 +34,9 @@ cc.Class({
     },
 
     onCreateKeystoreClicked(){
-        //Global.showAlertDialog("Please go to Settings > Biometrics & Security > Samsung Blockchain Keystore \n To create your keystore");
-
-        Global.gotoSamsungBlockchainKeystoreMenu();
+        if (Global.isAndroid()){
+            Global.gotoSamsungBlockchainKeystoreMenu();
+        }
     },
 
     onSaveClicked(){ 

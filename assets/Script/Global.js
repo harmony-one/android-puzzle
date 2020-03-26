@@ -1,24 +1,28 @@
 window.Global = {
     myKeystore: "",
-    leaderboard: "",
     newScore: 0,
 
     isAndroid: function() {
         return cc.sys.os == cc.sys.OS_ANDROID;
     },
 
+    isLoggedIn: function(){
+        let myKeystore = localStorage.getItem("my_keystore");
+
+        // Ethereum public key length = 128 chars
+        return myKeystore != null && myKeystore.length > 10;
+    },
+
     getKeystore: function(){
         this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
+
+        localStorage.setItem("my_keystore", this.myKeystore);
 
         return this.myKeystore;
     },
 
     getScore: function(){
         return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
-    },
-
-    getUserName: function(){
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "()Ljava/lang/String;");
     },
 
     updateScore: function(){
@@ -32,7 +36,7 @@ window.Global = {
     },
 
     getLeaderboard: function(){
-        this.leaderboard = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
     },
 
     showAlertDialog: function(message){

@@ -8,9 +8,12 @@ cc.Class({
 
     start () {
         let json = Global.getLeaderboard();
+        
+        cc.log("json string", json);
+        //Global.showAlertDialog(json);
+        let entries = JSON.parse(json);
+       
     },
-
-    // update (dt) {},
 
     onPlayAgainClicked(){
         cc.director.loadScene("game");

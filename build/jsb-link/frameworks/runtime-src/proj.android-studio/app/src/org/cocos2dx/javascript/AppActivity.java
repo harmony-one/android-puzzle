@@ -33,6 +33,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.samsung.android.sdk.coldwallet.ScwCoinType;
 import com.samsung.android.sdk.coldwallet.ScwDeepLink;
 import com.samsung.android.sdk.coldwallet.ScwService;
@@ -42,7 +43,7 @@ import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -50,9 +51,10 @@ public class AppActivity extends Cocos2dxActivity {
 
     static AppActivity currentContext;
 
-    FakeBlockchainApi blockchainApi = new FakeBlockchainApi();
+    LeaderBoard leaderboard = new LeaderBoard();
 
     private ScwService.ScwGetAddressListCallback mScwGetAddressListCallback;
+    private ScwService.ScwSignEthTransactionCallback mScwSignEthTransactionCallback;
     String publicKey = "";
 
 
@@ -68,7 +70,7 @@ public class AppActivity extends Cocos2dxActivity {
         currentContext = this;
 
         if (isKeystoreApiSupported()) {
-            blockchainApi.init();
+            leaderboard.init();
 
             if (isWalletInitialized()) {
                 String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
@@ -78,8 +80,6 @@ public class AppActivity extends Cocos2dxActivity {
                 Log.i("Harmony - ethereumHdPath", ethereumHdPath);
 
                 getPublicAddress(ethereumHdPath);
-
-
             }
         }
     }
@@ -176,12 +176,27 @@ public class AppActivity extends Cocos2dxActivity {
         return initialized;
     }
 
-    public void getPublicAddress(String hdPath) {
+    private void getPublicAddress(String hdPath) {
         ScwService.getInstance().getAddressList(getSCWGetAddressListCallback(), stringToArrayList(hdPath));
     }
 
-    public static ArrayList<String> stringToArrayList(String inputString) {
-        return new ArrayList<String>(Arrays.asList(inputString));
+    private void signEthTransaction(String hdPath){
+        String myAddress = currentContext.publicKey;
+        String toAddress = "0xe7425ee1bc64ab7c51ce3617cb83e76fd545f1a9"; // Example
+        String ethAmount = "123.456";
+        String data = "extra info";
+
+        byte[] encodedUnsignedEthTx = createRawTransaction(toAddress, ethAmount, data);
+
+        ScwService.getInstance().signEthTransaction(getSCWSignEthTransactionCallback(), encodedUnsignedEthTx, hdPath);
+    }
+
+    private byte[] createRawTransaction(String toAddress, String ethAmount, String extraInfo){
+        return new byte[0];
+    }
+
+    private static ArrayList<String> stringToArrayList(String inputString) {
+        return new ArrayList<>(Arrays.asList(inputString));
     }
 
     private ScwService.ScwGetAddressListCallback getSCWGetAddressListCallback() {
@@ -192,11 +207,11 @@ public class AppActivity extends Cocos2dxActivity {
                     publicKey = addressList.get(0);
 
 
-                    int currentScore = currentContext.blockchainApi.getScoreByKeystore(publicKey);
+                    int currentScore = currentContext.leaderboard.getScoreByKeystore(publicKey);
 
                     // this account never save score, or new player
                     if (currentScore == 0) {
-                        blockchainApi.updateScore(publicKey, 0);
+                        leaderboard.updateScore(publicKey, 0);
                     }
                 }
 
@@ -210,7 +225,25 @@ public class AppActivity extends Cocos2dxActivity {
         return mScwGetAddressListCallback;
     }
 
-    public String getSupportedCoins(){
+    private ScwService.ScwSignEthTransactionCallback getSCWSignEthTransactionCallback() {
+        if (mScwSignEthTransactionCallback == null) {
+            mScwSignEthTransactionCallback = new ScwService.ScwSignEthTransactionCallback() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Log.i("Puzzle", "Signing Successful!");
+                }
+
+                @Override
+                public void onFailure(int i, @Nullable String s) {
+
+                }
+            };
+        }
+
+        return mScwSignEthTransactionCallback;
+    }
+
+    private String getSupportedCoins(){
         int[] supportedCoins = ScwService.getInstance().getSupportedCoins();
 
         StringBuilder sb = new StringBuilder();
@@ -224,50 +257,27 @@ public class AppActivity extends Cocos2dxActivity {
         return s;
     }
 
-    public boolean isKeystoreApiSupported() {
+    private boolean isKeystoreApiSupported() {
         int keystoreApiLevel = ScwService.getInstance().getKeystoreApiLevel();
         return keystoreApiLevel > 0;
     }
 
-//    static SBlockchain mSblockchain;
-//    private static final int VENDOR_NOT_SUPPORTED = -1;
-//    public static void initBlockchain(){
-//        try {
-//            mSblockchain = new SBlockchain();
-//            mSblockchain.initialize(currentContext);
-//        } catch (SsdkUnsupportedException e) {
-//            if (e.getErrorType() == VENDOR_NOT_SUPPORTED){
-//                Log.e("error", "Platform SDK is not support this device");
-//            }
-//        }
-//    }
-
-
+    // PUBLIC API for Android Game
     public static String getKeystore(){
         Log.i("Puzzle","Keystore: " + currentContext.publicKey);
         return currentContext.publicKey;
     }
 
     public static int getScore(){
-        return currentContext.blockchainApi.getScoreByKeystore(currentContext.publicKey);
-    }
-
-    public static String getUserName(){
-        return currentContext.blockchainApi.getUserName();
+        return currentContext.leaderboard.getScoreByKeystore(currentContext.publicKey);
     }
 
     public static void updateScore(int score){
-        currentContext.blockchainApi.updateScore(currentContext.publicKey, score);
+        currentContext.leaderboard.updateScore(currentContext.publicKey, score);
     }
 
-    //    return [{
-//        "garlam": 300,
-//                "minh": 10
-//
-//    }]
     public static String getLeaderboard(){
-
-        return currentContext.blockchainApi.getLeaderboard();
+        return currentContext.leaderboard.getLeaderBoard();
     }
 
     public static void showAlertDialog(final String message) {
@@ -293,63 +303,72 @@ public class AppActivity extends Cocos2dxActivity {
         currentContext.startActivity(intent);
     }
 
-    class Player {
-        public String name;
-        public String keycode;
+    class Entry implements Comparable{
+        public String key;
         public int score;
 
-        public Player(String name, String keycode, int score) {
-            this.name = name;
-            this.keycode = keycode;
+        public Entry(String key, int score) {
+            this.key = key;
             this.score = score;
+        }
+
+        @Override
+        public int compareTo(Object compareTo) {
+            int scoreToCompare = ((Entry)compareTo).score;
+
+            return scoreToCompare - this.score; // big first
         }
     }
 
-    class FakeBlockchainApi {
-        private Hashtable<String, Player> leaderboard = new Hashtable();
+    // Leader board Api
+    class LeaderBoard {
+        private List<Entry> _list;
+
+        Gson gson = new Gson();
 
         public void init() {
+             _list = new ArrayList<>();
 
-            leaderboard.put("queen_keycode", new Player("Queen", "queen_keycode", 80));
-            leaderboard.put("jack_keycode", new Player("Joker", "jack_keycode", 78));
-            leaderboard.put("some_guy1", new Player("some guy 1", "some_guy1", 75));
-            leaderboard.put("some_guy2", new Player("try harder", "some_guy2", 70));
-            leaderboard.put("some_guy3", new Player("guy 3", "some_guy3", 66));
-            leaderboard.put("some_guy4", new Player("random guy 4", "some_guy4", 55));
-            leaderboard.put("some_guy5", new Player("some guy 5", "some_guy5", 44));
-            leaderboard.put("some_guy6", new Player("guy 6", "some_guy6", 33));
-            leaderboard.put("some_guy7", new Player("clone 7", "some_guy7", 22));
-            leaderboard.put("some_guy8", new Player("guy 8", "some_guy8", 20));
-            leaderboard.put("some_guy9", new Player("random guy 9", "some_guy9", 15));
+
+            _list.add(new Entry("0xe7125ee1bc64ab7c51ce3617cb83e76fd545f1a9", 80));
+            _list.add(new Entry("0xe8425ee1bc64ab7c51ce3617cb83e76fd545f1b0", 78));
+            _list.add(new Entry("0xe9325ee1bc64ab7c51ce3617cb83e76fd545f1c1", 75));
+            _list.add(new Entry("0xe6625ee1bc64ab7c51ce3617cb83e76fd545f1d2", 70));
+            _list.add(new Entry("0xe5e25ee1bc64ab7c51ce3617cb83e76fd545f1e3", 90));
+            _list.add(new Entry("0xe4325ee1bc64ab7c51ce3617cb83e76fd545f1f4", 55));
+            _list.add(new Entry("0xe2325ee1bc64ab7c51ce3617cb83e76fd545f1a5", 44));
+            _list.add(new Entry("0xe5425ee1bc64ab7c51ce3617cb83e76fd545f1b6", 33));
+            _list.add(new Entry("0xe1225ee1bc64ab7c51ce3617cb83e76fd545f1c7", 200));
+            _list.add(new Entry("0xe5d25ee1bc64ab7c51ce3617cb83e76fd545f1d8", 20));
+            _list.add(new Entry("0xe6a25ee1bc64ab7c51ce3617cb83e76fd545f1e9", 150));
+
+            Collections.sort(_list);
         }
 
-        public String getLeaderboard(){
-            return leaderboard.toString();
-        }
-
-        public String getUserName(){
-            if (leaderboard.containsKey(currentContext.publicKey)){
-                return leaderboard.get(currentContext.publicKey).name;
-            }
-
-            return "";
+        public String getLeaderBoard(){
+            String json = gson.toJson(_list);
+            Log.i("puzzle", json);
+            return json;
         }
 
         public int getScoreByKeystore(String keystore){
-            if (leaderboard.containsKey(keystore)){
-                return leaderboard.get(keystore).score;
+            for (Entry entry: _list) {
+                if(entry.key == keystore) return entry.score;
             }
 
             return 0;
         }
 
         public void updateScore(String keystore, int score){
-            if (leaderboard.containsKey(keystore)){
-                if (score > leaderboard.get(keystore).score) {
-                    leaderboard.get(keystore).score = score;
+            for (Entry entry: _list) {
+                if(entry.key == keystore) {
+                    if (score > entry.score) {
+                        entry.score = score;
+
+                        Collections.sort(_list);
+                        break;
+                    }
                 }
-            } else {
-                leaderboard.put(keystore, new Player(keystore, keystore, score));
             }
         }
     }

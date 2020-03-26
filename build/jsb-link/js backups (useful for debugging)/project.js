@@ -1,5 +1,5 @@
-window.__require = function e(t, i, c) {
-function n(s, l) {
+window.__require = function e(t, i, n) {
+function c(s, l) {
 if (!i[s]) {
 if (!t[s]) {
 var a = s.split("/");
@@ -15,13 +15,13 @@ var h = i[s] = {
 exports: {}
 };
 t[s][0].call(h.exports, function(e) {
-return n(t[s][1][e] || e);
-}, h, h.exports, e, t, i, c);
+return c(t[s][1][e] || e);
+}, h, h.exports, e, t, i, n);
 }
 return i[s].exports;
 }
-for (var o = "function" == typeof __require && __require, s = 0; s < c.length; s++) n(c[s]);
-return n;
+for (var o = "function" == typeof __require && __require, s = 0; s < n.length; s++) c(n[s]);
+return c;
 }({
 Block: [ function(e, t, i) {
 "use strict";
@@ -90,20 +90,22 @@ type: cc.Node
 start: function() {
 this.score.string = Global.newScore;
 this.score2.string = Global.newScore;
+if (Global.isLoggedIn()) {
+this.panelGuest.active = !1;
+this.panelAuthenticated.active = !0;
+}
 },
 onLoginClicked: function() {
 if (Global.isAndroid()) {
 Global.getKeystore();
-var e = Global.getUserName();
-this.lblWelcome.string = "Welcome, " + e;
-Global.showAlertDialog("Hello, " + e);
+this.lblWelcome.string = "Welcome!";
+Global.showAlertDialog("Welcome!, your public key: \n" + Global.myKeystore);
 }
 this.panelGuest.active = !1;
 this.panelAuthenticated.active = !0;
 },
 onCreateKeystoreClicked: function() {
-Global.showAlertDialog("Please go to Settings > Biometrics & Security > Samsung Blockchain Keystore \n To create your keystore");
-Global.gotoSamsungBlockchainKeystoreMenu();
+Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();
 },
 onSaveClicked: function() {
 if (Global.isAndroid()) {
@@ -123,7 +125,7 @@ cc._RF.pop();
 Game: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var c = 0, n = 1, o = 2;
+var n = 0, c = 1, o = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -177,7 +179,7 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: c,
+state: n,
 lastMove: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
@@ -200,13 +202,13 @@ for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var i = e % 3, c = Math.floor(e / 3);
-t.position = this.getNodePosition(i, c);
+var i = e % 3, n = Math.floor(e / 3);
+t.position = this.getNodePosition(i, n);
 this.node.addChild(t);
-var n = t.getComponent("Block");
-n.x = i;
-n.y = c;
-this.listBlockScripts.push(n);
+var c = t.getComponent("Block");
+c.x = i;
+c.y = n;
+this.listBlockScripts.push(c);
 }
 },
 getNodePosition: function(e, t) {
@@ -214,7 +216,7 @@ var i = this.nodeWidth;
 return cc.v2(18 * (t + 1) + i * t + i / 2, -(18 * (e + 1) + i * e + i / 2));
 },
 reset: function() {
-this.state = c;
+this.state = n;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
@@ -225,7 +227,7 @@ this.animatePlayButton();
 },
 loadLevel: function(e) {
 for (var t = 0; t < e.contents.length; t++) {
-var i = e.contents[t], c = t % 3, n = Math.floor(t / 3), o = this.findBlock(n, c);
+var i = e.contents[t], n = t % 3, c = Math.floor(t / 3), o = this.findBlock(c, n);
 o.setSelected(!1);
 o.setColorAndValue(this.getSpriteByValue(i), i);
 }
@@ -255,17 +257,17 @@ onTouchStart: function(e) {
 this.startPos = e.getLocation();
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), i = t.x - this.startPos.x, c = t.y - this.startPos.y;
-if (!(Math.abs(i) < 80 && Math.abs(c) < 80)) {
-var n = void 0;
-n = Math.abs(i) >= Math.abs(c) ? i > 0 ? "right" : "left" : c > 0 ? "up" : "down";
-this.tryMove(n);
+var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
+if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
+var c = void 0;
+c = Math.abs(i) >= Math.abs(n) ? i > 0 ? "right" : "left" : n > 0 ? "up" : "down";
+this.tryMove(c);
 }
 },
 findBlock: function(e, t) {
 for (var i = 0; i < this.listBlockScripts.length; i++) {
-var c = this.listBlockScripts[i];
-if (c.x == e && c.y == t) return c;
+var n = this.listBlockScripts[i];
+if (n.x == e && n.y == t) return n;
 }
 cc.log("findBlock: FAILED at index ", i);
 },
@@ -300,14 +302,14 @@ if (this.btnPlay.enabled) {
 this.btnPlay.node.active = !1;
 this.btnUndo.node.active = !0;
 this.tutorialLine.enabled = !1;
-this.state = n;
+this.state = c;
 }
 this.lastMove = e;
 this.btnUndo.interactable = !0;
-var c = this.findBlock(this.selectedX, this.selectedY), o = c.value + 1;
-c.setColorAndValue(this.getSpriteByValue(o), o);
+var n = this.findBlock(this.selectedX, this.selectedY), o = n.value + 1;
+n.setColorAndValue(this.getSpriteByValue(o), o);
 i.setSelected(!1);
-c.setSelected(!0);
+n.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -401,7 +403,7 @@ angle: 20
 })).start();
 this.isClockRinging = !0;
 }
-} else if (this.state == n) {
+} else if (this.state == c) {
 Global.newScore = this.score;
 cc.director.loadScene("end_game");
 this.state = o;
@@ -415,20 +417,21 @@ Global: [ function(e, t, i) {
 cc._RF.push(t, "9bf09yemltMJ6LDPqxBrroN", "Global");
 window.Global = {
 myKeystore: "",
-leaderboard: "",
 newScore: 0,
 isAndroid: function() {
 return cc.sys.os == cc.sys.OS_ANDROID;
 },
+isLoggedIn: function() {
+var e = localStorage.getItem("my_keystore");
+return null != e && e.length > 10;
+},
 getKeystore: function() {
 this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
+localStorage.setItem("my_keystore", this.myKeystore);
 return this.myKeystore;
 },
 getScore: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
-},
-getUserName: function() {
-return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getUserName", "()Ljava/lang/String;");
 },
 updateScore: function() {
 if (!(this.newScore <= 0)) {
@@ -437,7 +440,7 @@ this.newScore > e && jsb.reflection.callStaticMethod("org/cocos2dx/javascript/Ap
 }
 },
 getLeaderboard: function() {
-this.leaderboard = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
 },
 showAlertDialog: function(e) {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", e);
@@ -455,7 +458,12 @@ cc.Class({
 extends: cc.Component,
 properties: {},
 start: function() {
-Global.getLeaderboard();
+var e = Global.getLeaderboard();
+cc.log("json string", e);
+Global.showAlertDialog(e);
+var t = JSON.parse(e);
+cc.log("JSON obj", t);
+Global.showAlertDialog(t[0].key + "\n" + t[1].score);
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
@@ -482,7 +490,7 @@ return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.f
 },
 levels: function() {
 for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var c = 3 * (e = this.getDifficulty(i)), n = 4 * e, o = i + 3, s = this.randRange(c, n), l = {}, a = [];
+var n = 3 * (e = this.getDifficulty(i)), c = 4 * e, o = i + 3, s = this.randRange(n, c), l = {}, a = [];
 if (1 == i) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
 l.contents = a;

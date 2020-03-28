@@ -33,17 +33,16 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.google.gson.Gson;
 import com.samsung.android.sdk.coldwallet.ScwCoinType;
 import com.samsung.android.sdk.coldwallet.ScwDeepLink;
 import com.samsung.android.sdk.coldwallet.ScwService;
 
+import org.cocos2dx.javascript.service.LeaderBoard;
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -54,7 +53,6 @@ public class AppActivity extends Cocos2dxActivity {
     LeaderBoard leaderboard = new LeaderBoard();
 
     private ScwService.ScwGetAddressListCallback mScwGetAddressListCallback;
-    private ScwService.ScwSignEthTransactionCallback mScwSignEthTransactionCallback;
     String publicKey = "";
 
 
@@ -176,24 +174,60 @@ public class AppActivity extends Cocos2dxActivity {
         return initialized;
     }
 
+    private static void checkForUpdateThenSignTransaction(){
+        ScwService.ScwCheckForMandatoryAppUpdateCallback callback =
+                new ScwService.ScwCheckForMandatoryAppUpdateCallback() {
+                    @Override
+                    public void onMandatoryAppUpdateNeeded(boolean needed) {
+                        if(needed){
+                            startDeepLink(ScwDeepLink.GALAXY_STORE);
+                        } else {
+                            signEthTransaction();
+                        }
+                    }
+                };
+
+        ScwService.getInstance().checkForMandatoryAppUpdate(callback);
+    }
+
     private void getPublicAddress(String hdPath) {
         ScwService.getInstance().getAddressList(getSCWGetAddressListCallback(), stringToArrayList(hdPath));
     }
 
-    private void signEthTransaction(String hdPath){
+    // SIGN TRANSACTION
+    private static void signEthTransaction(){
+        String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
+
         String myAddress = currentContext.publicKey;
-        String toAddress = "0xe7425ee1bc64ab7c51ce3617cb83e76fd545f1a9"; // Example
-        String ethAmount = "123.456";
+        String toAddress = "0x2700E87Bf9A7A7D015eE50AaAB47936e3043cefe";
+        String ethAmount = "0.05";
         String data = "extra info";
 
         byte[] encodedUnsignedEthTx = createRawTransaction(toAddress, ethAmount, data);
 
-        ScwService.getInstance().signEthTransaction(getSCWSignEthTransactionCallback(), encodedUnsignedEthTx, hdPath);
+        ScwService.getInstance().signEthTransaction(getSCWSignEthTransactionCallback(), encodedUnsignedEthTx, ethereumHdPath);
     }
 
-    private byte[] createRawTransaction(String toAddress, String ethAmount, String extraInfo){
-        return new byte[0];
+    private static ScwService.ScwSignEthTransactionCallback getSCWSignEthTransactionCallback() {
+        return new ScwService.ScwSignEthTransactionCallback() {
+            @Override
+            public void onSuccess(byte[] signedEthTransaction) {
+                showAlertDialog("Sign Transaction successful!");
+            }
+
+            @Override
+            public void onFailure(int errorCode, @Nullable String errorMessage) {
+                showAlertDialog("FAILED to Sign Transaction, errorCode: " + errorCode + " errorMessage: " + errorMessage);
+                //ScwErrorCode.ERROR_INVALID_TRANSACTION_FORMAT == -16;
+            }
+        };
     }
+
+    private static byte[] createRawTransaction(String toAddress, String ethAmount, String extraInfo){
+        // ["cat", "dog"]
+        return new byte[]{50, 50, 50, 50 ,50};
+    }
+    // *********
 
     private static ArrayList<String> stringToArrayList(String inputString) {
         return new ArrayList<>(Arrays.asList(inputString));
@@ -206,10 +240,9 @@ public class AppActivity extends Cocos2dxActivity {
                 public void onSuccess(List<String> addressList) {
                     publicKey = addressList.get(0);
 
-
                     int currentScore = currentContext.leaderboard.getScoreByKeystore(publicKey);
 
-                    // this account never save score, or new player
+                    // this account never save score, or this is new player
                     if (currentScore == 0) {
                         leaderboard.updateScore(publicKey, 0);
                     }
@@ -223,24 +256,6 @@ public class AppActivity extends Cocos2dxActivity {
         }
 
         return mScwGetAddressListCallback;
-    }
-
-    private ScwService.ScwSignEthTransactionCallback getSCWSignEthTransactionCallback() {
-        if (mScwSignEthTransactionCallback == null) {
-            mScwSignEthTransactionCallback = new ScwService.ScwSignEthTransactionCallback() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Log.i("Puzzle", "Signing Successful!");
-                }
-
-                @Override
-                public void onFailure(int i, @Nullable String s) {
-
-                }
-            };
-        }
-
-        return mScwSignEthTransactionCallback;
     }
 
     private String getSupportedCoins(){
@@ -274,6 +289,9 @@ public class AppActivity extends Cocos2dxActivity {
 
     public static void updateScore(int score){
         currentContext.leaderboard.updateScore(currentContext.publicKey, score);
+
+        //signEthTransaction();
+        checkForUpdateThenSignTransaction();
     }
 
     public static String getLeaderboard(){
@@ -281,7 +299,6 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public static void showAlertDialog(final String message) {
-
         //we must use runOnUiThread here
         currentContext.runOnUiThread(new Runnable() {
             @Override
@@ -295,88 +312,16 @@ public class AppActivity extends Cocos2dxActivity {
         });
     }
 
+    // Don't remove, this is an api
     public static void gotoSamsungBlockchainKeystoreMenu(){
-        Uri uri = Uri.parse(ScwDeepLink.MAIN);
+        startDeepLink(ScwDeepLink.MAIN);
+    }
+
+    private static void startDeepLink(String deepLink){
+        Uri uri = Uri.parse(deepLink);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(uri);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         currentContext.startActivity(intent);
-    }
-
-    class Entry implements Comparable{
-        public String key;
-        public int score;
-
-        public Entry(String key, int score) {
-            this.key = key;
-            this.score = score;
-        }
-
-        @Override
-        public int compareTo(Object compareTo) {
-            int scoreToCompare = ((Entry)compareTo).score;
-
-            return scoreToCompare - this.score; // big first
-        }
-    }
-
-    // Leader board Api
-    class LeaderBoard {
-        private List<Entry> _list;
-
-        Gson gson = new Gson();
-
-        public void init() {
-             _list = new ArrayList<>();
-
-            _list.add(new Entry("0xe7125ee1bc64ab7c51ce3617cb83e76fd545f1a9", 80));
-            _list.add(new Entry("0xf8425ee1bc64ab7c51ce3617cb83e76fd545f1b0", 78));
-            _list.add(new Entry("0xa9325ee1bc64ab7c51ce3617cb83e76fd545f1c1", 75));
-            _list.add(new Entry("0xd6625ee1bc64ab7c51ce3617cb83e76fd545f1d2", 70));
-            _list.add(new Entry("0x95e25ee1bc64ab7c51ce3617cb83e76fd545f1e3", 90));
-            _list.add(new Entry("0xb4325ee1bc64ab7c51ce3617cb83e76fd545f1f4", 55));
-            _list.add(new Entry("0xc2325ee1bc64ab7c51ce3617cb83e76fd545f1a5", 44));
-            _list.add(new Entry("0xe5425ee1bc64ab7c51ce3617cb83e76fd545f1b6", 33));
-            _list.add(new Entry("0xf1225ee1bc64ab7c51ce3617cb83e76fd545f1c7", 200));
-            _list.add(new Entry("0x35d25ee1bc64ab7c51ce3617cb83e76fd545f1d8", 20));
-            _list.add(new Entry("0x46a25ee1bc64ab7c51ce3617cb83e76fd545f1e9", 150));
-
-            Collections.sort(_list);
-        }
-
-        public String getLeaderBoard(){
-            String json = gson.toJson(_list);
-            Log.i("puzzle", json);
-            return json;
-        }
-
-        public int getScoreByKeystore(String keystore){
-            for (Entry entry: _list) {
-                if(entry.key == keystore) return entry.score;
-            }
-
-            return 0;
-        }
-
-        public void updateScore(String keystore, int score){
-            Entry found = null;
-            for (Entry entry: _list) {
-                if(entry.key == keystore) {
-                    found = entry;
-                    break;
-                }
-            }
-
-            if (found != null) {
-                if (score > found.score) {
-                    found.score = score;
-                }
-            }
-            else {
-                Entry newEntry = new Entry(keystore, score);
-                _list.add(newEntry);
-            }
-            Collections.sort(_list);
-        }
     }
 }

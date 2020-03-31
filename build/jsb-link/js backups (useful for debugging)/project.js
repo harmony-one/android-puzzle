@@ -108,10 +108,7 @@ onCreateKeystoreClicked: function() {
 Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();
 },
 onSaveClicked: function() {
-if (Global.isAndroid()) {
-Global.updateScore();
-Global.showAlertDialog("Your score has been updated");
-}
+Global.isAndroid() && Global.updateScore();
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");

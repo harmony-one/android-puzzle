@@ -43,7 +43,7 @@ cc.Class({
         if (Global.isAndroid()){
             Global.updateScore();
 
-            Global.showAlertDialog("Your score has been updated");
+            //Global.showAlertDialog("Your score has been updated");
         }
     },
 

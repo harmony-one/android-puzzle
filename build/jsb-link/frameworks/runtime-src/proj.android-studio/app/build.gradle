@@ -207,7 +207,7 @@ dependencies {
     implementation group: 'com.android.databinding', name: 'library', version: '3.6.1'
 
     // https://mvnrepository.com/artifact/android.arch.persistence.room/runtime
-    compile group: 'android.arch.persistence.room', name: 'runtime', version: '1.1.1'
+    implementation group: 'android.arch.persistence.room', name: 'runtime', version: '1.1.1'
 
 
 }

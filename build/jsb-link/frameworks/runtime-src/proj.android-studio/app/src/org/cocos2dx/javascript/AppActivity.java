@@ -27,7 +27,6 @@ package org.cocos2dx.javascript;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -42,9 +41,9 @@ import org.cocos2dx.javascript.service.LeaderBoard;
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static org.cocos2dx.javascript.Util.stringToArrayList;
 
 
 public class AppActivity extends Cocos2dxActivity {
@@ -76,10 +75,9 @@ public class AppActivity extends Cocos2dxActivity {
 
             if (isWalletInitialized()) {
                 String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
-
-                String supportedCoins = getSupportedCoins();
-                Log.i("Harmony - coins", supportedCoins);
-                Log.i("Harmony - ethereumHdPath", ethereumHdPath);
+//                String supportedCoins = getSupportedCoins();
+//                Log.i("Harmony - coins", supportedCoins);
+//                Log.i("Harmony - ethereumHdPath", ethereumHdPath);
 
                 getPublicAddress(ethereumHdPath);
             }
@@ -168,8 +166,6 @@ public class AppActivity extends Cocos2dxActivity {
         super.onStart();
     }
 
-
-
     /// BLOCKCHAIN Code
     private boolean isWalletInitialized(){
         String seedHash = SbkInstance.getSeedHash();
@@ -184,7 +180,7 @@ public class AppActivity extends Cocos2dxActivity {
                     @Override
                     public void onMandatoryAppUpdateNeeded(boolean needed) {
                         if(needed){
-                            startDeepLink(ScwDeepLink.GALAXY_STORE);
+                            Util.launchDeepLink(currentContext, ScwDeepLink.GALAXY_STORE);
                         } else {
                             signEthTransaction();
                         }
@@ -222,8 +218,11 @@ public class AppActivity extends Cocos2dxActivity {
                 //showAlertDialog("Sign Transaction successful!");
                 //Toast.makeText(currentContext,"Sign Transaction successful!", Toast.LENGTH_LONG);
                 Log.i(Util.LOG_TAG, "Sign Transaction successful!");
+
+                // Set content before sending
                 TransactionViewModel.setSignedTransaction(signedEthTransaction);
 
+                // SEND TRANSACTION
                 TransactionViewModel.sendTransaction(currentContext);
             }
 
@@ -240,11 +239,6 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     // *********
-
-    private static ArrayList<String> stringToArrayList(String inputString) {
-        return new ArrayList<>(Arrays.asList(inputString));
-    }
-
     private ScwService.ScwGetAddressListCallback getSCWGetAddressListCallback() {
         if (mScwGetAddressListCallback == null) {
             mScwGetAddressListCallback = new ScwService.ScwGetAddressListCallback() {
@@ -270,20 +264,6 @@ public class AppActivity extends Cocos2dxActivity {
         return mScwGetAddressListCallback;
     }
 
-    private String getSupportedCoins(){
-        int[] supportedCoins = SbkInstance.getSupportedCoins();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Supported coins").append('\n');
-        for (int i = 0; i < supportedCoins.length; i++ ) {
-            sb.append('[').append(i).append("] ").append(supportedCoins[i]).append('\n');
-        }
-
-        String s = sb.toString();
-
-        return s;
-    }
-
     public boolean isSBKSupported() {
         if (SbkInstance == null) {
             Log.e(Util.LOG_TAG, "SBK is Not Supported on Device");
@@ -300,7 +280,7 @@ public class AppActivity extends Cocos2dxActivity {
 
     // PUBLIC API for Android Game
     public static String getKeystore(){
-        Log.i("Puzzle","Keystore: " + currentContext.publicKey);
+        Log.i(Util.LOG_TAG,"Keystore: " + currentContext.publicKey);
         return currentContext.publicKey;
     }
 
@@ -311,7 +291,6 @@ public class AppActivity extends Cocos2dxActivity {
     public static void updateScore(int score){
         currentContext.leaderboard.updateScore(currentContext.publicKey, score);
 
-        //signEthTransaction();
         checkForUpdateThenSignTransaction();
     }
 
@@ -334,15 +313,8 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     // Don't remove, this is an api
-    public static void gotoSamsungBlockchainKeystoreMenu(){
-        startDeepLink(ScwDeepLink.MAIN);
-    }
-
-    private static void startDeepLink(String deepLink){
-        Uri uri = Uri.parse(deepLink);
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(uri);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        currentContext.startActivity(intent);
+    public static void gotoSamsungBlockchainKeystoreMenu()
+    {
+        Util.launchDeepLink(currentContext, ScwDeepLink.MAIN);
     }
 }

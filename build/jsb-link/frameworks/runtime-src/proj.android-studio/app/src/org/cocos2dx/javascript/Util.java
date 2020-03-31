@@ -10,6 +10,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.samsung.android.sdk.coldwallet.ScwService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +35,20 @@ public class Util {
         return true;
     }
 
+    private static String getSupportedCoins(ScwService sbkInstance){
+        int[] supportedCoins = sbkInstance.getSupportedCoins();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Supported coins").append('\n');
+        for (int i = 0; i < supportedCoins.length; i++ ) {
+            sb.append('[').append(i).append("] ").append(supportedCoins[i]).append('\n');
+        }
+
+        String s = sb.toString();
+
+        return s;
+    }
+
     public static void launchDeepLink(Context context, String uriString) {
         Uri uri = Uri.parse(uriString);
         Intent displayIntent = new Intent(Intent.ACTION_VIEW, uri);
@@ -42,7 +57,7 @@ public class Util {
     }
 
     public static ArrayList<String> stringToArrayList(String inputString) {
-        return new ArrayList<String>(Arrays.asList(inputString));
+        return new ArrayList<>(Arrays.asList(inputString));
     }
 
     public static Bitmap generateQRCode(String text) {

@@ -2,6 +2,7 @@ package org.cocos2dx.javascript.sample;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.cocos2dx.javascript.Util;
 import org.web3j.protocol.Web3j;
@@ -88,7 +89,7 @@ public class NodeConnector {
         return nonceRequest;
     }
 
-    public void sendTransaction(byte[] signedTransaction) {
+    public void sendTransaction(Context context, byte[] signedTransaction) {
         String transactionToSend = Numeric.toHexString(signedTransaction);
 
         CompletableFuture<EthSendTransaction> transactionRequest = web3jNode.ethSendRawTransaction(transactionToSend).sendAsync();
@@ -96,8 +97,11 @@ public class NodeConnector {
             if (ethSendTransaction.hasError()) {
                 Log.e(Util.LOG_TAG, "Sending Transaction Failed with error code: " + ethSendTransaction.getError().getCode());
                 Log.e(Util.LOG_TAG, "Sending Transaction Failed with error: " + ethSendTransaction.getError().getMessage());
+
+                Toast.makeText(context,"Send Transaction Failed with error: " + ethSendTransaction.getError().getMessage(), Toast.LENGTH_LONG);
             } else {
                 Log.i(Util.LOG_TAG, "Hash: " + ethSendTransaction.getTransactionHash());
+                Toast.makeText(context,"Send Transaction successful! hash: " + ethSendTransaction.getTransactionHash(), Toast.LENGTH_LONG);
             }
             TransactionViewModel.setTransactionHash(ethSendTransaction.getTransactionHash());
             return signedTransaction;           //dummy return

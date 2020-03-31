@@ -16,7 +16,7 @@ public class TransactionViewModel {
     private static TransactionModel currentTransaction;
 
     public static void sendTransaction(Context context) {
-        NodeConnector.getInstance(context).sendTransaction(currentTransaction.getSignedTransaction());
+        NodeConnector.getInstance(context).sendTransaction(context, currentTransaction.getSignedTransaction());
     }
 
     public static void createAndSignTransaction(AppActivity context, String toAddress, String amount, String transactionSpeed) {

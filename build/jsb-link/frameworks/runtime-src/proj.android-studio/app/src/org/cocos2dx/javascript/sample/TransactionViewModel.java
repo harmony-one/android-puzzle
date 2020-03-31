@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import org.cocos2dx.javascript.AppActivity;
+import org.cocos2dx.javascript.Util;
 import org.web3j.utils.Convert;
 
 import java.math.BigInteger;
@@ -31,16 +32,17 @@ public class TransactionViewModel {
 
         NodeConnector.getInstance(context).getNonceRequest(context.publicKey).thenApply(ethGetTransactionCount -> {
             //After Fetching nonce
-            currentTransaction.setNonce(ethGetTransactionCount.getTransactionCount());
-            Log.i(Util.LOG_TAG, "Nonce has been fetched");
+            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+            currentTransaction.setNonce(nonce);
+
+            Log.i(Util.LOG_TAG, "Nonce has been fetched, value: " + nonce);
+
             currentTransaction.setUnsignedTransaction(currentTransaction.generateUnsignedTransaction());
             Log.i(Util.LOG_TAG, "Unsigned Transaction has been created");
-            //Sign Transaction
-            if(!SharedPreferenceManager.getUseOtherKeyManager(context)) {
-                context.signTransaction(currentTransaction.getUnsignedTransaction());
-            } else {
-                context.signEthTransactionWithWeb3j(currentTransaction.getUnsignedRawTransaction());
-            }
+
+            //Sign Transaction with Samsung SBK
+            context.signTransaction(currentTransaction.getUnsignedTransaction());
+
             return null;
         });
     }
@@ -70,6 +72,4 @@ public class TransactionViewModel {
         }
         return gasPrice;
     }
-
-
 }

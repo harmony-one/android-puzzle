@@ -3,6 +3,7 @@ package org.cocos2dx.javascript.sample;
 import android.content.Context;
 import android.util.Log;
 
+import org.cocos2dx.javascript.Util;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
@@ -42,7 +43,7 @@ public class NodeConnector {
     }
 
     public static void reCreateNodeConnector(Context context) {
-        nodeConnector = new NodeConnector(SharedPreferenceManager.getDefaultNetwork(context));
+        nodeConnector = new NodeConnector(ROPSTEN);
     }
 
 
@@ -69,7 +70,7 @@ public class NodeConnector {
             BigDecimal balanceInWei = new BigDecimal(ethGetBalance.getBalance());
             BigDecimal balanceInEther = balanceInWei.divide(new BigDecimal(BigInteger.TEN.pow(18)));
             String fetchedBalance = balanceInEther.toString();
-            Log.i("puzzle", "Fetched Balance: " + fetchedBalance);
+            Log.i(Util.LOG_TAG, "Fetched Balance: " + fetchedBalance);
             //AccountViewModel.setBalance(fetchedBalance);
             return ethGetBalance;       //dummy return
         });
@@ -93,10 +94,10 @@ public class NodeConnector {
         CompletableFuture<EthSendTransaction> transactionRequest = web3jNode.ethSendRawTransaction(transactionToSend).sendAsync();
         transactionRequest.thenApply(ethSendTransaction -> {
             if (ethSendTransaction.hasError()) {
-                Log.e("puzzle", "Sending Transaction Failed with error code: " + ethSendTransaction.getError().getCode());
-                Log.e("puzzle", "Sending Transaction Failed with error: " + ethSendTransaction.getError().getMessage());
+                Log.e(Util.LOG_TAG, "Sending Transaction Failed with error code: " + ethSendTransaction.getError().getCode());
+                Log.e(Util.LOG_TAG, "Sending Transaction Failed with error: " + ethSendTransaction.getError().getMessage());
             } else {
-                Log.i("puzzle", "Hash: " + ethSendTransaction.getTransactionHash());
+                Log.i(Util.LOG_TAG, "Hash: " + ethSendTransaction.getTransactionHash());
             }
             TransactionViewModel.setTransactionHash(ethSendTransaction.getTransactionHash());
             return signedTransaction;           //dummy return

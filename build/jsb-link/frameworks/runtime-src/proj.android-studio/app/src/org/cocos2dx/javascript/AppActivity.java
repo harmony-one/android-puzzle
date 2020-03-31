@@ -30,7 +30,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -38,20 +37,11 @@ import com.samsung.android.sdk.coldwallet.ScwCoinType;
 import com.samsung.android.sdk.coldwallet.ScwDeepLink;
 import com.samsung.android.sdk.coldwallet.ScwService;
 
-import org.cocos2dx.javascript.sample.NodeConnector;
-import org.cocos2dx.javascript.sample.SharedPreferenceManager;
 import org.cocos2dx.javascript.sample.TransactionViewModel;
-import org.cocos2dx.javascript.sample.Util;
 import org.cocos2dx.javascript.service.LeaderBoard;
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.crypto.TransactionEncoder;
-import org.web3j.crypto.WalletUtils;
-import org.web3j.tx.ChainId;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,15 +51,12 @@ public class AppActivity extends Cocos2dxActivity {
 
     static AppActivity currentContext;
 
+    ScwService SbkInstance;
+
     LeaderBoard leaderboard = new LeaderBoard();
 
     private ScwService.ScwGetAddressListCallback mScwGetAddressListCallback;
     public String publicKey = "";
-
-    private static final String CREDENTIAL_DIR = ".credentials";
-    private static final String CREDENTIAL_FILE_PATH_KEY = "credential_key";
-    private static final String HARD_CODED_PASSWORD = "PASSWORD";
-    private Credentials mCredential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +68,8 @@ public class AppActivity extends Cocos2dxActivity {
         SDKWrapper.getInstance().init(this);
 
         currentContext = this;
+
+        SbkInstance = ScwService.getInstance();
 
         if (isKeystoreApiSupported()) {
             leaderboard.init();
@@ -95,28 +84,6 @@ public class AppActivity extends Cocos2dxActivity {
                 getPublicAddress(ethereumHdPath);
             }
         }
-    }
-
-    public Credentials getCredential() throws Exception{
-        if(mCredential==null){
-            final String CREDENTIAL_PATH = currentContext.getFilesDir() + "/" + CREDENTIAL_DIR;;
-            File credentialDir = new File(CREDENTIAL_PATH);
-            if(!credentialDir.exists()){
-                boolean result = credentialDir.mkdir();
-                if(!result){
-                    throw new Exception("Cannot make dir");
-                }
-            }
-
-            String credentialFilename = SharedPreferenceManager.getCredentialFilePath(currentContext, CREDENTIAL_FILE_PATH_KEY);
-            if(credentialFilename==null){
-                // need to make
-                credentialFilename = WalletUtils.generateNewWalletFile(HARD_CODED_PASSWORD, credentialDir, false);
-                SharedPreferenceManager.setCredentialFilePath(currentContext, CREDENTIAL_FILE_PATH_KEY, credentialFilename);
-            }
-            mCredential = WalletUtils.loadCredentials(HARD_CODED_PASSWORD, CREDENTIAL_PATH + "/" + credentialFilename);
-        }
-        return mCredential;
     }
 
     @Override
@@ -205,7 +172,7 @@ public class AppActivity extends Cocos2dxActivity {
 
     /// BLOCKCHAIN Code
     private boolean isWalletInitialized(){
-        String seedHash = ScwService.getInstance().getSeedHash();
+        String seedHash = SbkInstance.getSeedHash();
         boolean initialized =  (seedHash != null && seedHash.length() > 0);
 
         return initialized;
@@ -224,73 +191,40 @@ public class AppActivity extends Cocos2dxActivity {
                     }
                 };
 
-        ScwService.getInstance().checkForMandatoryAppUpdate(callback);
+        currentContext.SbkInstance.checkForMandatoryAppUpdate(callback);
     }
 
     private void getPublicAddress(String hdPath) {
-        ScwService.getInstance().getAddressList(getSCWGetAddressListCallback(), stringToArrayList(hdPath));
+        SbkInstance.getAddressList(getSCWGetAddressListCallback(), stringToArrayList(hdPath));
     }
 
     // SIGN TRANSACTION
     private static void signEthTransaction(){
-        String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
-
-        String myAddress = currentContext.publicKey;
         String toAddress = "0x2700E87Bf9A7A7D015eE50AaAB47936e3043cefe";
         String ethAmount = "0.05";
-        String data = "";
         String speed = "average"; // slow | average | fast
-
-        byte[] encodedUnsignedEthTx = createRawTransaction(toAddress, ethAmount, data);
-
-        //ScwService.getInstance().signEthTransaction(getSCWSignEthTransactionCallback(), encodedUnsignedEthTx, ethereumHdPath);
 
         TransactionViewModel.createAndSignTransaction(currentContext, toAddress, ethAmount, speed);
     }
 
-    public void signTransaction( byte[] encodedUnsignedEthTx){
-        String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
-
-        ScwService.getInstance().signEthTransaction(getSCWSignEthTransactionCallback(), encodedUnsignedEthTx, ethereumHdPath);
-    }
-
-    public void signEthTransactionWithWeb3j(RawTransaction rawTransaction) {
-        Log.i(Util.LOG_TAG, "Init Web3j to sign transaction");
-
-        String network = SharedPreferenceManager.getDefaultNetwork(currentContext);
-        byte chainId = -1;
-        if(NodeConnector.ROPSTEN.equals(network)) {
-            chainId = 3;
-        } else if(NodeConnector.KOVAN.equals(network)) {
-            chainId = 42;
-        } else if(NodeConnector.MAINNET.equals(network)) {
-            chainId = 1;
-        }
-
-        byte[] signedMessage;
-
-        try {
-            if (chainId > ChainId.NONE) {
-                signedMessage = TransactionEncoder.signMessage(rawTransaction, chainId, mCredential);
-            } else {
-                signedMessage = TransactionEncoder.signMessage(rawTransaction, mCredential);
-            }
-
-            TransactionViewModel.setSignedTransaction(signedMessage);
-
-            Log.i(Util.LOG_TAG, "Success signMessage with web3j");
-
-        } catch (Exception e) {
-            Log.i(Util.LOG_TAG, "Exception when signMessage with web3j. message : " + e.getMessage());
+    public void signTransaction( byte[] unsignedTransaction){
+        Log.i(Util.LOG_TAG, "Init SBK to sign transaction");
+        if (isSBKSupported()) {
+            String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
+            SbkInstance.signEthTransaction(getSCWSignEthTransactionCallback(), unsignedTransaction, ethereumHdPath);
         }
     }
 
-    private static ScwService.ScwSignEthTransactionCallback getSCWSignEthTransactionCallback() {
+    private ScwService.ScwSignEthTransactionCallback getSCWSignEthTransactionCallback() {
         return new ScwService.ScwSignEthTransactionCallback() {
             @Override
             public void onSuccess(byte[] signedEthTransaction) {
                 //showAlertDialog("Sign Transaction successful!");
-                Toast.makeText(currentContext,"Sign Transaction successful!", Toast.LENGTH_LONG);
+                //Toast.makeText(currentContext,"Sign Transaction successful!", Toast.LENGTH_LONG);
+                Log.i(Util.LOG_TAG, "Sign Transaction successful!");
+                TransactionViewModel.setSignedTransaction(signedEthTransaction);
+
+                TransactionViewModel.sendTransaction(currentContext);
             }
 
             @Override
@@ -298,15 +232,13 @@ public class AppActivity extends Cocos2dxActivity {
                 //showAlertDialog("FAILED to Sign Transaction, errorCode: " + errorCode + " errorMessage: " + errorMessage);
                 //ScwErrorCode.ERROR_INVALID_TRANSACTION_FORMAT == -16;
 
-                Toast.makeText(currentContext,"FAILED to Sign Transaction, errorCode: " + errorCode + " errorMessage: " + errorMessage, Toast.LENGTH_LONG);
+                Log.i(Util.LOG_TAG, "FAILED to Sign Transaction, errorCode: " + errorCode + " errorMessage: " + errorMessage);
+
+                //Toast.makeText(currentContext,"FAILED to Sign Transaction, errorCode: " + errorCode + " errorMessage: " + errorMessage, Toast.LENGTH_LONG);
             }
         };
     }
 
-    private static byte[] createRawTransaction(String toAddress, String ethAmount, String extraInfo){
-        // ["cat", "dog"]
-        return new byte[]{50, 50, 50, 50 ,50};
-    }
     // *********
 
     private static ArrayList<String> stringToArrayList(String inputString) {
@@ -320,7 +252,7 @@ public class AppActivity extends Cocos2dxActivity {
                 public void onSuccess(List<String> addressList) {
                     publicKey = addressList.get(0);
 
-                    int currentScore = currentContext.leaderboard.getScoreByKeystore(publicKey);
+                    int currentScore = leaderboard.getScoreByKeystore(publicKey);
 
                     // this account never save score, or this is new player
                     if (currentScore == 0) {
@@ -339,7 +271,7 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     private String getSupportedCoins(){
-        int[] supportedCoins = ScwService.getInstance().getSupportedCoins();
+        int[] supportedCoins = SbkInstance.getSupportedCoins();
 
         StringBuilder sb = new StringBuilder();
         sb.append("Supported coins").append('\n');
@@ -352,8 +284,17 @@ public class AppActivity extends Cocos2dxActivity {
         return s;
     }
 
+    public boolean isSBKSupported() {
+        if (SbkInstance == null) {
+            Log.e(Util.LOG_TAG, "SBK is Not Supported on Device");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private boolean isKeystoreApiSupported() {
-        int keystoreApiLevel = ScwService.getInstance().getKeystoreApiLevel();
+        int keystoreApiLevel = SbkInstance.getKeystoreApiLevel();
         return keystoreApiLevel > 0;
     }
 

@@ -1,4 +1,4 @@
-package org.cocos2dx.javascript.sample;
+package org.cocos2dx.javascript;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +18,6 @@ import java.util.Arrays;
 public class Util {
 
     public static final String LOG_TAG = "Puzzle";
-    public static final String HD_PATH_PREFIX = "m/44'/60'/0'/0/";
-    public static final String ACCOUNT_NAME_PREFIX = "Account ";
-    public static final String DB_NAME = "open_crypto_wallet_db";
     private static int qrCodeWidth = 10;
     private static int qrCodeHeight = 10;
     private static int requiredAPILevel = 2;

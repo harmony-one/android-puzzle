@@ -70,17 +70,21 @@ public class AppActivity extends Cocos2dxActivity {
 
         SbkInstance = ScwService.getInstance();
 
-        if (isKeystoreApiSupported()) {
-            leaderboard.init();
+        if (isDeviceSupportsSBK() == false) {
+            showAlertDialog("Your Device is not support Samsung Blockchain");
+            return;
+        }
+        if (checkApiLevel() == false) {
+            showAlertDialog("Samsung Blockchain API level is outdated, please upgrade.");
+            return;
+        }
 
-            if (isWalletInitialized()) {
-                String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
-//                String supportedCoins = getSupportedCoins();
-//                Log.i("Harmony - coins", supportedCoins);
-//                Log.i("Harmony - ethereumHdPath", ethereumHdPath);
+        leaderboard.init();
 
-                getPublicAddress(ethereumHdPath);
-            }
+        if (isWalletInitialized()) {
+            String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
+
+            getPublicAddress(ethereumHdPath);
         }
     }
 
@@ -273,7 +277,7 @@ public class AppActivity extends Cocos2dxActivity {
         }
     }
 
-    private boolean isKeystoreApiSupported() {
+    private boolean checkApiLevel() {
         int keystoreApiLevel = SbkInstance.getKeystoreApiLevel();
         return keystoreApiLevel > 0;
     }
@@ -289,9 +293,14 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public static void updateScore(int score){
-        currentContext.leaderboard.updateScore(currentContext.publicKey, score);
+        if (Util.isInternetConnectionAvailable()){
+            currentContext.leaderboard.updateScore(currentContext.publicKey, score);
 
-        checkForUpdateThenSignTransaction();
+            checkForUpdateThenSignTransaction();
+        }
+        else {
+            showAlertDialog("No Internet connection available.\n Unable to save your score!");
+        }
     }
 
     public static String getLeaderboard(){
@@ -316,5 +325,9 @@ public class AppActivity extends Cocos2dxActivity {
     public static void gotoSamsungBlockchainKeystoreMenu()
     {
         Util.launchDeepLink(currentContext, ScwDeepLink.MAIN);
+    }
+
+    public static boolean isDeviceSupportsSBK(){
+        return currentContext.SbkInstance == null;
     }
 }

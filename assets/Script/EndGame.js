@@ -26,7 +26,7 @@ cc.Class({
 
             this.lblWelcome.string = "Welcome!";
 
-            Global.showAlertDialog("Welcome!, your public key: \n" + Global.myKeystore);
+            //Global.showAlertDialog("Welcome!, your public key: \n" + Global.myKeystore);
         }
 
         this.panelGuest.active = false;
@@ -41,7 +41,9 @@ cc.Class({
 
     onSaveClicked(){ 
         if (Global.isAndroid()){
-            Global.updateScore();
+            //Global.updateScore(); // update score & send-transaction
+
+            Global.restUpdateScore();
 
             //Global.showAlertDialog("Your score has been updated");
         }

@@ -1,5 +1,5 @@
-window.__require = function e(t, i, c) {
-function n(o, l) {
+window.__require = function e(t, i, n) {
+function c(o, l) {
 if (!i[o]) {
 if (!t[o]) {
 var a = o.split("/");
@@ -11,17 +11,17 @@ if (s) return s(a, !0);
 throw new Error("Cannot find module '" + o + "'");
 }
 }
-var h = i[o] = {
+var u = i[o] = {
 exports: {}
 };
-t[o][0].call(h.exports, function(e) {
-return n(t[o][1][e] || e);
-}, h, h.exports, e, t, i, c);
+t[o][0].call(u.exports, function(e) {
+return c(t[o][1][e] || e);
+}, u, u.exports, e, t, i, n);
 }
 return i[o].exports;
 }
-for (var s = "function" == typeof __require && __require, o = 0; o < c.length; o++) n(c[o]);
-return n;
+for (var s = "function" == typeof __require && __require, o = 0; o < n.length; o++) c(n[o]);
+return c;
 }({
 Block: [ function(e, t, i) {
 "use strict";
@@ -108,7 +108,7 @@ onCreateKeystoreClicked: function() {
 Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();
 },
 onSaveClicked: function() {
-Global.isAndroid() && Global.updateScore();
+Global.isAndroid() && Global.restUpdateScore();
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
@@ -130,11 +130,11 @@ key: cc.Label,
 score: cc.Label,
 medal: cc.Sprite
 },
-setup: function(e, t, i, c) {
+setup: function(e, t, i, n) {
 this.rank.string = e;
 this.key.string = t;
 this.score.string = i;
-this.medal.spriteFrame = c;
+this.medal.spriteFrame = n;
 }
 });
 cc._RF.pop();
@@ -142,7 +142,7 @@ cc._RF.pop();
 Game: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var c = 0, n = 1, s = 2;
+var n = 0, c = 1, s = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -196,7 +196,7 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: c,
+state: n,
 lastMove: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
@@ -219,13 +219,13 @@ for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var i = e % 3, c = Math.floor(e / 3);
-t.position = this.getNodePosition(i, c);
+var i = e % 3, n = Math.floor(e / 3);
+t.position = this.getNodePosition(i, n);
 this.node.addChild(t);
-var n = t.getComponent("Block");
-n.x = i;
-n.y = c;
-this.listBlockScripts.push(n);
+var c = t.getComponent("Block");
+c.x = i;
+c.y = n;
+this.listBlockScripts.push(c);
 }
 },
 getNodePosition: function(e, t) {
@@ -233,26 +233,30 @@ var i = this.nodeWidth;
 return cc.v2(18 * (t + 1) + i * t + i / 2, -(18 * (e + 1) + i * e + i / 2));
 },
 reset: function() {
-this.state = c;
+this.state = n;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
+Global.player_sequence = "";
 var e = this._allLevels[this._currentLevel];
 this.loadLevel(e);
 this.disableTouch();
 this.animatePlayButton();
 },
 loadLevel: function(e) {
-for (var t = 0; t < e.contents.length; t++) {
-var i = e.contents[t], c = t % 3, n = Math.floor(t / 3), s = this.findBlock(n, c);
-s.setSelected(!1);
-s.setColorAndValue(this.getSpriteByValue(i), i);
+Global.board_state = "";
+for (var t = "", i = 0; i < e.contents.length; i++) {
+var n = e.contents[i], c = i % 3, s = Math.floor(i / 3), o = this.findBlock(s, c);
+o.setSelected(!1);
+o.setColorAndValue(this.getSpriteByValue(n), n);
+t += n;
 }
+Global.board_state = t;
 this.selectedX = e.initialSelected.x;
 this.selectedY = e.initialSelected.y;
 cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
-var o = this.findBlock(this.selectedX, this.selectedY);
-null != o && o.setSelected(!0);
+var l = this.findBlock(this.selectedX, this.selectedY);
+null != l && l.setSelected(!0);
 this.lblLevel.string = this._currentLevel + 1 + "/100";
 this.btnUndo.interactable = !1;
 null != this.tween4Stopwatch && this.tween4Stopwatch.stop();
@@ -274,42 +278,42 @@ onTouchStart: function(e) {
 this.startPos = e.getLocation();
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), i = t.x - this.startPos.x, c = t.y - this.startPos.y;
-if (!(Math.abs(i) < 80 && Math.abs(c) < 80)) {
-var n = void 0;
-n = Math.abs(i) >= Math.abs(c) ? i > 0 ? "right" : "left" : c > 0 ? "up" : "down";
-this.tryMove(n);
+var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
+if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
+var c = void 0;
+c = Math.abs(i) >= Math.abs(n) ? i > 0 ? "R" : "L" : n > 0 ? "U" : "D";
+this.tryMove(c);
 }
 },
 findBlock: function(e, t) {
 for (var i = 0; i < this.listBlockScripts.length; i++) {
-var c = this.listBlockScripts[i];
-if (c.x == e && c.y == t) return c;
+var n = this.listBlockScripts[i];
+if (n.x == e && n.y == t) return n;
 }
 cc.log("findBlock: FAILED at index ", i);
 },
 tryMove: function(e) {
 var t = !1, i = this.findBlock(this.selectedX, this.selectedY);
 switch (e) {
-case "up":
+case "U":
 if (0 == this.selectedX) break;
 this.selectedX--;
 t = !0;
 break;
 
-case "down":
+case "D":
 if (2 == this.selectedX) break;
 this.selectedX++;
 t = !0;
 break;
 
-case "left":
+case "L":
 if (0 == this.selectedY) break;
 this.selectedY--;
 t = !0;
 break;
 
-case "right":
+case "R":
 if (2 == this.selectedY) break;
 this.selectedY++;
 t = !0;
@@ -319,14 +323,15 @@ if (this.btnPlay.enabled) {
 this.btnPlay.node.active = !1;
 this.btnUndo.node.active = !0;
 this.tutorialLine.enabled = !1;
-this.state = n;
+this.state = c;
 }
+Global.player_sequence += e;
 this.lastMove = e;
 this.btnUndo.interactable = !0;
-var c = this.findBlock(this.selectedX, this.selectedY), s = c.value + 1;
-c.setColorAndValue(this.getSpriteByValue(s), s);
+var n = this.findBlock(this.selectedX, this.selectedY), s = n.value + 1;
+n.setColorAndValue(this.getSpriteByValue(s), s);
 i.setSelected(!1);
-c.setSelected(!0);
+n.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -363,6 +368,7 @@ playInvalidMoveSound: function() {
 null != this.soundCantMove && cc.audioEngine.playEffect(this.soundCantMove);
 },
 onPlayClicked: function() {
+Global.restUpdateScore();
 this.enableTouch();
 this.tween4PlayButton.stop();
 this.btnPlay.node.scale = 1;
@@ -376,21 +382,24 @@ var e = this.findBlock(this.selectedX, this.selectedY), t = e.value - 1;
 e.setColorAndValue(this.getSpriteByValue(t), t);
 e.setSelected(!1);
 switch (this.lastMove) {
-case "up":
+case "U":
 this.selectedX++;
 break;
 
-case "down":
+case "D":
 this.selectedX--;
 break;
 
-case "left":
+case "L":
 this.selectedY++;
 break;
 
-case "right":
+case "R":
 this.selectedY--;
 }
+var i = Global.player_sequence;
+i = i.substring(i.length - 1);
+Global.player_sequence = i;
 this.lastMove = null;
 this.findBlock(this.selectedX, this.selectedY).setSelected(!0);
 this.btnUndo.interactable = !1;
@@ -420,7 +429,7 @@ angle: 20
 })).start();
 this.isClockRinging = !0;
 }
-} else if (this.state == n) {
+} else if (this.state == c) {
 Global.newScore = this.score;
 cc.director.loadScene("end_game");
 this.state = s;
@@ -435,6 +444,8 @@ cc._RF.push(t, "9bf09yemltMJ6LDPqxBrroN", "Global");
 window.Global = {
 myKeystore: "",
 newScore: 0,
+board_state: "",
+player_sequence: "",
 isAndroid: function() {
 return cc.sys.os == cc.sys.OS_ANDROID;
 },
@@ -452,8 +463,8 @@ return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "g
 },
 updateScore: function() {
 if (!(this.newScore <= 0)) {
-var e = this.getScore();
-this.newScore > e && jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(I)V", this.newScore);
+this.getScore();
+this.newScore;
 }
 },
 getLeaderboard: function() {
@@ -464,6 +475,21 @@ return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "s
 },
 gotoSamsungBlockchainKeystoreMenu: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "gotoSamsungBlockchainKeystoreMenu", "()V");
+},
+restUpdateScore: function() {
+var e = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
+cc.log("PARAMZ ", e);
+},
+restGetLeaderBoard: function(e) {
+var t = new XMLHttpRequest();
+t.open("GET", "http://ec2-54-212-193-72.us-west-2.compute.amazonaws.com:8080/api/leader_boards", !0);
+t.onreadystatechange = function() {
+if (4 == t.readyState && t.status >= 200 && t.status < 400) {
+var i = t.responseText;
+e(i);
+}
+};
+t.send(null);
 }
 };
 cc._RF.pop();
@@ -482,16 +508,27 @@ type: cc.SpriteFrame
 }
 },
 start: function() {
-var e = this, t = Global.getLeaderboard();
-cc.log("json string", t);
-var i = 1;
-JSON.parse(t).forEach(function(t) {
-var c = cc.instantiate(e.prefabEntry), n = c.getComponent("Entry"), s = e.medalSprites[e.medalSprites.length - 1];
-1 != i && 2 != i || (s = e.medalSprites[i - 1]);
-var o = t.key.slice(0, 10) + "...";
-n.setup(i, o, t.score, s);
-e.entriesRoot.addChild(c);
-i++;
+var e = "", t = null;
+Global.isAndroid();
+var i = this;
+Global.restGetLeaderBoard(function(n) {
+e = n;
+var c = JSON.parse(e);
+cc.log("json string", e);
+t = c.leaders;
+cc.log("Entries", t);
+t.sort(function(e, t) {
+return e.score > t.score ? 1 : -1;
+});
+var s = 1;
+t.forEach(function(e) {
+var t = cc.instantiate(i.prefabEntry), n = t.getComponent("Entry"), c = i.medalSprites[i.medalSprites.length - 1];
+1 != s && 2 != s || (c = i.medalSprites[s - 1]);
+var o = e.address.slice(0, 10) + "...";
+n.setup(s, o, e.score, c);
+i.entriesRoot.addChild(t);
+s++;
+});
 });
 },
 onPlayAgainClicked: function() {
@@ -519,7 +556,7 @@ return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.f
 },
 levels: function() {
 for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var c = 3 * (e = this.getDifficulty(i)), n = 4 * e, s = i + 3, o = this.randRange(c, n), l = {}, a = [];
+var n = 3 * (e = this.getDifficulty(i)), c = 4 * e, s = i + 3, o = this.randRange(n, c), l = {}, a = [];
 if (1 == i) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
 l.contents = a;
@@ -529,44 +566,44 @@ l.initialSelected.y = 0;
 t[i - 1] = l;
 } else {
 for (var r = 0; r < 9; r++) a.push(s);
-var h = this.randRange(0, 9), u = [];
-a[h] -= 1;
+var u = this.randRange(0, 9), h = [];
+a[u] -= 1;
 for (r = 0; r < o; r++) {
 var d = -1;
 do {
 d = this.randRange(0, 4);
-} while (!this.possible(a, h, d));
+} while (!this.possible(a, u, d));
 switch (d) {
 case 0:
-h -= 3;
-u.push('"d"');
-r + 1 != o && (a[h] -= 1);
+u -= 3;
+h.push('"d"');
+r + 1 != o && (a[u] -= 1);
 break;
 
 case 1:
-h += 3;
-u.push('"u"');
-r + 1 != o && (a[h] -= 1);
+u += 3;
+h.push('"u"');
+r + 1 != o && (a[u] -= 1);
 break;
 
 case 2:
-h -= 1;
-u.push('"r"');
-r + 1 != o && (a[h] -= 1);
+u -= 1;
+h.push('"r"');
+r + 1 != o && (a[u] -= 1);
 break;
 
 case 3:
-h += 1;
-u.push('"l"');
-r + 1 != o && (a[h] -= 1);
+u += 1;
+h.push('"l"');
+r + 1 != o && (a[u] -= 1);
 }
 }
-var f = h % 3, p = Math.floor(h / 3);
-u = u.reverse();
+var p = u % 3, f = Math.floor(u / 3);
+h = h.reverse();
 l.contents = a;
 l.initialSelected = {};
-l.initialSelected.x = p;
-l.initialSelected.y = f;
+l.initialSelected.x = f;
+l.initialSelected.y = p;
 t[i - 1] = l;
 }
 }

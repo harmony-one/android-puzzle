@@ -31,7 +31,7 @@ cc.Class({
     state: STATE.TUTORIAL,
     lastMove: null,
 
-    onLoad () {
+    onLoad () {        
         let spaceX = 11;
         let spaceY = 11;
         let padding = 22;
@@ -100,7 +100,7 @@ cc.Class({
         this.state = STATE.TUTORIAL;
         this.score = 0;
         this._currentLevel = 0;
-        this._timer = 0;        
+        this._timer = 0;
 
         let level = this._allLevels[this._currentLevel];
 
@@ -112,6 +112,10 @@ cc.Class({
     },
     
     loadLevel: function(level){
+        Global.board_state = "";
+        Global.player_sequence = "";
+        let temp = "";
+
         for (let i = 0; i < level.contents.length; i++) {
             let value = level.contents[i];
 
@@ -122,7 +126,10 @@ cc.Class({
             block.setSelected(false);
             
             block.setColorAndValue(this.getSpriteByValue(value), value);
+
+            temp += value;
         }
+        Global.board_state = temp;
 
         this.selectedX = level.initialSelected.x;
         this.selectedY = level.initialSelected.y;
@@ -174,9 +181,9 @@ cc.Class({
 
         let direction;
         if (Math.abs(deltaX) >= Math.abs(deltaY)) {
-            direction = deltaX > 0 ? 'right' : 'left';
+            direction = deltaX > 0 ? 'R' : 'L';
         } else {
-            direction = deltaY > 0 ? 'up' : 'down';
+            direction = deltaY > 0 ? 'U' : 'D';
         }
 
         //this.lblError.string = direction;
@@ -202,25 +209,25 @@ cc.Class({
         let currentBlock = this.findBlock(this.selectedX, this.selectedY);
 
         switch (direction){
-            case 'up':
+            case 'U':
                 if (this.selectedX == 0) break;
 
                 this.selectedX--;
                 canMove = true;
                 break;
-            case 'down':
+            case 'D':
                 if (this.selectedX == BLOCKS_PER_ROW - 1) break;
 
                 this.selectedX++;
                 canMove = true;
                 break;
-            case 'left':
+            case 'L':
                 if (this.selectedY == 0) break;
 
                 this.selectedY--;
                 canMove = true;
                 break;
-            case 'right':
+            case 'R':
                 if (this.selectedY == BLOCKS_PER_ROW - 1) break;
 
                 this.selectedY++;
@@ -239,6 +246,9 @@ cc.Class({
 
                 this.state = STATE.STARTED;
             }
+
+            // Log player's move to submit later
+            Global.player_sequence += direction;
 
             this.lastMove = direction;
             this.btnUndo.interactable = true;
@@ -336,19 +346,25 @@ cc.Class({
 
         // back to previous selected block
         switch (this.lastMove){
-            case 'up':
+            case 'U':
                 this.selectedX++;
                 break;
-            case 'down':
+            case 'D':
                 this.selectedX--;
                 break;
-            case 'left':
+            case 'L':
                 this.selectedY++;
                 break;
-            case 'right':
+            case 'R':
                 this.selectedY--;
                 break;
         }
+
+        // Remove last letter from player's activity
+        let temp = Global.player_sequence;
+        temp = temp.substring(temp.length - 1);
+
+        Global.player_sequence = temp;
         
         this.lastMove = null;
 

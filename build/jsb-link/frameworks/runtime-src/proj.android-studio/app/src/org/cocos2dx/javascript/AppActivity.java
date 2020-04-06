@@ -70,7 +70,7 @@ public class AppActivity extends Cocos2dxActivity {
 
         SbkInstance = ScwService.getInstance();
 
-        if (isDeviceSupportsSBK() == false) {
+        if (isSBKSupported() == false) {
             showAlertDialog("Your Device is not support Samsung Blockchain");
             return;
         }
@@ -268,7 +268,7 @@ public class AppActivity extends Cocos2dxActivity {
         return mScwGetAddressListCallback;
     }
 
-    public boolean isSBKSupported() {
+    private boolean isSBKSupported() {
         if (SbkInstance == null) {
             Log.e(Util.LOG_TAG, "SBK is Not Supported on Device");
             return false;
@@ -327,7 +327,4 @@ public class AppActivity extends Cocos2dxActivity {
         Util.launchDeepLink(currentContext, ScwDeepLink.MAIN);
     }
 
-    public static boolean isDeviceSupportsSBK(){
-        return currentContext.SbkInstance == null;
-    }
 }

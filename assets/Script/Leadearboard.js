@@ -33,7 +33,7 @@ cc.Class({
 
             cc.log("Entries" , entries);
 
-            entries.sort((a, b) => (a.score > b.score) ? 1 : -1);
+            entries.sort((a, b) => (a.score > b.score) ? -1 : 1);
 
             let rank = 1;
             entries.forEach(entry => {

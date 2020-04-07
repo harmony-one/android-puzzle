@@ -70,7 +70,7 @@ window.Global = {
                 let status = data["status"];
                 let tx = data["tx"];
 
-                Global.showAlertDialog("Score Saved \n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence);
+                Global.showAlertDialog("Score Saved \n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence);
             }
         }
         

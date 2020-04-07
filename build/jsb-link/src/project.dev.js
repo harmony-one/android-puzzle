@@ -103,7 +103,6 @@ window.__require = function e(t, n, r) {
         if (Global.isAndroid()) {
           Global.getKeystore();
           this.lblWelcome.string = "Welcome!";
-          Global.showAlertDialog("Welcome!, your public key: \n" + Global.myKeystore);
         }
         this.panelGuest.active = false;
         this.panelAuthenticated.active = true;
@@ -522,7 +521,7 @@ window.__require = function e(t, n, r) {
             cc.log("POGCHAMP", data);
             var status = data["status"];
             var tx = data["tx"];
-            Global.showAlertDialog("Score Saved \n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence);
+            Global.showAlertDialog("Score Saved \n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence);
           }
         };
         xhr.send(params);
@@ -568,7 +567,7 @@ window.__require = function e(t, n, r) {
           entries = data["leaders"];
           cc.log("Entries", entries);
           entries.sort(function(a, b) {
-            return a.score > b.score ? 1 : -1;
+            return a.score > b.score ? -1 : 1;
           });
           var rank = 1;
           entries.forEach(function(entry) {

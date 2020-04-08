@@ -24,7 +24,6 @@
  ****************************************************************************/
 package org.cocos2dx.javascript;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -71,11 +70,11 @@ public class AppActivity extends Cocos2dxActivity {
         SbkInstance = ScwService.getInstance();
 
         if (isSBKSupported() == false) {
-            showAlertDialog("Your Device is not support Samsung Blockchain");
+            //showAlertDialog("Your Device is not support Samsung Blockchain");
             return;
         }
         if (checkApiLevel() == false) {
-            showAlertDialog("Samsung Blockchain API level is outdated, please upgrade.");
+            //showAlertDialog("Samsung Blockchain API level is outdated, please upgrade.");
             return;
         }
 
@@ -299,7 +298,7 @@ public class AppActivity extends Cocos2dxActivity {
             checkForUpdateThenSignTransaction();
         }
         else {
-            showAlertDialog("No Internet connection available.\n Unable to save your score!");
+//            showAlertDialog("No Internet connection available.\n Unable to save your score!");
         }
     }
 
@@ -307,19 +306,29 @@ public class AppActivity extends Cocos2dxActivity {
         return currentContext.leaderboard.getLeaderBoard();
     }
 
-    public static void showAlertDialog(final String message) {
-        //we must use runOnUiThread here
-        currentContext.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog alertDialog = new AlertDialog.Builder(currentContext).create();
-                alertDialog.setTitle("Message");
-                alertDialog.setMessage(message);
-                //alertDialog.setIcon(R.drawable.ic_close);
-                alertDialog.show();
-            }
-        });
+    public static boolean isInternetConnectionAvailable(){
+        return Util.isInternetConnectionAvailable();
     }
+
+    public static boolean isSamsungBlockchainSupported(){
+        return currentContext.isSBKSupported();
+    }
+
+
+
+//    public static void showAlertDialog(final String message) {
+//        //we must use runOnUiThread here
+//        currentContext.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                AlertDialog alertDialog = new AlertDialog.Builder(currentContext).create();
+//                alertDialog.setTitle("Message");
+//                alertDialog.setMessage(message);
+//                //alertDialog.setIcon(R.drawable.ic_close);
+//                alertDialog.show();
+//            }
+//        });
+//    }
 
     // Don't remove, this is an api
     public static void gotoSamsungBlockchainKeystoreMenu()

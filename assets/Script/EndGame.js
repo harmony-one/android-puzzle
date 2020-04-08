@@ -1,3 +1,5 @@
+var DialogBox = require("DialogBox");
+
 cc.Class({
     extends: cc.Component,
 
@@ -7,30 +9,34 @@ cc.Class({
         lblWelcome: {default: null, type: cc.Label},
         panelGuest: {default: null, type: cc.Node},
         panelAuthenticated: {default: null, type: cc.Node},
-        
+        dialogBox: {default: null, type: DialogBox}
     },
 
     start () {
         this.score.string = Global.newScore;
         this.score2.string = Global.newScore;
 
+        Global.dialogBox = this.dialogBox;
+
         if (Global.isLoggedIn()){
             this.panelGuest.active = false;
-            this.panelAuthenticated.active = true;    
+            this.panelAuthenticated.active = true;            
         }
     },
 
     onLoginClicked(){
-        if (Global.isAndroid()){
-            Global.getKeystore();
+        if (Global.isSamsungBlockchainSupported()){
+            if (Global.isAndroid()){
+                Global.getKeystore();
 
-            this.lblWelcome.string = "Welcome!";
+                this.lblWelcome.string = "Welcome!";
+            }
 
-            //Global.showAlertDialog("Welcome!, your public key: \n" + Global.myKeystore);
+            this.panelGuest.active = false;
+            this.panelAuthenticated.active = true;
+        } else {
+            Global.showAlertDialog("Your phone does not have Samsung wallet support to store your record in Harmony blockchain");
         }
-
-        this.panelGuest.active = false;
-        this.panelAuthenticated.active = true;
     },
 
     onCreateKeystoreClicked(){
@@ -44,8 +50,6 @@ cc.Class({
             //Global.updateScore(); // update score & send-transaction
 
             Global.restUpdateScore();
-
-            //Global.showAlertDialog("Your score has been updated");
         }
     },
 

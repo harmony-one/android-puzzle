@@ -7,6 +7,8 @@ cc.Class({
         let actions = cc.sequence(delay, cc.callFunc(this.loadGameScene.bind(this)));
 
         this.node.runAction(actions);
+
+        Global.logout();
     },
     loadGameScene: function(){
         cc.director.loadScene("game");

@@ -1,14 +1,18 @@
+var DialogBox = require("DialogBox");
+
 window.Global = {
     myKeystore: "",
     newScore: 0,
     board_state: "",
     player_sequence: "",
+    dialogBox: null,
+    
 
     isAndroid: function() {
         return cc.sys.os == cc.sys.OS_ANDROID;
     },
 
-    isLoggedIn: function(){
+    isLoggedIn: function(){        
         let myKeystore = localStorage.getItem("my_keystore");
 
         // Ethereum public key length = 128 chars
@@ -21,6 +25,10 @@ window.Global = {
         localStorage.setItem("my_keystore", this.myKeystore);
 
         return this.myKeystore;
+    },
+
+    logout: function(){
+        localStorage.setItem("my_keystore", "");
     },
 
     getScore: function(){
@@ -43,11 +51,20 @@ window.Global = {
     },
 
     showAlertDialog: function(message){
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", message);
+        //return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", message);
+        Global.dialogBox.showMessage(message);        
     },
 
     gotoSamsungBlockchainKeystoreMenu: function(){
         return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "gotoSamsungBlockchainKeystoreMenu", "()V");
+    },
+
+    isSamsungBlockchainSupported: function(){
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "isSamsungBlockchainSupported", "()Z");
+    },
+
+    isInternetConnectionAvailable: function(){
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "isInternetConnectionAvailable", "()Z");
     },
 
     // call rest api
@@ -65,12 +82,20 @@ window.Global = {
         xhr.onreadystatechange = function() { // Call a function when the state changes.
             if (this.readyState === 4 && this.status === 200) {                
                 let data = JSON.parse(xhr.responseText);
+                
+                // let status = data["status"];
 
-                cc.log("POGCHAMP", data);
-                let status = data["status"];
+                cc.log("RESP", xhr.responseText); //{"status":"success","msg":"","tx":"0x32490249324i2390432432432"}
                 let tx = data["tx"];
+                let msg = "Score Saved! \n\n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence;
+                
+                cc.log("RESP", msg, );
 
-                Global.showAlertDialog("Score Saved \n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence);
+                Global.showAlertDialog(msg);
+                //if (status == "success"){
+                {
+                    
+                }
             }
         }
         

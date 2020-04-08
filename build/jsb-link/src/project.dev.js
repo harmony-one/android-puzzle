@@ -63,10 +63,33 @@ window.__require = function e(t, n, r) {
     });
     cc._RF.pop();
   }, {} ],
+  DialogBox: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "9c515QSqVdGj4bHCOMnzXYO", "DialogBox");
+    "use strict";
+    cc.Class({
+      extends: cc.Component,
+      properties: {
+        lblMessage: cc.Label
+      },
+      showMessage: function showMessage(msg) {
+        this.lblMessage.string = msg;
+        this.show();
+      },
+      hide: function hide() {
+        this.node.active = false;
+      },
+      show: function show() {
+        this.node.active = true;
+      }
+    });
+    cc._RF.pop();
+  }, {} ],
   EndGame: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "83178yEnslO66ZUZISIERtM", "EndGame");
     "use strict";
+    var DialogBox = require("DialogBox");
     cc.Class({
       extends: cc.Component,
       properties: {
@@ -89,23 +112,30 @@ window.__require = function e(t, n, r) {
         panelAuthenticated: {
           default: null,
           type: cc.Node
+        },
+        dialogBox: {
+          default: null,
+          type: DialogBox
         }
       },
       start: function start() {
         this.score.string = Global.newScore;
         this.score2.string = Global.newScore;
+        Global.dialogBox = this.dialogBox;
         if (Global.isLoggedIn()) {
           this.panelGuest.active = false;
           this.panelAuthenticated.active = true;
         }
       },
       onLoginClicked: function onLoginClicked() {
-        if (Global.isAndroid()) {
-          Global.getKeystore();
-          this.lblWelcome.string = "Welcome!";
-        }
-        this.panelGuest.active = false;
-        this.panelAuthenticated.active = true;
+        if (Global.isSamsungBlockchainSupported()) {
+          if (Global.isAndroid()) {
+            Global.getKeystore();
+            this.lblWelcome.string = "Welcome!";
+          }
+          this.panelGuest.active = false;
+          this.panelAuthenticated.active = true;
+        } else Global.showAlertDialog("Your phone does not have Samsung wallet support to store your record in Harmony blockchain");
       },
       onCreateKeystoreClicked: function onCreateKeystoreClicked() {
         Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();
@@ -121,7 +151,9 @@ window.__require = function e(t, n, r) {
       }
     });
     cc._RF.pop();
-  }, {} ],
+  }, {
+    DialogBox: "DialogBox"
+  } ],
   Entry: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "0eff6fHW9ZJqbcebTF5iL8z", "Entry");
@@ -474,11 +506,13 @@ window.__require = function e(t, n, r) {
     "use strict";
     cc._RF.push(module, "9bf09yemltMJ6LDPqxBrroN", "Global");
     "use strict";
+    var DialogBox = require("DialogBox");
     window.Global = {
       myKeystore: "",
       newScore: 0,
       board_state: "",
       player_sequence: "",
+      dialogBox: null,
       isAndroid: function isAndroid() {
         return cc.sys.os == cc.sys.OS_ANDROID;
       },
@@ -490,6 +524,9 @@ window.__require = function e(t, n, r) {
         this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
         localStorage.setItem("my_keystore", this.myKeystore);
         return this.myKeystore;
+      },
+      logout: function logout() {
+        localStorage.setItem("my_keystore", "");
       },
       getScore: function getScore() {
         return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
@@ -503,10 +540,16 @@ window.__require = function e(t, n, r) {
         return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
       },
       showAlertDialog: function showAlertDialog(message) {
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", message);
+        Global.dialogBox.showMessage(message);
       },
       gotoSamsungBlockchainKeystoreMenu: function gotoSamsungBlockchainKeystoreMenu() {
         return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "gotoSamsungBlockchainKeystoreMenu", "()V");
+      },
+      isSamsungBlockchainSupported: function isSamsungBlockchainSupported() {
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "isSamsungBlockchainSupported", "()Z");
+      },
+      isInternetConnectionAvailable: function isInternetConnectionAvailable() {
+        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "isInternetConnectionAvailable", "()Z");
       },
       restUpdateScore: function restUpdateScore() {
         var url = "http://ec2-54-212-193-72.us-west-2.compute.amazonaws.com:8080/api/submit";
@@ -518,10 +561,11 @@ window.__require = function e(t, n, r) {
         xhr.onreadystatechange = function() {
           if (4 === this.readyState && 200 === this.status) {
             var data = JSON.parse(xhr.responseText);
-            cc.log("POGCHAMP", data);
-            var status = data["status"];
+            cc.log("RESP", xhr.responseText);
             var tx = data["tx"];
-            Global.showAlertDialog("Score Saved \n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence);
+            var msg = "Score Saved! \n\n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence;
+            cc.log("RESP", msg);
+            Global.showAlertDialog(msg);
           }
         };
         xhr.send(params);
@@ -540,7 +584,9 @@ window.__require = function e(t, n, r) {
       }
     };
     cc._RF.pop();
-  }, {} ],
+  }, {
+    DialogBox: "DialogBox"
+  } ],
   Leadearboard: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "e4231kRB6FO7qKfwfFVqxPB", "Leadearboard");
@@ -690,6 +736,7 @@ window.__require = function e(t, n, r) {
         var delay = cc.delayTime(1.5);
         var actions = cc.sequence(delay, cc.callFunc(this.loadGameScene.bind(this)));
         this.node.runAction(actions);
+        Global.logout();
       },
       loadGameScene: function loadGameScene() {
         cc.director.loadScene("game");
@@ -698,4 +745,4 @@ window.__require = function e(t, n, r) {
     });
     cc._RF.pop();
   }, {} ]
-}, {}, [ "Block", "EndGame", "Entry", "Game", "Global", "Leadearboard", "LevelGenerator", "SplashScript" ]);
+}, {}, [ "Block", "DialogBox", "EndGame", "Entry", "Game", "Global", "Leadearboard", "LevelGenerator", "SplashScript" ]);

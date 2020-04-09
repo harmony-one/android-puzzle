@@ -70,7 +70,7 @@ window.__require = function e(t, n, r) {
     cc.Class({
       extends: cc.Component,
       properties: {
-        lblMessage: cc.Label
+        lblMessage: cc.RichText
       },
       showMessage: function showMessage(msg) {
         this.lblMessage.string = msg;
@@ -480,6 +480,8 @@ window.__require = function e(t, n, r) {
       },
       isClockRinging: false,
       update: function update(dt) {
+        if (this.state == STATE.TUTORIAL) return;
+        if (this.state == STATE.END) return;
         this._timer -= dt;
         if (this._timer > 0) {
           var floored = Math.floor(this._timer);
@@ -493,7 +495,7 @@ window.__require = function e(t, n, r) {
             })).start();
             this.isClockRinging = true;
           }
-        } else if (this.state == STATE.STARTED) {
+        } else {
           Global.newScore = this.score;
           cc.director.loadScene("end_game");
           this.state = STATE.END;
@@ -563,7 +565,10 @@ window.__require = function e(t, n, r) {
             var data = JSON.parse(xhr.responseText);
             cc.log("RESP", xhr.responseText);
             var tx = data["tx"];
-            var msg = "Score Saved! \n\n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence;
+            tx.length > 10 && (tx = tx.substring(0, 10) + "...");
+            var seq = Global.player_sequence;
+            seq.length > 10 && (seq = seq.substring(0, 10) + "...");
+            var msg = "Score Saved! \n <color =#131475>Txn:</c>" + tx + "\n <color =#131475>BOARD:</c> " + Global.board_state + "\n <color =#131475>SEQ.</c> " + seq;
             cc.log("RESP", msg);
             Global.showAlertDialog(msg);
           }

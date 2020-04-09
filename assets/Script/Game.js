@@ -384,6 +384,9 @@ cc.Class({
 
     isClockRinging: false,
     update (dt) {
+        if (this.state == STATE.TUTORIAL) return;
+        if (this.state == STATE.END) return;
+
         this._timer -= dt;
 
         if (this._timer > 0){
@@ -403,7 +406,7 @@ cc.Class({
 
                 this.isClockRinging = true;
             }
-        } else if (this.state == STATE.STARTED) {
+        } else {
             Global.newScore = this.score;
 
             cc.director.loadScene("end_game");

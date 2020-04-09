@@ -82,20 +82,28 @@ window.Global = {
         xhr.onreadystatechange = function() { // Call a function when the state changes.
             if (this.readyState === 4 && this.status === 200) {                
                 let data = JSON.parse(xhr.responseText);
-                
-                // let status = data["status"];
 
                 cc.log("RESP", xhr.responseText); //{"status":"success","msg":"","tx":"0x32490249324i2390432432432"}
-                let tx = data["tx"];
-                let msg = "Score Saved! \n\n Txn:" + tx + "\n SCORE: " + Global.newScore + "\n BOARD: " + Global.board_state + "\n SEQ. " + Global.player_sequence;
                 
-                cc.log("RESP", msg, );
+                // let status = data["status"];
+                //if (status === "success"){
+                // {
+                
+                // }
+
+                
+                let tx = data["tx"];
+                if (tx.length > 10) tx = tx.substring(0, 10) + "...";
+
+                let seq = Global.player_sequence;
+                if (seq.length > 10) seq = seq.substring(0, 10) + "...";
+
+                let msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + Global.board_state + "\n <color=#131475>SEQ.</c> " + seq;
+                
+                cc.log("RESP", msg);
 
                 Global.showAlertDialog(msg);
-                //if (status == "success"){
-                {
-                    
-                }
+                
             }
         }
         

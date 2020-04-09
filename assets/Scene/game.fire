@@ -207,7 +207,7 @@
       "array": [
         0,
         0,
-        443.4050067376326,
+        371.31936579532936,
         0,
         0,
         0,
@@ -1363,6 +1363,9 @@
         "__uuid__": "78385fcb-89d9-4b59-b123-8ad9842cf7d0"
       },
       {
+        "__uuid__": "434dbd93-824b-4fa8-a3ea-fccf1a15e38d"
+      },
+      {
         "__uuid__": "3b40afce-d486-4a31-9fc9-4d47f702c41b"
       },
       {
@@ -2182,6 +2185,7 @@
     "_isAbsHorizontalCenter": true,
     "_isAbsVerticalCenter": true,
     "_originalWidth": 0,
-    "_originalHeight": 0
+    "_originalHeight": 0,
+    "_id": "462TZE4t9K4qRLntq08WI3"
   }
 ]

@@ -3,7 +3,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        lblMessage: cc.Label,        
+        lblMessage: cc.RichText,        
     },
 
     // LIFE-CYCLE CALLBACKS:

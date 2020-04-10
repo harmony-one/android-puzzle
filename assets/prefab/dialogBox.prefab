@@ -419,7 +419,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -138.045,
+        -119.135,
         43.5,
         0,
         0,
@@ -486,7 +486,7 @@
     "asset": {
       "__uuid__": "81739de1-b444-4253-84f5-e822d4a17947"
     },
-    "fileId": "bets7pXetPkJl3uXBrG40R",
+    "fileId": "8cjbY659JKZ6L4sUlTbZae",
     "sync": false
   },
   {
@@ -528,7 +528,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        93.22500000000002,
+        112.135,
         43.5,
         0,
         0,
@@ -595,7 +595,7 @@
     "asset": {
       "__uuid__": "81739de1-b444-4253-84f5-e822d4a17947"
     },
-    "fileId": "bcxhM6RbtMdpgbWWE6wqi0",
+    "fileId": "8cpjFp8RxJeLwmhqcK9nmC",
     "sync": false
   },
   {
@@ -704,7 +704,7 @@
     "asset": {
       "__uuid__": "81739de1-b444-4253-84f5-e822d4a17947"
     },
-    "fileId": "8fE6Asg9dOwZ2SaLs5MO8B",
+    "fileId": "45RGo6impFlrjm5Jy4ti0B",
     "sync": false
   },
   {
@@ -746,7 +746,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -138.045,
+        -113.52,
         -56.5,
         0,
         0,
@@ -813,7 +813,7 @@
     "asset": {
       "__uuid__": "81739de1-b444-4253-84f5-e822d4a17947"
     },
-    "fileId": "a473kqSFZNmqf71BQhKwxW",
+    "fileId": "0f0kWe7jlC56UtF3oLYRwr",
     "sync": false
   },
   {
@@ -855,7 +855,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -138.045,
+        -136.85,
         -106.5,
         0,
         0,
@@ -922,7 +922,7 @@
     "asset": {
       "__uuid__": "81739de1-b444-4253-84f5-e822d4a17947"
     },
-    "fileId": "e7KGBzboJFQZR8obwYEKCD",
+    "fileId": "ec9wLEKuhP0ZeRQEpBu2qw",
     "sync": false
   },
   {
@@ -935,8 +935,8 @@
     "_enabled": true,
     "_fontFamily": "Arial",
     "_isSystemFontUsed": false,
-    "_N$string": "<color=#FFC530>Your phone does not</c> <br/>support Samsung wallet <br/>to store your record <br/>in Harmony blockchain!",
-    "_N$horizontalAlign": 0,
+    "_N$string": "<center><color=#FFC530>Your phone does not</c></center> <br/>support Samsung wallet <br/>to store your record <br/>in Harmony blockchain!",
+    "_N$horizontalAlign": 1,
     "_N$fontSize": 28,
     "_N$font": {
       "__uuid__": "41133572-7e54-4c2c-b8df-340ed97bbb89"

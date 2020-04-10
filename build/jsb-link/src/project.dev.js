@@ -90,6 +90,7 @@ window.__require = function e(t, n, r) {
     cc._RF.push(module, "83178yEnslO66ZUZISIERtM", "EndGame");
     "use strict";
     var DialogBox = require("DialogBox");
+    var Loading = require("Loading");
     cc.Class({
       extends: cc.Component,
       properties: {
@@ -116,12 +117,17 @@ window.__require = function e(t, n, r) {
         dialogBox: {
           default: null,
           type: DialogBox
+        },
+        loading: {
+          default: null,
+          type: cc.Node
         }
       },
       start: function start() {
         this.score.string = Global.newScore;
         this.score2.string = Global.newScore;
         Global.dialogBox = this.dialogBox;
+        Global.loading = this.loading;
         if (Global.isLoggedIn()) {
           this.panelGuest.active = false;
           this.panelAuthenticated.active = true;
@@ -152,7 +158,8 @@ window.__require = function e(t, n, r) {
     });
     cc._RF.pop();
   }, {
-    DialogBox: "DialogBox"
+    DialogBox: "DialogBox",
+    Loading: "Loading"
   } ],
   Entry: [ function(require, module, exports) {
     "use strict";
@@ -515,6 +522,7 @@ window.__require = function e(t, n, r) {
       board_state: "",
       player_sequence: "",
       dialogBox: null,
+      loading: null,
       isAndroid: function isAndroid() {
         return cc.sys.os == cc.sys.OS_ANDROID;
       },
@@ -560,7 +568,9 @@ window.__require = function e(t, n, r) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        null != Global.loading && (Global.loading.active = true);
         xhr.onreadystatechange = function() {
+          null != Global.loading && (Global.loading.active = false);
           if (4 === this.readyState && 200 === this.status) {
             var data = JSON.parse(xhr.responseText);
             cc.log("RESP", xhr.responseText);
@@ -568,7 +578,7 @@ window.__require = function e(t, n, r) {
             tx.length > 10 && (tx = tx.substring(0, 10) + "...");
             var seq = Global.player_sequence;
             seq.length > 10 && (seq = seq.substring(0, 10) + "...");
-            var msg = "Score Saved! \n <color =#131475>Txn:</c>" + tx + "\n <color =#131475>BOARD:</c> " + Global.board_state + "\n <color =#131475>SEQ.</c> " + seq;
+            var msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + Global.board_state + "\n <color=#131475>SEQ.</c> " + seq;
             cc.log("RESP", msg);
             Global.showAlertDialog(msg);
           }
@@ -579,7 +589,9 @@ window.__require = function e(t, n, r) {
         var url = "http://ec2-54-212-193-72.us-west-2.compute.amazonaws.com:8080/api/leader_boards";
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
+        null != Global.loading && (Global.loading.active = true);
         xhr.onreadystatechange = function() {
+          null != Global.loading && (Global.loading.active = false);
           if (4 == xhr.readyState && xhr.status >= 200 && xhr.status < 400) {
             var response = xhr.responseText;
             onSuccessCallback(response);
@@ -604,6 +616,10 @@ window.__require = function e(t, n, r) {
         medalSprites: {
           default: [],
           type: cc.SpriteFrame
+        },
+        loading: {
+          default: null,
+          type: cc.Node
         }
       },
       start: function start() {
@@ -611,6 +627,7 @@ window.__require = function e(t, n, r) {
         var entries = null;
         Global.isAndroid();
         var that = this;
+        Global.loading = this.loading;
         Global.restGetLeaderBoard(function(jsonText) {
           json = jsonText;
           var data = JSON.parse(json);
@@ -731,6 +748,22 @@ window.__require = function e(t, n, r) {
     });
     cc._RF.pop();
   }, {} ],
+  Loading: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "0ab5fsWe1ZMhp4pZYuuNkS+", "Loading");
+    "use strict";
+    cc.Class({
+      extends: cc.Component,
+      properties: {
+        icon: cc.Sprite
+      },
+      onEnable: function onEnable() {
+        var seq = cc.repeatForever(cc.rotateBy(.2, 360).easing(cc.easeIn(3)));
+        this.icon.node.runAction(seq);
+      }
+    });
+    cc._RF.pop();
+  }, {} ],
   SplashScript: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "280c3rsZJJKnZ9RqbALVwtK", "SplashScript");
@@ -750,4 +783,4 @@ window.__require = function e(t, n, r) {
     });
     cc._RF.pop();
   }, {} ]
-}, {}, [ "Block", "DialogBox", "EndGame", "Entry", "Game", "Global", "Leadearboard", "LevelGenerator", "SplashScript" ]);
+}, {}, [ "Block", "DialogBox", "EndGame", "Entry", "Game", "Global", "Leadearboard", "LevelGenerator", "Loading", "SplashScript" ]);

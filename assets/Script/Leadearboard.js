@@ -6,7 +6,8 @@ cc.Class({
         entriesRoot: cc.Node,
         prefabEntry: cc.Prefab,
 
-        medalSprites: {default: [], type: cc.SpriteFrame}
+        medalSprites: {default: [], type: cc.SpriteFrame},
+        loading: {default: null, type: cc.Node},
     },
 
     start () {
@@ -22,6 +23,8 @@ cc.Class({
         }
 
         let that = this;
+
+        Global.loading = this.loading;
 
         Global.restGetLeaderBoard(function(jsonText){
             json = jsonText;

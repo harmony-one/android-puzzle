@@ -1,4 +1,5 @@
 var DialogBox = require("DialogBox");
+var Loading = require("Loading");
 
 cc.Class({
     extends: cc.Component,
@@ -9,7 +10,8 @@ cc.Class({
         lblWelcome: {default: null, type: cc.Label},
         panelGuest: {default: null, type: cc.Node},
         panelAuthenticated: {default: null, type: cc.Node},
-        dialogBox: {default: null, type: DialogBox}
+        dialogBox: {default: null, type: DialogBox},
+        loading: {default: null, type: cc.Node},
     },
 
     start () {
@@ -17,6 +19,7 @@ cc.Class({
         this.score2.string = Global.newScore;
 
         Global.dialogBox = this.dialogBox;
+        Global.loading = this.loading;
 
         if (Global.isLoggedIn()){
             this.panelGuest.active = false;

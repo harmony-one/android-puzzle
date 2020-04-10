@@ -6,6 +6,7 @@ window.Global = {
     board_state: "",
     player_sequence: "",
     dialogBox: null,
+    loading: null,
     
 
     isAndroid: function() {
@@ -79,7 +80,11 @@ window.Global = {
         
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
+        if (Global.loading != null) Global.loading.active = true;
+
         xhr.onreadystatechange = function() { // Call a function when the state changes.
+            if (Global.loading != null) Global.loading.active = false;
+
             if (this.readyState === 4 && this.status === 200) {                
                 let data = JSON.parse(xhr.responseText);
 
@@ -98,7 +103,10 @@ window.Global = {
                 let seq = Global.player_sequence;
                 if (seq.length > 10) seq = seq.substring(0, 10) + "...";
 
-                let msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + Global.board_state + "\n <color=#131475>SEQ.</c> " + seq;
+                let board = Global.board_state;
+                if (board.length > 10) board = board.substring(0, 10) + "...";
+
+                let msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + board + "\n <color=#131475>SEQ.</c> " + seq;
                 
                 cc.log("RESP", msg);
 
@@ -116,7 +124,11 @@ window.Global = {
         let xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         
+        if (Global.loading != null) Global.loading.active = true;
+
         xhr.onreadystatechange = function () {
+            if (Global.loading != null) Global.loading.active = false;
+            
             if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
                 var response = xhr.responseText;
                 

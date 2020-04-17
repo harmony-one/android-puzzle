@@ -70,13 +70,14 @@ window.Global = {
 
     // call rest api
     restUpdateScore: function(){
-        let url = "http://ec2-54-212-193-72.us-west-2.compute.amazonaws.com:8080/api/submit" ;
-        var params = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
+        let url = "http://54.212.193.72:3000/api/submit";
+        let params = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
 
         cc.log("PARAMZ ", params);
 
-        var xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
+        xhr.timeout = 10000;
         
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -114,15 +115,23 @@ window.Global = {
                 
             }
         }
+
+        xhr.onerror = function () {
+            if (Global.loading != null) Global.loading.active = false;
+
+            let msg = "Networking problem \n Failed to save your score";
+                Global.showAlertDialog(msg);
+        };
         
         xhr.send(params);
     },
 
     restGetLeaderBoard: function(onSuccessCallback){
-        let url = "http://ec2-54-212-193-72.us-west-2.compute.amazonaws.com:8080/api/leader_boards";        
+        let url = "http://54.212.193.72:3000/api/leader_boards";
 
         let xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
+        xhr.timeout = 5000;
         
         if (Global.loading != null) Global.loading.active = true;
 
@@ -134,6 +143,13 @@ window.Global = {
                 
                 onSuccessCallback(response);
             }
+        };
+
+        xhr.onerror = function () {
+            if (Global.loading != null) Global.loading.active = false;
+            
+            let msg = "Unable to get leader board!";
+            Global.showAlertDialog(msg);
         };
         
         xhr.send(null);

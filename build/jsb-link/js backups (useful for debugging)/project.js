@@ -1,27 +1,27 @@
-window.__require = function e(t, i, n) {
-function c(o, l) {
-if (!i[o]) {
-if (!t[o]) {
-var a = o.split("/");
+window.__require = function e(t, i, o) {
+function n(l, s) {
+if (!i[l]) {
+if (!t[l]) {
+var a = l.split("/");
 a = a[a.length - 1];
 if (!t[a]) {
 var r = "function" == typeof __require && __require;
-if (!l && r) return r(a, !0);
-if (s) return s(a, !0);
-throw new Error("Cannot find module '" + o + "'");
+if (!s && r) return r(a, !0);
+if (c) return c(a, !0);
+throw new Error("Cannot find module '" + l + "'");
 }
 }
-var u = i[o] = {
+var d = i[l] = {
 exports: {}
 };
-t[o][0].call(u.exports, function(e) {
-return c(t[o][1][e] || e);
-}, u, u.exports, e, t, i, n);
+t[l][0].call(d.exports, function(e) {
+return n(t[l][1][e] || e);
+}, d, d.exports, e, t, i, o);
 }
-return i[o].exports;
+return i[l].exports;
 }
-for (var s = "function" == typeof __require && __require, o = 0; o < n.length; o++) c(n[o]);
-return c;
+for (var c = "function" == typeof __require && __require, l = 0; l < o.length; l++) n(o[l]);
+return n;
 }({
 Block: [ function(e, t, i) {
 "use strict";
@@ -60,9 +60,32 @@ scale: 1
 });
 cc._RF.pop();
 }, {} ],
+DialogBox: [ function(e, t, i) {
+"use strict";
+cc._RF.push(t, "9c515QSqVdGj4bHCOMnzXYO", "DialogBox");
+cc.Class({
+extends: cc.Component,
+properties: {
+lblMessage: cc.RichText
+},
+showMessage: function(e) {
+this.lblMessage.string = e;
+this.show();
+},
+hide: function() {
+this.node.active = !1;
+},
+show: function() {
+this.node.active = !0;
+}
+});
+cc._RF.pop();
+}, {} ],
 EndGame: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "83178yEnslO66ZUZISIERtM", "EndGame");
+var o = e("DialogBox");
+e("Loading");
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -85,24 +108,35 @@ type: cc.Node
 panelAuthenticated: {
 default: null,
 type: cc.Node
+},
+dialogBox: {
+default: null,
+type: o
+},
+loading: {
+default: null,
+type: cc.Node
 }
 },
 start: function() {
 this.score.string = Global.newScore;
 this.score2.string = Global.newScore;
+Global.dialogBox = this.dialogBox;
+Global.loading = this.loading;
 if (Global.isLoggedIn()) {
 this.panelGuest.active = !1;
 this.panelAuthenticated.active = !0;
 }
 },
 onLoginClicked: function() {
+if (Global.isSamsungBlockchainSupported()) {
 if (Global.isAndroid()) {
 Global.getKeystore();
 this.lblWelcome.string = "Welcome!";
-Global.showAlertDialog("Welcome!, your public key: \n" + Global.myKeystore);
 }
 this.panelGuest.active = !1;
 this.panelAuthenticated.active = !0;
+} else Global.showAlertDialog("Your phone does not have Samsung wallet support to store your record in Harmony blockchain");
 },
 onCreateKeystoreClicked: function() {
 Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();
@@ -118,7 +152,10 @@ cc.director.loadScene("leader_board");
 }
 });
 cc._RF.pop();
-}, {} ],
+}, {
+DialogBox: "DialogBox",
+Loading: "Loading"
+} ],
 Entry: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "0eff6fHW9ZJqbcebTF5iL8z", "Entry");
@@ -128,13 +165,22 @@ properties: {
 rank: cc.Label,
 key: cc.Label,
 score: cc.Label,
-medal: cc.Sprite
+medal: cc.Sprite,
+tx: {
+default: "",
+visible: !1
+}
 },
-setup: function(e, t, i, n) {
+setup: function(e, t, i, o, n) {
+this.tx = n;
 this.rank.string = e;
 this.key.string = t;
 this.score.string = i;
-this.medal.spriteFrame = n;
+this.medal.spriteFrame = o;
+this.node.on(cc.Node.EventType.TOUCH_END, this.onClick, this);
+},
+onClick: function() {
+cc.sys.openURL("https://explorer.harmony.one/#/tx/" + this.tx);
 }
 });
 cc._RF.pop();
@@ -142,7 +188,7 @@ cc._RF.pop();
 Game: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var n = 0, c = 1, s = 2;
+var o = 0, n = 1, c = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -196,7 +242,7 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: n,
+state: o,
 lastMove: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
@@ -219,13 +265,13 @@ for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var i = e % 3, n = Math.floor(e / 3);
-t.position = this.getNodePosition(i, n);
+var i = e % 3, o = Math.floor(e / 3);
+t.position = this.getNodePosition(i, o);
 this.node.addChild(t);
-var c = t.getComponent("Block");
-c.x = i;
-c.y = n;
-this.listBlockScripts.push(c);
+var n = t.getComponent("Block");
+n.x = i;
+n.y = o;
+this.listBlockScripts.push(n);
 }
 },
 getNodePosition: function(e, t) {
@@ -233,11 +279,10 @@ var i = this.nodeWidth;
 return cc.v2(18 * (t + 1) + i * t + i / 2, -(18 * (e + 1) + i * e + i / 2));
 },
 reset: function() {
-this.state = n;
+this.state = o;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
-Global.player_sequence = "";
 var e = this._allLevels[this._currentLevel];
 this.loadLevel(e);
 this.disableTouch();
@@ -245,18 +290,19 @@ this.animatePlayButton();
 },
 loadLevel: function(e) {
 Global.board_state = "";
+Global.player_sequence = "";
 for (var t = "", i = 0; i < e.contents.length; i++) {
-var n = e.contents[i], c = i % 3, s = Math.floor(i / 3), o = this.findBlock(s, c);
-o.setSelected(!1);
-o.setColorAndValue(this.getSpriteByValue(n), n);
-t += n;
+var o = e.contents[i], n = i % 3, c = Math.floor(i / 3), l = this.findBlock(c, n);
+l.setSelected(!1);
+l.setColorAndValue(this.getSpriteByValue(o), o);
+t += o;
 }
 Global.board_state = t;
 this.selectedX = e.initialSelected.x;
 this.selectedY = e.initialSelected.y;
 cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
-var l = this.findBlock(this.selectedX, this.selectedY);
-null != l && l.setSelected(!0);
+var s = this.findBlock(this.selectedX, this.selectedY);
+null != s && s.setSelected(!0);
 this.lblLevel.string = this._currentLevel + 1 + "/100";
 this.btnUndo.interactable = !1;
 null != this.tween4Stopwatch && this.tween4Stopwatch.stop();
@@ -278,17 +324,17 @@ onTouchStart: function(e) {
 this.startPos = e.getLocation();
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
-if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
-var c = void 0;
-c = Math.abs(i) >= Math.abs(n) ? i > 0 ? "R" : "L" : n > 0 ? "U" : "D";
-this.tryMove(c);
+var t = e.getLocation(), i = t.x - this.startPos.x, o = t.y - this.startPos.y;
+if (!(Math.abs(i) < 80 && Math.abs(o) < 80)) {
+var n = void 0;
+n = Math.abs(i) >= Math.abs(o) ? i > 0 ? "R" : "L" : o > 0 ? "U" : "D";
+this.tryMove(n);
 }
 },
 findBlock: function(e, t) {
 for (var i = 0; i < this.listBlockScripts.length; i++) {
-var n = this.listBlockScripts[i];
-if (n.x == e && n.y == t) return n;
+var o = this.listBlockScripts[i];
+if (o.x == e && o.y == t) return o;
 }
 cc.log("findBlock: FAILED at index ", i);
 },
@@ -323,15 +369,15 @@ if (this.btnPlay.enabled) {
 this.btnPlay.node.active = !1;
 this.btnUndo.node.active = !0;
 this.tutorialLine.enabled = !1;
-this.state = c;
+this.state = n;
 }
 Global.player_sequence += e;
 this.lastMove = e;
 this.btnUndo.interactable = !0;
-var n = this.findBlock(this.selectedX, this.selectedY), s = n.value + 1;
-n.setColorAndValue(this.getSpriteByValue(s), s);
+var o = this.findBlock(this.selectedX, this.selectedY), c = o.value + 1;
+o.setColorAndValue(this.getSpriteByValue(c), c);
 i.setSelected(!1);
-n.setSelected(!0);
+o.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -368,7 +414,6 @@ playInvalidMoveSound: function() {
 null != this.soundCantMove && cc.audioEngine.playEffect(this.soundCantMove);
 },
 onPlayClicked: function() {
-Global.restUpdateScore();
 this.enableTouch();
 this.tween4PlayButton.stop();
 this.btnPlay.node.scale = 1;
@@ -417,6 +462,7 @@ e.animatePlayButton();
 },
 isClockRinging: !1,
 update: function(e) {
+if (this.state != o && this.state != c) {
 this._timer -= e;
 if (this._timer > 0) {
 var t = ("0" + Math.floor(this._timer)).slice(-2);
@@ -429,10 +475,11 @@ angle: 20
 })).start();
 this.isClockRinging = !0;
 }
-} else if (this.state == c) {
+} else {
 Global.newScore = this.score;
 cc.director.loadScene("end_game");
-this.state = s;
+this.state = c;
+}
 }
 }
 });
@@ -441,11 +488,14 @@ cc._RF.pop();
 Global: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "9bf09yemltMJ6LDPqxBrroN", "Global");
+e("DialogBox");
 window.Global = {
 myKeystore: "",
 newScore: 0,
 board_state: "",
 player_sequence: "",
+dialogBox: null,
+loading: null,
 isAndroid: function() {
 return cc.sys.os == cc.sys.OS_ANDROID;
 },
@@ -457,6 +507,9 @@ getKeystore: function() {
 this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
 localStorage.setItem("my_keystore", this.myKeystore);
 return this.myKeystore;
+},
+logout: function() {
+localStorage.setItem("my_keystore", "");
 },
 getScore: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
@@ -471,29 +524,70 @@ getLeaderboard: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
 },
 showAlertDialog: function(e) {
-return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "showAlertDialog", "(Ljava/lang/String;)V", e);
+Global.dialogBox.showMessage(e);
 },
 gotoSamsungBlockchainKeystoreMenu: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "gotoSamsungBlockchainKeystoreMenu", "()V");
 },
+isSamsungBlockchainSupported: function() {
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "isSamsungBlockchainSupported", "()Z");
+},
+isInternetConnectionAvailable: function() {
+return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "isInternetConnectionAvailable", "()Z");
+},
 restUpdateScore: function() {
 var e = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
 cc.log("PARAMZ ", e);
+var t = new XMLHttpRequest();
+t.open("POST", "http://54.212.193.72:3000/api/submit", !0);
+t.timeout = 1e4;
+t.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+null != Global.loading && (Global.loading.active = !0);
+t.onreadystatechange = function() {
+null != Global.loading && (Global.loading.active = !1);
+if (4 === this.readyState && 200 === this.status) {
+var e = JSON.parse(t.responseText);
+cc.log("RESP", t.responseText);
+var i = e.tx;
+i.length > 10 && (i = i.substring(0, 10) + "...");
+var o = Global.player_sequence;
+o.length > 10 && (o = o.substring(0, 10) + "...");
+var n = Global.board_state;
+n.length > 10 && (n = n.substring(0, 10) + "...");
+var c = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + i + "\n <color=#131475>BOARD:</c> " + n + "\n <color=#131475>SEQ.</c> " + o;
+cc.log("RESP", c);
+Global.showAlertDialog(c);
+}
+};
+t.onerror = function() {
+null != Global.loading && (Global.loading.active = !1);
+Global.showAlertDialog("Networking problem \n Failed to save your score");
+};
+t.send(e);
 },
 restGetLeaderBoard: function(e) {
 var t = new XMLHttpRequest();
-t.open("GET", "http://ec2-54-212-193-72.us-west-2.compute.amazonaws.com:8080/api/leader_boards", !0);
+t.open("GET", "http://54.212.193.72:3000/api/leader_boards", !0);
+t.timeout = 5e3;
+null != Global.loading && (Global.loading.active = !0);
 t.onreadystatechange = function() {
+null != Global.loading && (Global.loading.active = !1);
 if (4 == t.readyState && t.status >= 200 && t.status < 400) {
 var i = t.responseText;
 e(i);
 }
 };
+t.onerror = function() {
+null != Global.loading && (Global.loading.active = !1);
+Global.showAlertDialog("Unable to get leader board!");
+};
 t.send(null);
 }
 };
 cc._RF.pop();
-}, {} ],
+}, {
+DialogBox: "DialogBox"
+} ],
 Leadearboard: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "e4231kRB6FO7qKfwfFVqxPB", "Leadearboard");
@@ -505,29 +599,34 @@ prefabEntry: cc.Prefab,
 medalSprites: {
 default: [],
 type: cc.SpriteFrame
+},
+loading: {
+default: null,
+type: cc.Node
 }
 },
 start: function() {
 var e = "", t = null;
 Global.isAndroid();
 var i = this;
-Global.restGetLeaderBoard(function(n) {
-e = n;
-var c = JSON.parse(e);
+Global.loading = this.loading;
+Global.restGetLeaderBoard(function(o) {
+e = o;
+var n = JSON.parse(e);
 cc.log("json string", e);
-t = c.leaders;
+t = n.leaders;
 cc.log("Entries", t);
 t.sort(function(e, t) {
-return e.score > t.score ? 1 : -1;
+return e.score > t.score ? -1 : 1;
 });
-var s = 1;
+var c = 1;
 t.forEach(function(e) {
-var t = cc.instantiate(i.prefabEntry), n = t.getComponent("Entry"), c = i.medalSprites[i.medalSprites.length - 1];
-1 != s && 2 != s || (c = i.medalSprites[s - 1]);
-var o = e.address.slice(0, 10) + "...";
-n.setup(s, o, e.score, c);
+var t = cc.instantiate(i.prefabEntry), o = t.getComponent("Entry"), n = i.medalSprites[i.medalSprites.length - 1];
+1 != c && 2 != c || (n = i.medalSprites[c - 1]);
+var l = e.address.slice(0, 10) + "...";
+o.setup(c, l, e.score, n, "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040");
 i.entriesRoot.addChild(t);
-s++;
+c++;
 });
 });
 },
@@ -556,58 +655,73 @@ return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.f
 },
 levels: function() {
 for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var n = 3 * (e = this.getDifficulty(i)), c = 4 * e, s = i + 3, o = this.randRange(n, c), l = {}, a = [];
+var o = 3 * (e = this.getDifficulty(i)), n = 4 * e, c = i + 3, l = this.randRange(o, n), s = {}, a = [];
 if (1 == i) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
-l.contents = a;
-l.initialSelected = {};
-l.initialSelected.x = 0;
-l.initialSelected.y = 0;
-t[i - 1] = l;
+s.contents = a;
+s.initialSelected = {};
+s.initialSelected.x = 0;
+s.initialSelected.y = 0;
+t[i - 1] = s;
 } else {
-for (var r = 0; r < 9; r++) a.push(s);
-var u = this.randRange(0, 9), h = [];
-a[u] -= 1;
-for (r = 0; r < o; r++) {
-var d = -1;
+for (var r = 0; r < 9; r++) a.push(c);
+var d = this.randRange(0, 9), u = [];
+a[d] -= 1;
+for (r = 0; r < l; r++) {
+var h = -1;
 do {
-d = this.randRange(0, 4);
-} while (!this.possible(a, u, d));
-switch (d) {
+h = this.randRange(0, 4);
+} while (!this.possible(a, d, h));
+switch (h) {
 case 0:
-u -= 3;
-h.push('"d"');
-r + 1 != o && (a[u] -= 1);
+d -= 3;
+u.push('"d"');
+r + 1 != l && (a[d] -= 1);
 break;
 
 case 1:
-u += 3;
-h.push('"u"');
-r + 1 != o && (a[u] -= 1);
+d += 3;
+u.push('"u"');
+r + 1 != l && (a[d] -= 1);
 break;
 
 case 2:
-u -= 1;
-h.push('"r"');
-r + 1 != o && (a[u] -= 1);
+d -= 1;
+u.push('"r"');
+r + 1 != l && (a[d] -= 1);
 break;
 
 case 3:
-u += 1;
-h.push('"l"');
-r + 1 != o && (a[u] -= 1);
+d += 1;
+u.push('"l"');
+r + 1 != l && (a[d] -= 1);
 }
 }
-var p = u % 3, f = Math.floor(u / 3);
-h = h.reverse();
-l.contents = a;
-l.initialSelected = {};
-l.initialSelected.x = f;
-l.initialSelected.y = p;
-t[i - 1] = l;
+var p = d % 3, f = Math.floor(d / 3);
+u = u.reverse();
+s.contents = a;
+s.initialSelected = {};
+s.initialSelected.x = f;
+s.initialSelected.y = p;
+t[i - 1] = s;
 }
 }
 return t;
+}
+});
+cc._RF.pop();
+}, {} ],
+Loading: [ function(e, t, i) {
+"use strict";
+cc._RF.push(t, "0ab5fsWe1ZMhp4pZYuuNkS+", "Loading");
+cc.Class({
+extends: cc.Component,
+properties: {
+icon: cc.Sprite
+},
+onEnable: function() {
+var e = cc.repeatForever(cc.rotateBy(1, 360).easing(cc.easeIn(3)));
+this.icon.node.runAction(e);
 }
 });
 cc._RF.pop();
@@ -620,6 +734,7 @@ extends: cc.Component,
 onLoad: function() {
 var e = cc.delayTime(1.5), t = cc.sequence(e, cc.callFunc(this.loadGameScene.bind(this)));
 this.node.runAction(t);
+Global.logout();
 },
 loadGameScene: function() {
 cc.director.loadScene("game");
@@ -628,4 +743,4 @@ update: function(e) {}
 });
 cc._RF.pop();
 }, {} ]
-}, {}, [ "Block", "EndGame", "Entry", "Game", "Global", "Leadearboard", "LevelGenerator", "SplashScript" ]);
+}, {}, [ "Block", "DialogBox", "EndGame", "Entry", "Game", "Global", "Leadearboard", "LevelGenerator", "Loading", "SplashScript" ]);

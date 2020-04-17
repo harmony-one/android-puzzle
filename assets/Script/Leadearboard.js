@@ -49,7 +49,8 @@ cc.Class({
                 }
                 
                 let shortenKey = entry.address.slice(0, 10) + "...";
-                script.setup(rank, shortenKey, entry.score, medal);
+                let tx = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
+                script.setup(rank, shortenKey, entry.score, medal, tx);
 
                 that.entriesRoot.addChild(newEntry);
 

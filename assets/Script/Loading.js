@@ -8,7 +8,7 @@ cc.Class({
 
     onEnable: function(){
         var seq = cc.repeatForever(
-            cc.rotateBy(0.2, 360).easing(cc.easeIn(3.0))
+            cc.rotateBy(1.0, 360).easing(cc.easeIn(3.0))
         );
 
         this.icon.node.runAction(seq);

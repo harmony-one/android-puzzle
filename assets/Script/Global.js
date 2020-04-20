@@ -7,6 +7,7 @@ window.Global = {
     player_sequence: "",
     dialogBox: null,
     loading: null,
+    saveScoreCallback: null,
     
 
     isAndroid: function() {
@@ -69,7 +70,8 @@ window.Global = {
     },
 
     // call rest api
-    restUpdateScore: function(){
+    restUpdateScore: function(onSuccessCallback){
+
         let url = "http://54.212.193.72:3000/api/submit";
         let params = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
 
@@ -93,19 +95,22 @@ window.Global = {
                 
                 let status = data["status"];
                 if (status === "success"){
-                    let tx = data["tx"];
-                    if (tx.length > 10) tx = tx.substring(0, 10) + "...";
+                    onSuccessCallback();
+                    // let tx = data["tx"];
+                    // if (tx.length > 10) tx = tx.substring(0, 10) + "...";
 
-                    let seq = Global.player_sequence;
-                    if (seq.length > 10) seq = seq.substring(0, 10) + "...";
+                    // let seq = Global.player_sequence;
+                    // if (seq.length > 10) seq = seq.substring(0, 10) + "...";
 
-                    let board = Global.board_state;
-                    if (board.length > 10) board = board.substring(0, 10) + "...";
+                    // let board = Global.board_state;
+                    // if (board.length > 10) board = board.substring(0, 10) + "...";
 
-                    let msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + board + "\n <color=#131475>SEQ.</c> " + seq;
+                    //let msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + board + "\n <color=#131475>SEQ.</c> " + seq;
                     
-                    Global.showAlertDialog(msg);
-                } else {
+                    //Global.showAlertDialog(msg);
+                    
+                } 
+                else {
                     let msg = "Failed to save score! \n Please try again.";
                     
                     Global.showAlertDialog(msg);

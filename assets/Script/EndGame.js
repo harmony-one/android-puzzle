@@ -8,6 +8,8 @@ cc.Class({
         score: { default: null, type: cc.Label },
         score2: { default: null, type: cc.Label },
         lblWelcome: {default: null, type: cc.Label},
+        lblUpdateSuccess: { default: null, type: cc.Label },
+        lblPoint: { default: null, type: cc.Label },
         panelGuest: {default: null, type: cc.Node},
         panelAuthenticated: {default: null, type: cc.Node},
         dialogBox: {default: null, type: DialogBox},
@@ -19,7 +21,8 @@ cc.Class({
         this.score2.string = Global.newScore;
 
         Global.dialogBox = this.dialogBox;
-        Global.loading = this.loading;
+        Global.loading = this.loading;        
+
 
         if (Global.isLoggedIn()){
             this.panelGuest.active = false;
@@ -51,8 +54,20 @@ cc.Class({
     onSaveClicked(){ 
         if (Global.isAndroid()){
             //Global.updateScore(); // update score & send-transaction
+            let that = this;
 
-            Global.restUpdateScore();
+            Global.restUpdateScore(function(){
+                cc.log("score updated");
+
+                that.lblWelcome.string = "Score Saved";
+                // that.lblUpdateSuccess.active = true;
+                // that.lblPoint.active = false;
+
+                // setTimeout(function() {
+                //     // that.lblUpdateSuccess.active = false;
+                //     // that.lblPoint.active = true;
+                // }, 3000);
+            });
         }
     },
 
@@ -63,6 +78,8 @@ cc.Class({
     onLeaderboardClicked(){
         cc.director.loadScene("leader_board");
     },
+
+    
 
 
 });

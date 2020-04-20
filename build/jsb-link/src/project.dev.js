@@ -149,7 +149,7 @@ window.__require = function e(t, n, r) {
           }
           this.panelGuest.active = false;
           this.panelAuthenticated.active = true;
-        } else Global.showAlertDialog("Your phone does not have Samsung wallet support to store your record in Harmony blockchain");
+        } else Global.showAlertDialog("<center>Your phone does not</center> <br/>support Samsung wallet <br/>to store your record <br/>in Harmony blockchain!");
       },
       onCreateKeystoreClicked: function onCreateKeystoreClicked() {
         Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();

@@ -40,8 +40,8 @@ cc.Class({
 
             let rank = 1;
             entries.forEach(entry => {
-                let newEntry = cc.instantiate(that.prefabEntry);
-                let script = newEntry.getComponent('Entry');
+                let record = cc.instantiate(that.prefabEntry);
+                let script = record.getComponent('Entry');
             
                 let medal = that.medalSprites[that.medalSprites.length - 1]; // normal medal
                 if (rank == 1 || rank == 2){ // Gold + Silver
@@ -50,9 +50,14 @@ cc.Class({
                 
                 let shortenKey = entry.address.slice(0, 10) + "...";
                 let tx = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
+
+                if (entry.txn != undefined && entry.txn != null){
+                    tx = entry.txn;
+                }
+
                 script.setup(rank, shortenKey, entry.score, medal, tx);
 
-                that.entriesRoot.addChild(newEntry);
+                that.entriesRoot.addChild(record);
 
                 rank ++;
             });

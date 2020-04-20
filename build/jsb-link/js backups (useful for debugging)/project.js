@@ -1,29 +1,29 @@
-window.__require = function e(t, i, o) {
-function n(l, s) {
-if (!i[l]) {
-if (!t[l]) {
-var a = l.split("/");
+window.__require = function e(t, o, i) {
+function n(c, s) {
+if (!o[c]) {
+if (!t[c]) {
+var a = c.split("/");
 a = a[a.length - 1];
 if (!t[a]) {
 var r = "function" == typeof __require && __require;
 if (!s && r) return r(a, !0);
-if (c) return c(a, !0);
-throw new Error("Cannot find module '" + l + "'");
+if (l) return l(a, !0);
+throw new Error("Cannot find module '" + c + "'");
 }
 }
-var d = i[l] = {
+var u = o[c] = {
 exports: {}
 };
-t[l][0].call(d.exports, function(e) {
-return n(t[l][1][e] || e);
-}, d, d.exports, e, t, i, o);
+t[c][0].call(u.exports, function(e) {
+return n(t[c][1][e] || e);
+}, u, u.exports, e, t, o, i);
 }
-return i[l].exports;
+return o[c].exports;
 }
-for (var c = "function" == typeof __require && __require, l = 0; l < o.length; l++) n(o[l]);
+for (var l = "function" == typeof __require && __require, c = 0; c < i.length; c++) n(i[c]);
 return n;
 }({
-Block: [ function(e, t, i) {
+Block: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "89334GVgj1MkaQ0C/zPbcJf", "Block");
 cc.Class({
@@ -60,7 +60,7 @@ scale: 1
 });
 cc._RF.pop();
 }, {} ],
-DialogBox: [ function(e, t, i) {
+DialogBox: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "9c515QSqVdGj4bHCOMnzXYO", "DialogBox");
 cc.Class({
@@ -81,10 +81,10 @@ this.node.active = !0;
 });
 cc._RF.pop();
 }, {} ],
-EndGame: [ function(e, t, i) {
+EndGame: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "83178yEnslO66ZUZISIERtM", "EndGame");
-var o = e("DialogBox");
+var i = e("DialogBox");
 e("Loading");
 cc.Class({
 extends: cc.Component,
@@ -111,7 +111,7 @@ type: cc.Node
 },
 dialogBox: {
 default: null,
-type: o
+type: i
 },
 loading: {
 default: null,
@@ -156,7 +156,7 @@ cc._RF.pop();
 DialogBox: "DialogBox",
 Loading: "Loading"
 } ],
-Entry: [ function(e, t, i) {
+Entry: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "0eff6fHW9ZJqbcebTF5iL8z", "Entry");
 cc.Class({
@@ -171,12 +171,12 @@ default: "",
 visible: !1
 }
 },
-setup: function(e, t, i, o, n) {
+setup: function(e, t, o, i, n) {
 this.tx = n;
 this.rank.string = e;
 this.key.string = t;
-this.score.string = i;
-this.medal.spriteFrame = o;
+this.score.string = o;
+this.medal.spriteFrame = i;
 this.node.on(cc.Node.EventType.TOUCH_END, this.onClick, this);
 },
 onClick: function() {
@@ -185,10 +185,10 @@ cc.sys.openURL("https://explorer.harmony.one/#/tx/" + this.tx);
 });
 cc._RF.pop();
 }, {} ],
-Game: [ function(e, t, i) {
+Game: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var o = 0, n = 1, c = 2;
+var i = 0, n = 1, l = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -242,7 +242,7 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: o,
+state: i,
 lastMove: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
@@ -265,21 +265,21 @@ for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var i = e % 3, o = Math.floor(e / 3);
-t.position = this.getNodePosition(i, o);
+var o = e % 3, i = Math.floor(e / 3);
+t.position = this.getNodePosition(o, i);
 this.node.addChild(t);
 var n = t.getComponent("Block");
-n.x = i;
-n.y = o;
+n.x = o;
+n.y = i;
 this.listBlockScripts.push(n);
 }
 },
 getNodePosition: function(e, t) {
-var i = this.nodeWidth;
-return cc.v2(18 * (t + 1) + i * t + i / 2, -(18 * (e + 1) + i * e + i / 2));
+var o = this.nodeWidth;
+return cc.v2(18 * (t + 1) + o * t + o / 2, -(18 * (e + 1) + o * e + o / 2));
 },
 reset: function() {
-this.state = o;
+this.state = i;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
@@ -291,11 +291,11 @@ this.animatePlayButton();
 loadLevel: function(e) {
 Global.board_state = "";
 Global.player_sequence = "";
-for (var t = "", i = 0; i < e.contents.length; i++) {
-var o = e.contents[i], n = i % 3, c = Math.floor(i / 3), l = this.findBlock(c, n);
-l.setSelected(!1);
-l.setColorAndValue(this.getSpriteByValue(o), o);
-t += o;
+for (var t = "", o = 0; o < e.contents.length; o++) {
+var i = e.contents[o], n = o % 3, l = Math.floor(o / 3), c = this.findBlock(l, n);
+c.setSelected(!1);
+c.setColorAndValue(this.getSpriteByValue(i), i);
+t += i;
 }
 Global.board_state = t;
 this.selectedX = e.initialSelected.x;
@@ -324,22 +324,22 @@ onTouchStart: function(e) {
 this.startPos = e.getLocation();
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), i = t.x - this.startPos.x, o = t.y - this.startPos.y;
-if (!(Math.abs(i) < 80 && Math.abs(o) < 80)) {
+var t = e.getLocation(), o = t.x - this.startPos.x, i = t.y - this.startPos.y;
+if (!(Math.abs(o) < 80 && Math.abs(i) < 80)) {
 var n = void 0;
-n = Math.abs(i) >= Math.abs(o) ? i > 0 ? "R" : "L" : o > 0 ? "U" : "D";
+n = Math.abs(o) >= Math.abs(i) ? o > 0 ? "R" : "L" : i > 0 ? "U" : "D";
 this.tryMove(n);
 }
 },
 findBlock: function(e, t) {
-for (var i = 0; i < this.listBlockScripts.length; i++) {
-var o = this.listBlockScripts[i];
-if (o.x == e && o.y == t) return o;
+for (var o = 0; o < this.listBlockScripts.length; o++) {
+var i = this.listBlockScripts[o];
+if (i.x == e && i.y == t) return i;
 }
-cc.log("findBlock: FAILED at index ", i);
+cc.log("findBlock: FAILED at index ", o);
 },
 tryMove: function(e) {
-var t = !1, i = this.findBlock(this.selectedX, this.selectedY);
+var t = !1, o = this.findBlock(this.selectedX, this.selectedY);
 switch (e) {
 case "U":
 if (0 == this.selectedX) break;
@@ -374,10 +374,10 @@ this.state = n;
 Global.player_sequence += e;
 this.lastMove = e;
 this.btnUndo.interactable = !0;
-var o = this.findBlock(this.selectedX, this.selectedY), c = o.value + 1;
-o.setColorAndValue(this.getSpriteByValue(c), c);
-i.setSelected(!1);
-o.setSelected(!0);
+var i = this.findBlock(this.selectedX, this.selectedY), l = i.value + 1;
+i.setColorAndValue(this.getSpriteByValue(l), l);
+o.setSelected(!1);
+i.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -386,7 +386,7 @@ this.lblScore.string = this.score;
 this.gotoNextLevel();
 }
 } else {
-i.animate();
+o.animate();
 this.playInvalidMoveSound();
 }
 },
@@ -442,9 +442,9 @@ break;
 case "R":
 this.selectedY--;
 }
-var i = Global.player_sequence;
-i = i.substring(i.length - 1);
-Global.player_sequence = i;
+var o = Global.player_sequence;
+o = o.substring(o.length - 1);
+Global.player_sequence = o;
 this.lastMove = null;
 this.findBlock(this.selectedX, this.selectedY).setSelected(!0);
 this.btnUndo.interactable = !1;
@@ -462,7 +462,7 @@ e.animatePlayButton();
 },
 isClockRinging: !1,
 update: function(e) {
-if (this.state != o && this.state != c) {
+if (this.state != i && this.state != l) {
 this._timer -= e;
 if (this._timer > 0) {
 var t = ("0" + Math.floor(this._timer)).slice(-2);
@@ -478,14 +478,14 @@ this.isClockRinging = !0;
 } else {
 Global.newScore = this.score;
 cc.director.loadScene("end_game");
-this.state = c;
+this.state = l;
 }
 }
 }
 });
 cc._RF.pop();
 }, {} ],
-Global: [ function(e, t, i) {
+Global: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "9bf09yemltMJ6LDPqxBrroN", "Global");
 e("DialogBox");
@@ -540,7 +540,7 @@ var e = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state
 cc.log("PARAMZ ", e);
 var t = new XMLHttpRequest();
 t.open("POST", "http://54.212.193.72:3000/api/submit", !0);
-t.timeout = 1e4;
+t.timeout = 15e3;
 t.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 null != Global.loading && (Global.loading.active = !0);
 t.onreadystatechange = function() {
@@ -548,20 +548,27 @@ null != Global.loading && (Global.loading.active = !1);
 if (4 === this.readyState && 200 === this.status) {
 var e = JSON.parse(t.responseText);
 cc.log("RESP", t.responseText);
-var i = e.tx;
-i.length > 10 && (i = i.substring(0, 10) + "...");
-var o = Global.player_sequence;
+if ("success" === e.status) {
+var o = e.tx;
 o.length > 10 && (o = o.substring(0, 10) + "...");
+var i = Global.player_sequence;
+i.length > 10 && (i = i.substring(0, 10) + "...");
 var n = Global.board_state;
 n.length > 10 && (n = n.substring(0, 10) + "...");
-var c = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + i + "\n <color=#131475>BOARD:</c> " + n + "\n <color=#131475>SEQ.</c> " + o;
-cc.log("RESP", c);
-Global.showAlertDialog(c);
+var l = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + o + "\n <color=#131475>BOARD:</c> " + n + "\n <color=#131475>SEQ.</c> " + i;
+Global.showAlertDialog(l);
+} else {
+Global.showAlertDialog("Failed to save score! \n Please try again.");
+}
 }
 };
 t.onerror = function() {
 null != Global.loading && (Global.loading.active = !1);
 Global.showAlertDialog("Networking problem \n Failed to save your score");
+};
+t.ontimeout = function(e) {
+null != Global.loading && (Global.loading.active = !1);
+Global.showAlertDialog("Network: Request timeout.");
 };
 t.send(e);
 },
@@ -573,8 +580,10 @@ null != Global.loading && (Global.loading.active = !0);
 t.onreadystatechange = function() {
 null != Global.loading && (Global.loading.active = !1);
 if (4 == t.readyState && t.status >= 200 && t.status < 400) {
-var i = t.responseText;
-e(i);
+var o = t.responseText;
+if ("success" === JSON.parse(t.responseText).status) e(o); else {
+Global.showAlertDialog("Unable to get \n Leader Board! \n Please try again.");
+}
 }
 };
 t.onerror = function() {
@@ -588,7 +597,7 @@ cc._RF.pop();
 }, {
 DialogBox: "DialogBox"
 } ],
-Leadearboard: [ function(e, t, i) {
+Leadearboard: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "e4231kRB6FO7qKfwfFVqxPB", "Leadearboard");
 cc.Class({
@@ -608,10 +617,10 @@ type: cc.Node
 start: function() {
 var e = "", t = null;
 Global.isAndroid();
-var i = this;
+var o = this;
 Global.loading = this.loading;
-Global.restGetLeaderBoard(function(o) {
-e = o;
+Global.restGetLeaderBoard(function(i) {
+e = i;
 var n = JSON.parse(e);
 cc.log("json string", e);
 t = n.leaders;
@@ -619,14 +628,15 @@ cc.log("Entries", t);
 t.sort(function(e, t) {
 return e.score > t.score ? -1 : 1;
 });
-var c = 1;
+var l = 1;
 t.forEach(function(e) {
-var t = cc.instantiate(i.prefabEntry), o = t.getComponent("Entry"), n = i.medalSprites[i.medalSprites.length - 1];
-1 != c && 2 != c || (n = i.medalSprites[c - 1]);
-var l = e.address.slice(0, 10) + "...";
-o.setup(c, l, e.score, n, "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040");
-i.entriesRoot.addChild(t);
-c++;
+var t = cc.instantiate(o.prefabEntry), i = t.getComponent("Entry"), n = o.medalSprites[o.medalSprites.length - 1];
+1 != l && 2 != l || (n = o.medalSprites[l - 1]);
+var c = e.address.slice(0, 10) + "...", s = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
+void 0 != e.txn && null != e.txn && (s = e.txn);
+i.setup(l, c, e.score, n, s);
+o.entriesRoot.addChild(t);
+l++;
 });
 });
 },
@@ -639,7 +649,7 @@ cc.director.loadScene("end_game");
 });
 cc._RF.pop();
 }, {} ],
-LevelGenerator: [ function(e, t, i) {
+LevelGenerator: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "3ffbfo+zY9GiJgho3eM08Wb", "LevelGenerator");
 cc.Class({
@@ -650,60 +660,60 @@ return Math.floor(Math.random() * (t - e) + e);
 getDifficulty: function(e) {
 return 1 == e ? 1 : e >= 2 && e <= 3 ? 2 : e >= 4 && e <= 5 ? 3 : e >= 6 && e <= 7 ? 4 : e >= 8 && e <= 10 ? 5 : e >= 11 && e <= 20 ? 7 : e >= 21 && e <= 40 ? 8 : e >= 41 && e <= 60 ? 9 : e >= 61 && e <= 80 ? 10 : e >= 81 && e <= 90 ? 11 : e >= 91 && e <= 95 ? 12 : 96 == e ? 13 : 97 == e ? 14 : 98 == e ? 15 : 99 == e ? 16 : 17;
 },
-possible: function(e, t, i) {
-return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.floor(t / 3)) && ((2 != i || t % 3 != 0) && (3 != i || t % 3 != 2))));
+possible: function(e, t, o) {
+return -1 != o && ((0 != o || 0 != Math.floor(t / 3)) && ((1 != o || 2 != Math.floor(t / 3)) && ((2 != o || t % 3 != 0) && (3 != o || t % 3 != 2))));
 },
 levels: function() {
-for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var o = 3 * (e = this.getDifficulty(i)), n = 4 * e, c = i + 3, l = this.randRange(o, n), s = {}, a = [];
-if (1 == i) {
+for (var e, t = new Array(100), o = 1; o < 101; o++) {
+var i = 3 * (e = this.getDifficulty(o)), n = 4 * e, l = o + 3, c = this.randRange(i, n), s = {}, a = [];
+if (1 == o) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
 s.contents = a;
 s.initialSelected = {};
 s.initialSelected.x = 0;
 s.initialSelected.y = 0;
-t[i - 1] = s;
+t[o - 1] = s;
 } else {
-for (var r = 0; r < 9; r++) a.push(c);
-var d = this.randRange(0, 9), u = [];
-a[d] -= 1;
-for (r = 0; r < l; r++) {
+for (var r = 0; r < 9; r++) a.push(l);
+var u = this.randRange(0, 9), d = [];
+a[u] -= 1;
+for (r = 0; r < c; r++) {
 var h = -1;
 do {
 h = this.randRange(0, 4);
-} while (!this.possible(a, d, h));
+} while (!this.possible(a, u, h));
 switch (h) {
 case 0:
-d -= 3;
-u.push('"d"');
-r + 1 != l && (a[d] -= 1);
+u -= 3;
+d.push('"d"');
+r + 1 != c && (a[u] -= 1);
 break;
 
 case 1:
-d += 3;
-u.push('"u"');
-r + 1 != l && (a[d] -= 1);
+u += 3;
+d.push('"u"');
+r + 1 != c && (a[u] -= 1);
 break;
 
 case 2:
-d -= 1;
-u.push('"r"');
-r + 1 != l && (a[d] -= 1);
+u -= 1;
+d.push('"r"');
+r + 1 != c && (a[u] -= 1);
 break;
 
 case 3:
-d += 1;
-u.push('"l"');
-r + 1 != l && (a[d] -= 1);
+u += 1;
+d.push('"l"');
+r + 1 != c && (a[u] -= 1);
 }
 }
-var p = d % 3, f = Math.floor(d / 3);
-u = u.reverse();
+var p = u % 3, f = Math.floor(u / 3);
+d = d.reverse();
 s.contents = a;
 s.initialSelected = {};
 s.initialSelected.x = f;
 s.initialSelected.y = p;
-t[i - 1] = s;
+t[o - 1] = s;
 }
 }
 return t;
@@ -711,7 +721,7 @@ return t;
 });
 cc._RF.pop();
 }, {} ],
-Loading: [ function(e, t, i) {
+Loading: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "0ab5fsWe1ZMhp4pZYuuNkS+", "Loading");
 cc.Class({
@@ -726,7 +736,7 @@ this.icon.node.runAction(e);
 });
 cc._RF.pop();
 }, {} ],
-SplashScript: [ function(e, t, i) {
+SplashScript: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "280c3rsZJJKnZ9RqbALVwtK", "SplashScript");
 cc.Class({

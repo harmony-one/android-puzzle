@@ -77,7 +77,7 @@ window.Global = {
 
         let xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
-        xhr.timeout = 10000;
+        xhr.timeout = 15000;
         
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -91,28 +91,25 @@ window.Global = {
 
                 cc.log("RESP", xhr.responseText); //{"status":"success","msg":"","tx":"0x32490249324i2390432432432"}
                 
-                // let status = data["status"];
-                //if (status === "success"){
-                // {
-                
-                // }
+                let status = data["status"];
+                if (status === "success"){
+                    let tx = data["tx"];
+                    if (tx.length > 10) tx = tx.substring(0, 10) + "...";
 
-                
-                let tx = data["tx"];
-                if (tx.length > 10) tx = tx.substring(0, 10) + "...";
+                    let seq = Global.player_sequence;
+                    if (seq.length > 10) seq = seq.substring(0, 10) + "...";
 
-                let seq = Global.player_sequence;
-                if (seq.length > 10) seq = seq.substring(0, 10) + "...";
+                    let board = Global.board_state;
+                    if (board.length > 10) board = board.substring(0, 10) + "...";
 
-                let board = Global.board_state;
-                if (board.length > 10) board = board.substring(0, 10) + "...";
-
-                let msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + board + "\n <color=#131475>SEQ.</c> " + seq;
-                
-                cc.log("RESP", msg);
-
-                Global.showAlertDialog(msg);
-                
+                    let msg = "<color=#FFC530>Your score Saved!<c> \n <color=#131475>Txn:</c>" + tx + "\n <color=#131475>BOARD:</c> " + board + "\n <color=#131475>SEQ.</c> " + seq;
+                    
+                    Global.showAlertDialog(msg);
+                } else {
+                    let msg = "Failed to save score! \n Please try again.";
+                    
+                    Global.showAlertDialog(msg);
+                }
             }
         }
 
@@ -120,7 +117,14 @@ window.Global = {
             if (Global.loading != null) Global.loading.active = false;
 
             let msg = "Networking problem \n Failed to save your score";
-                Global.showAlertDialog(msg);
+            Global.showAlertDialog(msg);
+        };
+
+        xhr.ontimeout = function (e) {
+            if (Global.loading != null) Global.loading.active = false;
+
+            let msg = "Network: Request timeout.";
+            Global.showAlertDialog(msg);
         };
         
         xhr.send(params);
@@ -141,7 +145,16 @@ window.Global = {
             if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
                 var response = xhr.responseText;
                 
-                onSuccessCallback(response);
+                let data = JSON.parse(xhr.responseText);
+
+                let status = data["status"];
+                if (status === "success"){
+                    onSuccessCallback(response);
+                } else {
+                    let msg = "Unable to get \n Leader Board! \n Please try again.";
+                    
+                    Global.showAlertDialog(msg);
+                }
             }
         };
 

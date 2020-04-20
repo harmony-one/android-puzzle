@@ -12,7 +12,7 @@
   "webOrientation": "auto",
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
-  "inlineSpriteFrames_native": true,
+  "inlineSpriteFrames_native": false,
   "mergeStartScene": false,
   "optimizeHotUpdate": false,
   "md5Cache": false,

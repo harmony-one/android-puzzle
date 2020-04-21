@@ -30,6 +30,7 @@ cc.Class({
 
     state: STATE.TUTORIAL,
     lastMove: null,
+    usedReset: false,
 
     onLoad () {        
         let spaceX = 11;
@@ -101,6 +102,7 @@ cc.Class({
         this.score = 0;
         this._currentLevel = 0;
         this._timer = 0;
+        this.usedReset = false;
 
         let level = this._allLevels[this._currentLevel];
 
@@ -141,7 +143,7 @@ cc.Class({
         }
 
         this.lblLevel.string = (this._currentLevel + 1) + "/100";
-        this.btnUndo.interactable = false;
+        this.btnUndo.interactable = true;
         
         if (this.tween4Stopwatch != null) this.tween4Stopwatch.stop();
         this.isClockRinging = false;
@@ -251,7 +253,7 @@ cc.Class({
             Global.player_sequence += direction;
 
             this.lastMove = direction;
-            this.btnUndo.interactable = true;
+            //this.btnUndo.interactable = true;
 
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
             let newValue = nextBlock.value + 1;
@@ -334,43 +336,52 @@ cc.Class({
         selectedBlock.animate();
     },
 
-    onUndoClicked: function(){
-        if (this.lastMove == null) return;
+    // onUndoClicked: function(){
+    //     if (this.lastMove == null) return;
 
-        // Deselect + substract value
-        let currentBlock = this.findBlock(this.selectedX, this.selectedY);                
-        let oldValue = currentBlock.value - 1;
+    //     // Deselect + substract value
+    //     let currentBlock = this.findBlock(this.selectedX, this.selectedY);                
+    //     let oldValue = currentBlock.value - 1;
 
-        currentBlock.setColorAndValue(this.getSpriteByValue(oldValue), oldValue);
-        currentBlock.setSelected(false);
+    //     currentBlock.setColorAndValue(this.getSpriteByValue(oldValue), oldValue);
+    //     currentBlock.setSelected(false);
 
-        // back to previous selected block
-        switch (this.lastMove){
-            case 'U':
-                this.selectedX++;
-                break;
-            case 'D':
-                this.selectedX--;
-                break;
-            case 'L':
-                this.selectedY++;
-                break;
-            case 'R':
-                this.selectedY--;
-                break;
-        }
+    //     // back to previous selected block
+    //     switch (this.lastMove){
+    //         case 'U':
+    //             this.selectedX++;
+    //             break;
+    //         case 'D':
+    //             this.selectedX--;
+    //             break;
+    //         case 'L':
+    //             this.selectedY++;
+    //             break;
+    //         case 'R':
+    //             this.selectedY--;
+    //             break;
+    //     }
 
-        // Remove last letter from player's activity
-        let temp = Global.player_sequence;
-        temp = temp.substring(temp.length - 1);
+    //     // Remove last letter from player's activity
+    //     let temp = Global.player_sequence;
+    //     temp = temp.substring(temp.length - 1);
 
-        Global.player_sequence = temp;
+    //     Global.player_sequence = temp;
         
-        this.lastMove = null;
+    //     this.lastMove = null;
 
-        let previousBlock = this.findBlock(this.selectedX, this.selectedY);                
-        previousBlock.setSelected(true);
+    //     let previousBlock = this.findBlock(this.selectedX, this.selectedY);                
+    //     previousBlock.setSelected(true);
 
+    //     this.btnUndo.interactable = false;
+    // },
+    onUndoClicked: function(){
+        if (this.usedReset) return;
+
+        let level = this._allLevels[this._currentLevel];
+
+        this.loadLevel(level);        
+        
         this.btnUndo.interactable = false;
     },
 

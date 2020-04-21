@@ -1,27 +1,27 @@
-window.__require = function e(t, i, n) {
-function o(s, c) {
-if (!i[s]) {
-if (!t[s]) {
-var a = s.split("/");
+window.__require = function e(t, i, o) {
+function n(c, s) {
+if (!i[c]) {
+if (!t[c]) {
+var a = c.split("/");
 a = a[a.length - 1];
 if (!t[a]) {
 var r = "function" == typeof __require && __require;
-if (!c && r) return r(a, !0);
+if (!s && r) return r(a, !0);
 if (l) return l(a, !0);
-throw new Error("Cannot find module '" + s + "'");
+throw new Error("Cannot find module '" + c + "'");
 }
 }
-var u = i[s] = {
+var u = i[c] = {
 exports: {}
 };
-t[s][0].call(u.exports, function(e) {
-return o(t[s][1][e] || e);
-}, u, u.exports, e, t, i, n);
+t[c][0].call(u.exports, function(e) {
+return n(t[c][1][e] || e);
+}, u, u.exports, e, t, i, o);
 }
-return i[s].exports;
+return i[c].exports;
 }
-for (var l = "function" == typeof __require && __require, s = 0; s < n.length; s++) o(n[s]);
-return o;
+for (var l = "function" == typeof __require && __require, c = 0; c < o.length; c++) n(o[c]);
+return n;
 }({
 Block: [ function(e, t, i) {
 "use strict";
@@ -84,7 +84,7 @@ cc._RF.pop();
 EndGame: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "83178yEnslO66ZUZISIERtM", "EndGame");
-var n = e("DialogBox");
+var o = e("DialogBox");
 e("Loading");
 cc.Class({
 extends: cc.Component,
@@ -119,7 +119,7 @@ type: cc.Node
 },
 dialogBox: {
 default: null,
-type: n
+type: o
 },
 loading: {
 default: null,
@@ -144,61 +144,25 @@ this.lblWelcome.string = "Welcome!";
 }
 this.panelGuest.active = !1;
 this.panelAuthenticated.active = !0;
-} else Global.showAlertDialog("Your phone does not have Samsung wallet support to store your record in Harmony blockchain");
+} else Global.showAlertDialog("<center>Your phone does not</center> <br/>support Samsung wallet <br/>to store your record <br/>in Harmony blockchain!");
 },
 onCreateKeystoreClicked: function() {
 Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();
 },
 onSaveClicked: function() {
-Global.isAndroid() && this.restUpdateScore();
+if (Global.isAndroid()) {
+var e = this;
+Global.restUpdateScore(function() {
+cc.log("score updated");
+e.lblWelcome.string = "Score Saved";
+});
+}
 },
-onSaveSuccess: function() {},
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
 },
 onLeaderboardClicked: function() {
 cc.director.loadScene("leader_board");
-},
-restUpdateScore: function() {
-var e = this, t = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
-cc.log("PARAMZ ", t);
-var i = new XMLHttpRequest();
-i.open("POST", "http://54.212.193.72:3000/api/submit", !0);
-i.timeout = 15e3;
-i.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-null != Global.loading && (Global.loading.active = !0);
-i.onreadystatechange = function() {
-null != Global.loading && (Global.loading.active = !1);
-if (4 === this.readyState && 200 === this.status) {
-var t = JSON.parse(i.responseText);
-cc.log("RESP", i.responseText);
-if ("success" === t.status) {
-var n = t.tx;
-n.length > 10 && (n = n.substring(0, 10) + "...");
-var o = Global.player_sequence;
-o.length > 10 && (o = o.substring(0, 10) + "...");
-var l = Global.board_state;
-l.length > 10 && (l = l.substring(0, 10) + "...");
-e.lblUpdateSuccess.enable = !0;
-e.lblPoint.enable = !1;
-e.scheduleOnce(function() {
-e.lblUpdateSuccess.enable = !1;
-e.lblPoint.enable = !0;
-}, 3);
-} else {
-Global.showAlertDialog("Failed to save score! \n Please try again.");
-}
-}
-};
-i.onerror = function() {
-null != Global.loading && (Global.loading.active = !1);
-Global.showAlertDialog("Networking problem \n Failed to save your score");
-};
-i.ontimeout = function(e) {
-null != Global.loading && (Global.loading.active = !1);
-Global.showAlertDialog("Network: Request timeout.");
-};
-i.send(t);
 }
 });
 cc._RF.pop();
@@ -221,12 +185,12 @@ default: "",
 visible: !1
 }
 },
-setup: function(e, t, i, n, o) {
-this.tx = o;
+setup: function(e, t, i, o, n) {
+this.tx = n;
 this.rank.string = e;
 this.key.string = t;
 this.score.string = i;
-this.medal.spriteFrame = n;
+this.medal.spriteFrame = o;
 this.node.on(cc.Node.EventType.TOUCH_END, this.onClick, this);
 },
 onClick: function() {
@@ -238,7 +202,7 @@ cc._RF.pop();
 Game: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var n = 0, o = 1, l = 2;
+var o = 0, n = 1, l = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -292,7 +256,7 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: n,
+state: o,
 lastMove: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
@@ -315,13 +279,13 @@ for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var i = e % 3, n = Math.floor(e / 3);
-t.position = this.getNodePosition(i, n);
+var i = e % 3, o = Math.floor(e / 3);
+t.position = this.getNodePosition(i, o);
 this.node.addChild(t);
-var o = t.getComponent("Block");
-o.x = i;
-o.y = n;
-this.listBlockScripts.push(o);
+var n = t.getComponent("Block");
+n.x = i;
+n.y = o;
+this.listBlockScripts.push(n);
 }
 },
 getNodePosition: function(e, t) {
@@ -329,7 +293,7 @@ var i = this.nodeWidth;
 return cc.v2(18 * (t + 1) + i * t + i / 2, -(18 * (e + 1) + i * e + i / 2));
 },
 reset: function() {
-this.state = n;
+this.state = o;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
@@ -342,17 +306,17 @@ loadLevel: function(e) {
 Global.board_state = "";
 Global.player_sequence = "";
 for (var t = "", i = 0; i < e.contents.length; i++) {
-var n = e.contents[i], o = i % 3, l = Math.floor(i / 3), s = this.findBlock(l, o);
-s.setSelected(!1);
-s.setColorAndValue(this.getSpriteByValue(n), n);
-t += n;
+var o = e.contents[i], n = i % 3, l = Math.floor(i / 3), c = this.findBlock(l, n);
+c.setSelected(!1);
+c.setColorAndValue(this.getSpriteByValue(o), o);
+t += o;
 }
 Global.board_state = t;
 this.selectedX = e.initialSelected.x;
 this.selectedY = e.initialSelected.y;
 cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
-var c = this.findBlock(this.selectedX, this.selectedY);
-null != c && c.setSelected(!0);
+var s = this.findBlock(this.selectedX, this.selectedY);
+null != s && s.setSelected(!0);
 this.lblLevel.string = this._currentLevel + 1 + "/100";
 this.btnUndo.interactable = !1;
 null != this.tween4Stopwatch && this.tween4Stopwatch.stop();
@@ -374,17 +338,17 @@ onTouchStart: function(e) {
 this.startPos = e.getLocation();
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), i = t.x - this.startPos.x, n = t.y - this.startPos.y;
-if (!(Math.abs(i) < 80 && Math.abs(n) < 80)) {
-var o = void 0;
-o = Math.abs(i) >= Math.abs(n) ? i > 0 ? "R" : "L" : n > 0 ? "U" : "D";
-this.tryMove(o);
+var t = e.getLocation(), i = t.x - this.startPos.x, o = t.y - this.startPos.y;
+if (!(Math.abs(i) < 80 && Math.abs(o) < 80)) {
+var n = void 0;
+n = Math.abs(i) >= Math.abs(o) ? i > 0 ? "R" : "L" : o > 0 ? "U" : "D";
+this.tryMove(n);
 }
 },
 findBlock: function(e, t) {
 for (var i = 0; i < this.listBlockScripts.length; i++) {
-var n = this.listBlockScripts[i];
-if (n.x == e && n.y == t) return n;
+var o = this.listBlockScripts[i];
+if (o.x == e && o.y == t) return o;
 }
 cc.log("findBlock: FAILED at index ", i);
 },
@@ -419,15 +383,15 @@ if (this.btnPlay.enabled) {
 this.btnPlay.node.active = !1;
 this.btnUndo.node.active = !0;
 this.tutorialLine.enabled = !1;
-this.state = o;
+this.state = n;
 }
 Global.player_sequence += e;
 this.lastMove = e;
 this.btnUndo.interactable = !0;
-var n = this.findBlock(this.selectedX, this.selectedY), l = n.value + 1;
-n.setColorAndValue(this.getSpriteByValue(l), l);
+var o = this.findBlock(this.selectedX, this.selectedY), l = o.value + 1;
+o.setColorAndValue(this.getSpriteByValue(l), l);
 i.setSelected(!1);
-n.setSelected(!0);
+o.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -512,7 +476,7 @@ e.animatePlayButton();
 },
 isClockRinging: !1,
 update: function(e) {
-if (this.state != n && this.state != l) {
+if (this.state != o && this.state != l) {
 this._timer -= e;
 if (this._timer > 0) {
 var t = ("0" + Math.floor(this._timer)).slice(-2);
@@ -546,6 +510,7 @@ board_state: "",
 player_sequence: "",
 dialogBox: null,
 loading: null,
+saveScoreCallback: null,
 isAndroid: function() {
 return cc.sys.os == cc.sys.OS_ANDROID;
 },
@@ -585,9 +550,37 @@ return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "i
 isInternetConnectionAvailable: function() {
 return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "isInternetConnectionAvailable", "()Z");
 },
+restUpdateScore: function(e) {
+var t = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
+cc.log("PARAMZ ", t);
+var i = new XMLHttpRequest();
+i.open("POST", "http://puzzlemobile.hmny.io:3000/api/submit", !0);
+i.timeout = 15e3;
+i.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+null != Global.loading && (Global.loading.active = !0);
+i.onreadystatechange = function() {
+null != Global.loading && (Global.loading.active = !1);
+if (4 === this.readyState && 200 === this.status) {
+var t = JSON.parse(i.responseText);
+cc.log("RESP", i.responseText);
+if ("success" === t.status) e(); else {
+Global.showAlertDialog("Failed to save score! \n Please try again.");
+}
+}
+};
+i.onerror = function() {
+null != Global.loading && (Global.loading.active = !1);
+Global.showAlertDialog("Networking problem \n Failed to save your score");
+};
+i.ontimeout = function(e) {
+null != Global.loading && (Global.loading.active = !1);
+Global.showAlertDialog("Network: Request timeout.");
+};
+i.send(t);
+},
 restGetLeaderBoard: function(e) {
 var t = new XMLHttpRequest();
-t.open("GET", "http://54.212.193.72:3000/api/leader_boards", !0);
+t.open("GET", "http://puzzlemobile.hmny.io:3000/api/leader_boards", !0);
 t.timeout = 5e3;
 null != Global.loading && (Global.loading.active = !0);
 t.onreadystatechange = function() {
@@ -601,7 +594,7 @@ Global.showAlertDialog("Unable to get \n Leader Board! \n Please try again.");
 };
 t.onerror = function() {
 null != Global.loading && (Global.loading.active = !1);
-Global.showAlertDialog("Unable to get leader board!");
+Global.showAlertDialog("Unable to get \n Leader Board!");
 };
 t.send(null);
 }
@@ -632,22 +625,22 @@ var e = "", t = null;
 Global.isAndroid();
 var i = this;
 Global.loading = this.loading;
-Global.restGetLeaderBoard(function(n) {
-e = n;
-var o = JSON.parse(e);
+Global.restGetLeaderBoard(function(o) {
+e = o;
+var n = JSON.parse(e);
 cc.log("json string", e);
-t = o.leaders;
+t = n.leaders;
 cc.log("Entries", t);
 t.sort(function(e, t) {
 return e.score > t.score ? -1 : 1;
 });
 var l = 1;
 t.forEach(function(e) {
-var t = cc.instantiate(i.prefabEntry), n = t.getComponent("Entry"), o = i.medalSprites[i.medalSprites.length - 1];
-1 != l && 2 != l || (o = i.medalSprites[l - 1]);
-var s = e.address.slice(0, 10) + "...", c = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
-void 0 != e.txn && null != e.txn && (c = e.txn);
-n.setup(l, s, e.score, o, c);
+var t = cc.instantiate(i.prefabEntry), o = t.getComponent("Entry"), n = i.medalSprites[i.medalSprites.length - 1];
+1 != l && 2 != l || (n = i.medalSprites[l - 1]);
+var c = e.address.slice(0, 10) + "...", s = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
+void 0 != e.txn && null != e.txn && (s = e.txn);
+o.setup(l, c, e.score, n, s);
 i.entriesRoot.addChild(t);
 l++;
 });
@@ -678,19 +671,19 @@ return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.f
 },
 levels: function() {
 for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var n = 3 * (e = this.getDifficulty(i)), o = 4 * e, l = i + 3, s = this.randRange(n, o), c = {}, a = [];
+var o = 3 * (e = this.getDifficulty(i)), n = 4 * e, l = i + 3, c = this.randRange(o, n), s = {}, a = [];
 if (1 == i) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
-c.contents = a;
-c.initialSelected = {};
-c.initialSelected.x = 0;
-c.initialSelected.y = 0;
-t[i - 1] = c;
+s.contents = a;
+s.initialSelected = {};
+s.initialSelected.x = 0;
+s.initialSelected.y = 0;
+t[i - 1] = s;
 } else {
 for (var r = 0; r < 9; r++) a.push(l);
 var u = this.randRange(0, 9), d = [];
 a[u] -= 1;
-for (r = 0; r < s; r++) {
+for (r = 0; r < c; r++) {
 var h = -1;
 do {
 h = this.randRange(0, 4);
@@ -699,34 +692,34 @@ switch (h) {
 case 0:
 u -= 3;
 d.push('"d"');
-r + 1 != s && (a[u] -= 1);
+r + 1 != c && (a[u] -= 1);
 break;
 
 case 1:
 u += 3;
 d.push('"u"');
-r + 1 != s && (a[u] -= 1);
+r + 1 != c && (a[u] -= 1);
 break;
 
 case 2:
 u -= 1;
 d.push('"r"');
-r + 1 != s && (a[u] -= 1);
+r + 1 != c && (a[u] -= 1);
 break;
 
 case 3:
 u += 1;
 d.push('"l"');
-r + 1 != s && (a[u] -= 1);
+r + 1 != c && (a[u] -= 1);
 }
 }
 var p = u % 3, f = Math.floor(u / 3);
 d = d.reverse();
-c.contents = a;
-c.initialSelected = {};
-c.initialSelected.x = f;
-c.initialSelected.y = p;
-t[i - 1] = c;
+s.contents = a;
+s.initialSelected = {};
+s.initialSelected.x = f;
+s.initialSelected.y = p;
+t[i - 1] = s;
 }
 }
 return t;

@@ -72,7 +72,7 @@ window.Global = {
     // call rest api
     restUpdateScore: function(onSuccessCallback){
 
-        let url = "http://54.212.193.72:3000/api/submit";
+        let url = "http://puzzlemobile.hmny.io:3000/api/submit";
         let params = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
 
         cc.log("PARAMZ ", params);
@@ -136,7 +136,7 @@ window.Global = {
     },
 
     restGetLeaderBoard: function(onSuccessCallback){
-        let url = "http://54.212.193.72:3000/api/leader_boards";
+        let url = "http://puzzlemobile.hmny.io:3000/api/leader_boards";
 
         let xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
@@ -166,7 +166,7 @@ window.Global = {
         xhr.onerror = function () {
             if (Global.loading != null) Global.loading.active = false;
             
-            let msg = "Unable to get leader board!";
+            let msg = "Unable to get \n Leader Board!";
             Global.showAlertDialog(msg);
         };
         

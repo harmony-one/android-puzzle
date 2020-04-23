@@ -7,6 +7,7 @@ cc.Class({
     properties: {
         score: { default: null, type: cc.Label },
         score2: { default: null, type: cc.Label },
+        lblGold: { default: null, type: cc.Label },
         lblWelcome: {default: null, type: cc.Label},
         lblUpdateSuccess: { default: null, type: cc.Label },
         lblPoint: { default: null, type: cc.Label },
@@ -19,6 +20,7 @@ cc.Class({
     start () {
         this.score.string = Global.newScore;
         this.score2.string = Global.newScore;
+        this.lblGold.string = Global.newScore;
 
         Global.dialogBox = this.dialogBox;
         Global.loading = this.loading;        

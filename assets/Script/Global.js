@@ -1,6 +1,9 @@
 var DialogBox = require("DialogBox");
 
+window.SWIFT_DISTANCE = 80;
+
 window.Global = {
+
     myKeystore: "",
     newScore: 0,
     board_state: "",

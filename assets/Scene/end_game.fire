@@ -198,7 +198,7 @@
       "array": [
         0,
         0,
-        359.4005425705421,
+        365.46272039703314,
         0,
         0,
         0,
@@ -896,7 +896,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "text",
+    "_name": "lblGold",
     "_objFlags": 0,
     "_parent": {
       "__id__": 18
@@ -1088,7 +1088,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "text",
+    "_name": "lblTime",
     "_objFlags": 0,
     "_parent": {
       "__id__": 22
@@ -1735,6 +1735,9 @@
     },
     "score2": {
       "__id__": 48
+    },
+    "lblGold": {
+      "__id__": 20
     },
     "lblWelcome": {
       "__id__": 59

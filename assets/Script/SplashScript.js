@@ -3,6 +3,8 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        cc.debug.setDisplayStats(false);
+
         let delay = cc.delayTime(1.5);
         let actions = cc.sequence(delay, cc.callFunc(this.loadGameScene.bind(this)));
 
@@ -10,12 +12,8 @@ cc.Class({
 
         Global.logout();
     },
+
     loadGameScene: function(){
         cc.director.loadScene("game");
-    },
-
-    // called every frame
-    update: function (dt) {
-
     },
 });

@@ -24,7 +24,6 @@
  ****************************************************************************/
 package org.cocos2dx.javascript;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -70,17 +69,21 @@ public class AppActivity extends Cocos2dxActivity {
 
         SbkInstance = ScwService.getInstance();
 
-        if (isKeystoreApiSupported()) {
-            leaderboard.init();
+        if (isSBKSupported() == false) {
+            //showAlertDialog("Your Device is not support Samsung Blockchain");
+            return;
+        }
+        if (checkApiLevel() == false) {
+            //showAlertDialog("Samsung Blockchain API level is outdated, please upgrade.");
+            return;
+        }
 
-            if (isWalletInitialized()) {
-                String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
-//                String supportedCoins = getSupportedCoins();
-//                Log.i("Harmony - coins", supportedCoins);
-//                Log.i("Harmony - ethereumHdPath", ethereumHdPath);
+        leaderboard.init();
 
-                getPublicAddress(ethereumHdPath);
-            }
+        if (isWalletInitialized()) {
+            String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
+
+            getPublicAddress(ethereumHdPath);
         }
     }
 
@@ -264,7 +267,7 @@ public class AppActivity extends Cocos2dxActivity {
         return mScwGetAddressListCallback;
     }
 
-    public boolean isSBKSupported() {
+    private boolean isSBKSupported() {
         if (SbkInstance == null) {
             Log.e(Util.LOG_TAG, "SBK is Not Supported on Device");
             return false;
@@ -273,7 +276,7 @@ public class AppActivity extends Cocos2dxActivity {
         }
     }
 
-    private boolean isKeystoreApiSupported() {
+    private boolean checkApiLevel() {
         int keystoreApiLevel = SbkInstance.getKeystoreApiLevel();
         return keystoreApiLevel > 0;
     }
@@ -289,32 +292,48 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public static void updateScore(int score){
-        currentContext.leaderboard.updateScore(currentContext.publicKey, score);
+        if (Util.isInternetConnectionAvailable()){
+            currentContext.leaderboard.updateScore(currentContext.publicKey, score);
 
-        checkForUpdateThenSignTransaction();
+            checkForUpdateThenSignTransaction();
+        }
+        else {
+//            showAlertDialog("No Internet connection available.\n Unable to save your score!");
+        }
     }
 
     public static String getLeaderboard(){
         return currentContext.leaderboard.getLeaderBoard();
     }
 
-    public static void showAlertDialog(final String message) {
-        //we must use runOnUiThread here
-        currentContext.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog alertDialog = new AlertDialog.Builder(currentContext).create();
-                alertDialog.setTitle("Message");
-                alertDialog.setMessage(message);
-                //alertDialog.setIcon(R.drawable.ic_close);
-                alertDialog.show();
-            }
-        });
+    public static boolean isInternetConnectionAvailable(){
+        return Util.isInternetConnectionAvailable();
     }
+
+    public static boolean isSamsungBlockchainSupported(){
+        return currentContext.isSBKSupported();
+    }
+
+
+
+//    public static void showAlertDialog(final String message) {
+//        //we must use runOnUiThread here
+//        currentContext.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                AlertDialog alertDialog = new AlertDialog.Builder(currentContext).create();
+//                alertDialog.setTitle("Message");
+//                alertDialog.setMessage(message);
+//                //alertDialog.setIcon(R.drawable.ic_close);
+//                alertDialog.show();
+//            }
+//        });
+//    }
 
     // Don't remove, this is an api
     public static void gotoSamsungBlockchainKeystoreMenu()
     {
         Util.launchDeepLink(currentContext, ScwDeepLink.MAIN);
     }
+
 }

@@ -1,5 +1,5 @@
 var BLOCKS_PER_ROW = 3;
-var BLOCK_WIDTH = 18;
+var BLOCK_SPACE = 18;
 const STATE = {
     TUTORIAL: 0,
     STARTED: 1,
@@ -30,8 +30,12 @@ cc.Class({
 
     state: STATE.TUTORIAL,
     lastMove: null,
+    usedReset: false,
+    touchedBlock: null,
+    startPos: null,
+    endPos: null,
 
-    onLoad () {
+    onLoad () {        
         let spaceX = 11;
         let spaceY = 11;
         let padding = 22;
@@ -48,7 +52,7 @@ cc.Class({
 
         this.reset();
 
-        if (this.themeMusic != null){
+        if (this.themeMusic != null && Global.isAndroid()){
             cc.audioEngine.playMusic(this.themeMusic, true);
         }
 
@@ -74,33 +78,36 @@ cc.Class({
         // Create 9 Blocks for all level, then reuse them with this.listBlockScripts
         for (let i = 0; i < BLOCKS_PER_ROW * BLOCKS_PER_ROW; i++) {
             let block = cc.instantiate(this.prefabBlock);
+            this.node.addChild(block);
             
             block.width = this.nodeWidth;
             block.height = this.nodeHeight;
             
             let x = i % BLOCKS_PER_ROW;
             let y = Math.floor(i / BLOCKS_PER_ROW);
-            block.position = this.getNodePosition(x, y);
 
-            this.node.addChild(block);
+            block.position = this.getNodePosition(x, y);
 
             let script = block.getComponent('Block');
             script.x = x;
             script.y = y;
-            this.listBlockScripts.push(script);                
+            this.listBlockScripts.push(script);
         }
     },
 
-    getNodePosition: function (x, y) {
+    getNodePosition: function (row, col) {
         let w = this.nodeWidth;
-        return cc.v2(BLOCK_WIDTH*(y + 1) + w*y + w/2, -(BLOCK_WIDTH*(x+1) + w*x + w/2));
+        let h = this.nodeHeight;
+        
+        return cc.v2((row - 1) * (BLOCK_SPACE + w) , - (col - 1) * (BLOCK_SPACE + h));
     },
 
     reset: function () {
         this.state = STATE.TUTORIAL;
         this.score = 0;
         this._currentLevel = 0;
-        this._timer = 0;        
+        this._timer = 0;
+        this.usedReset = false;
 
         let level = this._allLevels[this._currentLevel];
 
@@ -112,21 +119,27 @@ cc.Class({
     },
     
     loadLevel: function(level){
+        Global.board_state = "";
+        Global.player_sequence = "";
+        let temp = "";
+
         for (let i = 0; i < level.contents.length; i++) {
             let value = level.contents[i];
 
-            let y = i % BLOCKS_PER_ROW;
-            let x = Math.floor(i / BLOCKS_PER_ROW);
+            let x = i % BLOCKS_PER_ROW;
+            let y = Math.floor(i / BLOCKS_PER_ROW);
 
             let block = this.findBlock(x, y);
             block.setSelected(false);
-            
+
             block.setColorAndValue(this.getSpriteByValue(value), value);
+
+            temp += value;
         }
+        Global.board_state = temp;
 
         this.selectedX = level.initialSelected.x;
         this.selectedY = level.initialSelected.y;
-        cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
 
         let selectedBlock = this.findBlock(this.selectedX, this.selectedY);
         if (selectedBlock != null){
@@ -134,7 +147,7 @@ cc.Class({
         }
 
         this.lblLevel.string = (this._currentLevel + 1) + "/100";
-        this.btnUndo.interactable = false;
+        this.btnUndo.interactable = true;
         
         if (this.tween4Stopwatch != null) this.tween4Stopwatch.stop();
         this.isClockRinging = false;
@@ -158,30 +171,67 @@ cc.Class({
 
     onTouchStart: function (event) {
         this.startPos = event.getLocation();
+        //cc.log(">>BOARD touch-START ", this.startPos);        
     },
 
     onTouchEnd: function (event) {
+        //cc.log("BOARD touch-END", event.target);
         let endPos = event.getLocation();
 
         let deltaX = endPos.x - this.startPos.x;
         let deltaY = endPos.y - this.startPos.y;
 
-        let offset = 80;
-        if (Math.abs(deltaX) < offset && 
-            Math.abs(deltaY) < offset) {
-            return;
+        if (Math.abs(deltaX) < SWIFT_DISTANCE && Math.abs(deltaY) < SWIFT_DISTANCE) {
+            let board = event.target;
+            
+            let touchBlock = this.findBlockByCoordinate(cc.v2(endPos.x - board.x, endPos.y - board.y));
+
+            this.moveByClickingBlock(touchBlock);
+        } else {
+            this.moveBySwift(deltaX, deltaY);
         }
+    },
+
+    moveBySwift: function(deltaX, deltaY){
+        //cc.log("moveBySwift");
 
         let direction;
         if (Math.abs(deltaX) >= Math.abs(deltaY)) {
-            direction = deltaX > 0 ? 'right' : 'left';
+            direction = deltaX > 0 ? 'R' : 'L';
         } else {
-            direction = deltaY > 0 ? 'up' : 'down';
+            direction = deltaY > 0 ? 'U' : 'D';
         }
 
-        //this.lblError.string = direction;
-
         this.tryMove(direction);
+    },
+
+    moveByClickingBlock: function(touchBlock){    
+        cc.log("moveByClickingBlock", touchBlock);
+
+        if (touchBlock === undefined || touchBlock === null) return;
+
+        let currentBlock = this.findBlock(this.selectedX, this.selectedY);
+
+        let dx = currentBlock.x - touchBlock.x;
+        let dy = currentBlock.y - touchBlock.y;
+
+        let absDx = Math.abs(dx);
+        let absDy = Math.abs(dy);
+        if ((absDx === 1 || absDy === 1) // delta == 1: neighbor blocks only
+            && !(absDx === 1 && absDy === 1) // not allow 2 directions at the same time
+            && (absDx <= 1 && absDy <= 1)) // not allow "far away" click
+        {  
+            let direction = '';
+            if (dx != 0) {
+                direction = dx > 0 ? 'L' : 'R';
+            } else if (dy != 0) {
+                direction = dy > 0 ? 'U' : 'D';
+            }
+
+            this.tryMove(direction);
+        } else {
+            this.playInvalidMoveSound();
+        }
     },
     
     findBlock: function(x, y){        
@@ -196,31 +246,55 @@ cc.Class({
         cc.log("findBlock: FAILED at index ", i);
     },
 
+    findBlockByCoordinate: function(v2){        
+        for(var i = 0; i < this.listBlockScripts.length; i++){
+            let block = this.listBlockScripts[i];
+            
+            let blockPos = this.getNodePosition(block.x, block.y);
+            let halfSize = cc.v2(this.nodeWidth, this.nodeHeight);
+
+            let minX = blockPos.x - halfSize.x;
+            let maxX = blockPos.x + halfSize.x;
+            let minY = blockPos.y - halfSize.y;
+            let maxY = blockPos.y + halfSize.y;
+
+            cc.log("block" + i, blockPos, minX, maxX, minY, maxY);
+
+            if (minX <= v2.x && v2.x <= maxX
+                && minY <= v2.y && v2.y <= maxY) {
+                return this.listBlockScripts[i];
+            }
+        }
+
+        cc.log("findBlock: FAILED at coordinate ", v2);
+    },
+
     tryMove: function (direction) {
+        cc.log("tryMove with direction=", direction);
         let canMove = false;
 
         let currentBlock = this.findBlock(this.selectedX, this.selectedY);
 
         switch (direction){
-            case 'up':
+            case 'L':
                 if (this.selectedX == 0) break;
 
                 this.selectedX--;
                 canMove = true;
                 break;
-            case 'down':
+            case 'R':
                 if (this.selectedX == BLOCKS_PER_ROW - 1) break;
 
                 this.selectedX++;
                 canMove = true;
                 break;
-            case 'left':
+            case 'U':
                 if (this.selectedY == 0) break;
 
                 this.selectedY--;
                 canMove = true;
                 break;
-            case 'right':
+            case 'D':
                 if (this.selectedY == BLOCKS_PER_ROW - 1) break;
 
                 this.selectedY++;
@@ -240,8 +314,11 @@ cc.Class({
                 this.state = STATE.STARTED;
             }
 
+            // Log player's move to submit later
+            Global.player_sequence += direction;
+
             this.lastMove = direction;
-            this.btnUndo.interactable = true;
+            //this.btnUndo.interactable = true;
 
             let nextBlock = this.findBlock(this.selectedX, this.selectedY);                
             let newValue = nextBlock.value + 1;
@@ -324,37 +401,52 @@ cc.Class({
         selectedBlock.animate();
     },
 
-    onUndoClicked: function(){
-        if (this.lastMove == null) return;
+    // onUndoClicked: function(){
+    //     if (this.lastMove == null) return;
 
-        // Deselect + substract value
-        let currentBlock = this.findBlock(this.selectedX, this.selectedY);                
-        let oldValue = currentBlock.value - 1;
+    //     // Deselect + substract value
+    //     let currentBlock = this.findBlock(this.selectedX, this.selectedY);                
+    //     let oldValue = currentBlock.value - 1;
 
-        currentBlock.setColorAndValue(this.getSpriteByValue(oldValue), oldValue);
-        currentBlock.setSelected(false);
+    //     currentBlock.setColorAndValue(this.getSpriteByValue(oldValue), oldValue);
+    //     currentBlock.setSelected(false);
 
-        // back to previous selected block
-        switch (this.lastMove){
-            case 'up':
-                this.selectedX++;
-                break;
-            case 'down':
-                this.selectedX--;
-                break;
-            case 'left':
-                this.selectedY++;
-                break;
-            case 'right':
-                this.selectedY--;
-                break;
-        }
+    //     // back to previous selected block
+    //     switch (this.lastMove){
+    //         case 'U':
+    //             this.selectedX++;
+    //             break;
+    //         case 'D':
+    //             this.selectedX--;
+    //             break;
+    //         case 'L':
+    //             this.selectedY++;
+    //             break;
+    //         case 'R':
+    //             this.selectedY--;
+    //             break;
+    //     }
+
+    //     // Remove last letter from player's activity
+    //     let temp = Global.player_sequence;
+    //     temp = temp.substring(temp.length - 1);
+
+    //     Global.player_sequence = temp;
         
-        this.lastMove = null;
+    //     this.lastMove = null;
 
-        let previousBlock = this.findBlock(this.selectedX, this.selectedY);                
-        previousBlock.setSelected(true);
+    //     let previousBlock = this.findBlock(this.selectedX, this.selectedY);                
+    //     previousBlock.setSelected(true);
 
+    //     this.btnUndo.interactable = false;
+    // },
+    onUndoClicked: function(){
+        if (this.usedReset) return;
+
+        let level = this._allLevels[this._currentLevel];
+
+        this.loadLevel(level);        
+        
         this.btnUndo.interactable = false;
     },
 
@@ -368,6 +460,9 @@ cc.Class({
 
     isClockRinging: false,
     update (dt) {
+        if (this.state == STATE.TUTORIAL) return;
+        if (this.state == STATE.END) return;
+
         this._timer -= dt;
 
         if (this._timer > 0){
@@ -387,7 +482,7 @@ cc.Class({
 
                 this.isClockRinging = true;
             }
-        } else if (this.state == STATE.STARTED) {
+        } else {
             Global.newScore = this.score;
 
             cc.director.loadScene("end_game");

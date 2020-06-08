@@ -1,29 +1,29 @@
-window.__require = function e(t, o, i) {
-function n(l, s) {
-if (!o[l]) {
-if (!t[l]) {
-var a = l.split("/");
+window.__require = function e(t, i, o) {
+function n(c, s) {
+if (!i[c]) {
+if (!t[c]) {
+var a = c.split("/");
 a = a[a.length - 1];
 if (!t[a]) {
 var r = "function" == typeof __require && __require;
 if (!s && r) return r(a, !0);
-if (c) return c(a, !0);
-throw new Error("Cannot find module '" + l + "'");
+if (l) return l(a, !0);
+throw new Error("Cannot find module '" + c + "'");
 }
 }
-var u = o[l] = {
+var d = i[c] = {
 exports: {}
 };
-t[l][0].call(u.exports, function(e) {
-return n(t[l][1][e] || e);
-}, u, u.exports, e, t, o, i);
+t[c][0].call(d.exports, function(e) {
+return n(t[c][1][e] || e);
+}, d, d.exports, e, t, i, o);
 }
-return o[l].exports;
+return i[c].exports;
 }
-for (var c = "function" == typeof __require && __require, l = 0; l < i.length; l++) n(i[l]);
+for (var l = "function" == typeof __require && __require, c = 0; c < o.length; c++) n(o[c]);
 return n;
 }({
-Block: [ function(e, t, o) {
+Block: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "89334GVgj1MkaQ0C/zPbcJf", "Block");
 cc.Class({
@@ -60,7 +60,7 @@ scale: 1
 });
 cc._RF.pop();
 }, {} ],
-DialogBox: [ function(e, t, o) {
+DialogBox: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "9c515QSqVdGj4bHCOMnzXYO", "DialogBox");
 cc.Class({
@@ -81,10 +81,10 @@ this.node.active = !0;
 });
 cc._RF.pop();
 }, {} ],
-EndGame: [ function(e, t, o) {
+EndGame: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "83178yEnslO66ZUZISIERtM", "EndGame");
-var i = e("DialogBox");
+var o = e("DialogBox");
 e("Loading");
 cc.Class({
 extends: cc.Component,
@@ -94,6 +94,10 @@ default: null,
 type: cc.Label
 },
 score2: {
+default: null,
+type: cc.Label
+},
+lblGold: {
 default: null,
 type: cc.Label
 },
@@ -119,7 +123,7 @@ type: cc.Node
 },
 dialogBox: {
 default: null,
-type: i
+type: o
 },
 loading: {
 default: null,
@@ -129,6 +133,7 @@ type: cc.Node
 start: function() {
 this.score.string = Global.newScore;
 this.score2.string = Global.newScore;
+this.lblGold.string = Global.newScore;
 Global.dialogBox = this.dialogBox;
 Global.loading = this.loading;
 if (Global.isLoggedIn()) {
@@ -170,7 +175,7 @@ cc._RF.pop();
 DialogBox: "DialogBox",
 Loading: "Loading"
 } ],
-Entry: [ function(e, t, o) {
+Entry: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "0eff6fHW9ZJqbcebTF5iL8z", "Entry");
 cc.Class({
@@ -185,12 +190,12 @@ default: "",
 visible: !1
 }
 },
-setup: function(e, t, o, i, n) {
+setup: function(e, t, i, o, n) {
 this.tx = n;
 this.rank.string = e;
 this.key.string = t;
-this.score.string = o;
-this.medal.spriteFrame = i;
+this.score.string = i;
+this.medal.spriteFrame = o;
 this.node.on(cc.Node.EventType.TOUCH_END, this.onClick, this);
 },
 onClick: function() {
@@ -199,10 +204,10 @@ cc.sys.openURL("https://explorer.harmony.one/#/tx/" + this.tx);
 });
 cc._RF.pop();
 }, {} ],
-Game: [ function(e, t, o) {
+Game: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "918870dx+VCSJisaYjAnxgN", "Game");
-var i = 0, n = 1, c = 2;
+var o = 0, n = 1, l = 2;
 cc.Class({
 extends: cc.Component,
 properties: {
@@ -256,10 +261,12 @@ default: null,
 type: cc.AudioClip
 }
 },
-state: i,
+state: o,
 lastMove: null,
 usedReset: !1,
 touchedBlock: null,
+startPos: null,
+endPos: null,
 onLoad: function() {
 this.nodeWidth = (this.node.width - 66) / 3;
 this.nodeHeight = (this.node.height - 66) / 3;
@@ -268,7 +275,7 @@ this._currentLevel = 0;
 var e = this._allLevels[this._currentLevel];
 this.instantiateBlocks(e);
 this.reset();
-null != this.themeMusic && cc.audioEngine.playMusic(this.themeMusic, !0);
+null != this.themeMusic && Global.isAndroid() && cc.audioEngine.playMusic(this.themeMusic, !0);
 },
 generateAllLevels: function() {
 var e = this.levelGenerator.getComponent("LevelGenerator");
@@ -279,24 +286,23 @@ instantiateBlocks: function() {
 this.listBlockScripts = [];
 for (var e = 0; e < 9; e++) {
 var t = cc.instantiate(this.prefabBlock);
+this.node.addChild(t);
 t.width = this.nodeWidth;
 t.height = this.nodeHeight;
-var o = e % 3, i = Math.floor(e / 3);
-t.position = this.getNodePosition(o, i);
-this.node.addChild(t);
+var i = e % 3, o = Math.floor(e / 3);
+t.position = this.getNodePosition(i, o);
 var n = t.getComponent("Block");
-n.x = o;
-n.y = i;
+n.x = i;
+n.y = o;
 this.listBlockScripts.push(n);
-t.on(cc.Node.EventType.MOUSE_UP, this.onBlockTouched, this);
 }
 },
 getNodePosition: function(e, t) {
-var o = this.nodeWidth;
-return cc.v2(18 * (t + 1) + o * t + o / 2, -(18 * (e + 1) + o * e + o / 2));
+var i = this.nodeWidth, o = this.nodeHeight;
+return cc.v2((e - 1) * (18 + i), -(t - 1) * (18 + o));
 },
 reset: function() {
-this.state = i;
+this.state = o;
 this.score = 0;
 this._currentLevel = 0;
 this._timer = 0;
@@ -309,16 +315,15 @@ this.animatePlayButton();
 loadLevel: function(e) {
 Global.board_state = "";
 Global.player_sequence = "";
-for (var t = "", o = 0; o < e.contents.length; o++) {
-var i = e.contents[o], n = o % 3, c = Math.floor(o / 3), l = this.findBlock(c, n);
-l.setSelected(!1);
-l.setColorAndValue(this.getSpriteByValue(i), i);
-t += i;
+for (var t = "", i = 0; i < e.contents.length; i++) {
+var o = e.contents[i], n = i % 3, l = Math.floor(i / 3), c = this.findBlock(n, l);
+c.setSelected(!1);
+c.setColorAndValue(this.getSpriteByValue(o), o);
+t += o;
 }
 Global.board_state = t;
 this.selectedX = e.initialSelected.x;
 this.selectedY = e.initialSelected.y;
-cc.log("SELECTED " + this.selectedX + "-" + this.selectedY, "finding node...");
 var s = this.findBlock(this.selectedX, this.selectedY);
 null != s && s.setSelected(!0);
 this.lblLevel.string = this._currentLevel + 1 + "/100";
@@ -340,63 +345,68 @@ this.node.parent.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
 },
 onTouchStart: function(e) {
 this.startPos = e.getLocation();
-cc.log("parent touched ", this.startPos);
-this.touchedBlock = null;
 },
 onTouchEnd: function(e) {
-var t = e.getLocation(), o = t.x - this.startPos.x, i = t.y - this.startPos.y;
-Math.abs(o) < 80 && Math.abs(i) < 80 || this.moveBySwift(o, i);
-},
-onBlockTouched: function(e) {
-this.touchedBlock = e.target;
-this.startPos = e.getLocation();
-cc.log("block touched ", this.startPos);
+var t = e.getLocation(), i = t.x - this.startPos.x, o = t.y - this.startPos.y;
+if (Math.abs(i) < SWIFT_DISTANCE && Math.abs(o) < SWIFT_DISTANCE) {
+var n = e.target, l = this.findBlockByCoordinate(cc.v2(t.x - n.x, t.y - n.y));
+this.moveByClickingBlock(l);
+} else this.moveBySwift(i, o);
 },
 moveBySwift: function(e, t) {
-var o = void 0;
-o = Math.abs(e) >= Math.abs(t) ? e > 0 ? "R" : "L" : t > 0 ? "U" : "D";
-this.tryMove(o);
-},
-moveByClickingBlock: function() {
-if (null !== this.touchedBlock) {
-cc.log("CHOOSEN ONE", this.touchedBlock);
-var e = this.findBlock(this.selectedX, this.selectedY), t = e.x - this.touchedBlock.x, o = e.y - this.touchedBlock.y;
-if (0 != t || 0 != o) {
-var i = "";
-0 != t ? i = t > 0 ? "R" : "L" : 0 != o && (i = o > 0 ? "U" : "D");
+var i = void 0;
+i = Math.abs(e) >= Math.abs(t) ? e > 0 ? "R" : "L" : t > 0 ? "U" : "D";
 this.tryMove(i);
-}
+},
+moveByClickingBlock: function(e) {
+cc.log("moveByClickingBlock", e);
+if (void 0 !== e && null !== e) {
+var t = this.findBlock(this.selectedX, this.selectedY), i = t.x - e.x, o = t.y - e.y, n = Math.abs(i), l = Math.abs(o);
+if ((1 === n || 1 === l) && (1 !== n || 1 !== l) && n <= 1 && l <= 1) {
+var c = "";
+0 != i ? c = i > 0 ? "L" : "R" : 0 != o && (c = o > 0 ? "U" : "D");
+this.tryMove(c);
+} else this.playInvalidMoveSound();
 }
 },
 findBlock: function(e, t) {
-for (var o = 0; o < this.listBlockScripts.length; o++) {
-var i = this.listBlockScripts[o];
-if (i.x == e && i.y == t) return i;
+for (var i = 0; i < this.listBlockScripts.length; i++) {
+var o = this.listBlockScripts[i];
+if (o.x == e && o.y == t) return o;
 }
-cc.log("findBlock: FAILED at index ", o);
+cc.log("findBlock: FAILED at index ", i);
+},
+findBlockByCoordinate: function(e) {
+for (var t = 0; t < this.listBlockScripts.length; t++) {
+var i = this.listBlockScripts[t], o = this.getNodePosition(i.x, i.y), n = cc.v2(this.nodeWidth, this.nodeHeight), l = o.x - n.x, c = o.x + n.x, s = o.y - n.y, a = o.y + n.y;
+cc.log("block" + t, o, l, c, s, a);
+if (l <= e.x && e.x <= c && s <= e.y && e.y <= a) return this.listBlockScripts[t];
+}
+cc.log("findBlock: FAILED at coordinate ", e);
 },
 tryMove: function(e) {
-var t = !1, o = this.findBlock(this.selectedX, this.selectedY);
+cc.log("tryMove with direction=", e);
+var t = !1, i = this.findBlock(this.selectedX, this.selectedY);
 switch (e) {
-case "U":
+case "L":
 if (0 == this.selectedX) break;
 this.selectedX--;
 t = !0;
 break;
 
-case "D":
+case "R":
 if (2 == this.selectedX) break;
 this.selectedX++;
 t = !0;
 break;
 
-case "L":
+case "U":
 if (0 == this.selectedY) break;
 this.selectedY--;
 t = !0;
 break;
 
-case "R":
+case "D":
 if (2 == this.selectedY) break;
 this.selectedY++;
 t = !0;
@@ -410,10 +420,10 @@ this.state = n;
 }
 Global.player_sequence += e;
 this.lastMove = e;
-var i = this.findBlock(this.selectedX, this.selectedY), c = i.value + 1;
-i.setColorAndValue(this.getSpriteByValue(c), c);
-o.setSelected(!1);
-i.setSelected(!0);
+var o = this.findBlock(this.selectedX, this.selectedY), l = o.value + 1;
+o.setColorAndValue(this.getSpriteByValue(l), l);
+i.setSelected(!1);
+o.setSelected(!0);
 this.playMoveSound();
 if (this.isPlayerWin()) {
 cc.audioEngine.playEffect(this.soundWin);
@@ -422,7 +432,7 @@ this.lblScore.string = this.score;
 this.gotoNextLevel();
 }
 } else {
-o.animate();
+i.animate();
 this.playInvalidMoveSound();
 }
 },
@@ -476,7 +486,7 @@ e.animatePlayButton();
 },
 isClockRinging: !1,
 update: function(e) {
-if (this.state != i && this.state != c) {
+if (this.state != o && this.state != l) {
 this._timer -= e;
 if (this._timer > 0) {
 var t = ("0" + Math.floor(this._timer)).slice(-2);
@@ -492,17 +502,18 @@ this.isClockRinging = !0;
 } else {
 Global.newScore = this.score;
 cc.director.loadScene("end_game");
-this.state = c;
+this.state = l;
 }
 }
 }
 });
 cc._RF.pop();
 }, {} ],
-Global: [ function(e, t, o) {
+Global: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "9bf09yemltMJ6LDPqxBrroN", "Global");
 e("DialogBox");
+window.SWIFT_DISTANCE = 80;
 window.Global = {
 myKeystore: "",
 newScore: 0,
@@ -553,41 +564,41 @@ return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "i
 restUpdateScore: function(e) {
 var t = "address=" + this.myKeystore + "&score=" + this.newScore + "&board_state=" + this.board_state + "&sequence=" + this.player_sequence;
 cc.log("PARAMZ ", t);
-var o = new XMLHttpRequest();
-o.open("POST", "http://puzzlemobile.hmny.io:3000/api/submit", !0);
-o.timeout = 15e3;
-o.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+var i = new XMLHttpRequest();
+i.open("POST", "http://puzzle-backend.hmny.io:3000/api/submit", !0);
+i.timeout = 15e3;
+i.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 null != Global.loading && (Global.loading.active = !0);
-o.onreadystatechange = function() {
+i.onreadystatechange = function() {
 null != Global.loading && (Global.loading.active = !1);
 if (4 === this.readyState && 200 === this.status) {
-var t = JSON.parse(o.responseText);
-cc.log("RESP", o.responseText);
+var t = JSON.parse(i.responseText);
+cc.log("RESP", i.responseText);
 if ("success" === t.status) e(); else {
 Global.showAlertDialog("Failed to save score! \n Please try again.");
 }
 }
 };
-o.onerror = function() {
+i.onerror = function() {
 null != Global.loading && (Global.loading.active = !1);
 Global.showAlertDialog("Networking problem \n Failed to save your score");
 };
-o.ontimeout = function(e) {
+i.ontimeout = function(e) {
 null != Global.loading && (Global.loading.active = !1);
 Global.showAlertDialog("Network: Request timeout.");
 };
-o.send(t);
+i.send(t);
 },
 restGetLeaderBoard: function(e) {
 var t = new XMLHttpRequest();
-t.open("GET", "http://puzzlemobile.hmny.io:3000/api/leader_boards", !0);
+t.open("GET", "http://puzzle-backend.hmny.io:3000/api/leader_boards", !0);
 t.timeout = 5e3;
 null != Global.loading && (Global.loading.active = !0);
 t.onreadystatechange = function() {
 null != Global.loading && (Global.loading.active = !1);
 if (4 == t.readyState && t.status >= 200 && t.status < 400) {
-var o = t.responseText;
-if ("success" === JSON.parse(t.responseText).status) e(o); else {
+var i = t.responseText;
+if ("success" === JSON.parse(t.responseText).status) e(i); else {
 Global.showAlertDialog("Unable to get \n Leader Board! \n Please try again.");
 }
 }
@@ -603,7 +614,7 @@ cc._RF.pop();
 }, {
 DialogBox: "DialogBox"
 } ],
-Leadearboard: [ function(e, t, o) {
+Leadearboard: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "e4231kRB6FO7qKfwfFVqxPB", "Leadearboard");
 cc.Class({
@@ -623,10 +634,10 @@ type: cc.Node
 start: function() {
 var e = "", t = null;
 Global.isAndroid();
-var o = this;
+var i = this;
 Global.loading = this.loading;
-Global.restGetLeaderBoard(function(i) {
-e = i;
+Global.restGetLeaderBoard(function(o) {
+e = o;
 var n = JSON.parse(e);
 cc.log("json string", e);
 t = n.leaders;
@@ -634,15 +645,15 @@ cc.log("Entries", t);
 t.sort(function(e, t) {
 return e.score > t.score ? -1 : 1;
 });
-var c = 1;
+var l = 1;
 t.forEach(function(e) {
-var t = cc.instantiate(o.prefabEntry), i = t.getComponent("Entry"), n = o.medalSprites[o.medalSprites.length - 1];
-1 != c && 2 != c || (n = o.medalSprites[c - 1]);
-var l = e.address.slice(0, 10) + "...", s = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
+var t = cc.instantiate(i.prefabEntry), o = t.getComponent("Entry"), n = i.medalSprites[i.medalSprites.length - 1];
+1 != l && 2 != l || (n = i.medalSprites[l - 1]);
+var c = e.address.slice(0, 10) + "...", s = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
 void 0 != e.txn && null != e.txn && (s = e.txn);
-i.setup(c, l, e.score, n, s);
-o.entriesRoot.addChild(t);
-c++;
+o.setup(l, c, e.score, n, s);
+i.entriesRoot.addChild(t);
+l++;
 });
 });
 },
@@ -655,7 +666,7 @@ cc.director.loadScene("end_game");
 });
 cc._RF.pop();
 }, {} ],
-LevelGenerator: [ function(e, t, o) {
+LevelGenerator: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "3ffbfo+zY9GiJgho3eM08Wb", "LevelGenerator");
 cc.Class({
@@ -666,60 +677,60 @@ return Math.floor(Math.random() * (t - e) + e);
 getDifficulty: function(e) {
 return 1 == e ? 1 : e >= 2 && e <= 3 ? 2 : e >= 4 && e <= 5 ? 3 : e >= 6 && e <= 7 ? 4 : e >= 8 && e <= 10 ? 5 : e >= 11 && e <= 20 ? 7 : e >= 21 && e <= 40 ? 8 : e >= 41 && e <= 60 ? 9 : e >= 61 && e <= 80 ? 10 : e >= 81 && e <= 90 ? 11 : e >= 91 && e <= 95 ? 12 : 96 == e ? 13 : 97 == e ? 14 : 98 == e ? 15 : 99 == e ? 16 : 17;
 },
-possible: function(e, t, o) {
-return -1 != o && ((0 != o || 0 != Math.floor(t / 3)) && ((1 != o || 2 != Math.floor(t / 3)) && ((2 != o || t % 3 != 0) && (3 != o || t % 3 != 2))));
+possible: function(e, t, i) {
+return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.floor(t / 3)) && ((2 != i || t % 3 != 0) && (3 != i || t % 3 != 2))));
 },
 levels: function() {
-for (var e, t = new Array(100), o = 1; o < 101; o++) {
-var i = 3 * (e = this.getDifficulty(o)), n = 4 * e, c = o + 3, l = this.randRange(i, n), s = {}, a = [];
-if (1 == o) {
+for (var e, t = new Array(100), i = 1; i < 101; i++) {
+var o = 3 * (e = this.getDifficulty(i)), n = 4 * e, l = i + 3, c = this.randRange(o, n), s = {}, a = [];
+if (1 == i) {
 a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
 s.contents = a;
 s.initialSelected = {};
 s.initialSelected.x = 0;
 s.initialSelected.y = 0;
-t[o - 1] = s;
+t[i - 1] = s;
 } else {
-for (var r = 0; r < 9; r++) a.push(c);
-var u = this.randRange(0, 9), d = [];
-a[u] -= 1;
-for (r = 0; r < l; r++) {
+for (var r = 0; r < 9; r++) a.push(l);
+var d = this.randRange(0, 9), u = [];
+a[d] -= 1;
+for (r = 0; r < c; r++) {
 var h = -1;
 do {
 h = this.randRange(0, 4);
-} while (!this.possible(a, u, h));
+} while (!this.possible(a, d, h));
 switch (h) {
 case 0:
-u -= 3;
-d.push('"d"');
-r + 1 != l && (a[u] -= 1);
+d -= 3;
+u.push('"d"');
+r + 1 != c && (a[d] -= 1);
 break;
 
 case 1:
-u += 3;
-d.push('"u"');
-r + 1 != l && (a[u] -= 1);
+d += 3;
+u.push('"u"');
+r + 1 != c && (a[d] -= 1);
 break;
 
 case 2:
-u -= 1;
-d.push('"r"');
-r + 1 != l && (a[u] -= 1);
+d -= 1;
+u.push('"r"');
+r + 1 != c && (a[d] -= 1);
 break;
 
 case 3:
-u += 1;
-d.push('"l"');
-r + 1 != l && (a[u] -= 1);
+d += 1;
+u.push('"l"');
+r + 1 != c && (a[d] -= 1);
 }
 }
-var p = u % 3, f = Math.floor(u / 3);
-d = d.reverse();
+var p = d % 3, f = Math.floor(d / 3);
+u = u.reverse();
 s.contents = a;
 s.initialSelected = {};
 s.initialSelected.x = f;
 s.initialSelected.y = p;
-t[o - 1] = s;
+t[i - 1] = s;
 }
 }
 return t;
@@ -727,7 +738,7 @@ return t;
 });
 cc._RF.pop();
 }, {} ],
-Loading: [ function(e, t, o) {
+Loading: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "0ab5fsWe1ZMhp4pZYuuNkS+", "Loading");
 cc.Class({
@@ -742,20 +753,20 @@ this.icon.node.runAction(e);
 });
 cc._RF.pop();
 }, {} ],
-SplashScript: [ function(e, t, o) {
+SplashScript: [ function(e, t, i) {
 "use strict";
 cc._RF.push(t, "280c3rsZJJKnZ9RqbALVwtK", "SplashScript");
 cc.Class({
 extends: cc.Component,
 onLoad: function() {
+cc.debug.setDisplayStats(!1);
 var e = cc.delayTime(1.5), t = cc.sequence(e, cc.callFunc(this.loadGameScene.bind(this)));
 this.node.runAction(t);
 Global.logout();
 },
 loadGameScene: function() {
 cc.director.loadScene("game");
-},
-update: function(e) {}
+}
 });
 cc._RF.pop();
 }, {} ]

@@ -42,3 +42,15 @@
 # keep anysdk for release. you can comment if you are not using anysdk
 -keep public class com.anysdk.** { *; }
 -dontwarn com.anysdk.**
+
+-dontwarn com.samsung.**
+-dontwarn org.w3c.dom.**
+-dontwarn javax.naming.**
+-dontwarn java.beans.**
+-dontwarn javax.annotation.**
+-dontwarn kotlinx.coroutines.**
+-dontwarn sun.misc.**
+-dontwarn java8.util.**
+-dontwarn retrofit2.**
+-dontwarn org.slf4j.**
+

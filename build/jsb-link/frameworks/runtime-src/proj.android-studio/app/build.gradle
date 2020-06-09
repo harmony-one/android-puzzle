@@ -60,7 +60,11 @@ android {
     signingConfigs {
 
        release {
-            if (project.hasProperty("RELEASE_STORE_FILE")) {
+            storeFile file('C:\\NCCSoft\\android-puzzle\\harmony_keystore.keystore')
+           storePassword '123456'
+           keyAlias = 'harmony'
+           keyPassword '123456'
+           if (project.hasProperty("RELEASE_STORE_FILE")) {
                 storeFile file(RELEASE_STORE_FILE)
                 storePassword RELEASE_STORE_PASSWORD
                 keyAlias RELEASE_KEY_ALIAS

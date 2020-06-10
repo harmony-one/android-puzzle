@@ -38,6 +38,8 @@ cc.Class({
                 Global.getKeystore();
 
                 this.lblWelcome.string = "Welcome!";
+                let shortenKeystore = Global.myKeystore.slice(0, 10) + "...";
+                Global.showAlertDialog("<center>Your keystore: </center><br/>" + shortenKeystore);
             }
 
             this.panelGuest.active = false;

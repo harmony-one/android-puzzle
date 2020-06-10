@@ -292,14 +292,15 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public static void updateScore(int score){
-        if (Util.isInternetConnectionAvailable()){
-            currentContext.leaderboard.updateScore(currentContext.publicKey, score);
-
-            checkForUpdateThenSignTransaction();
-        }
-        else {
+        checkForUpdateThenSignTransaction();
+//        if (Util.isInternetConnectionAvailable()){
+//            currentContext.leaderboard.updateScore(currentContext.publicKey, score);
+//
+//            checkForUpdateThenSignTransaction();
+//        }
+//        else {
 //            showAlertDialog("No Internet connection available.\n Unable to save your score!");
-        }
+//        }
     }
 
     public static String getLeaderboard(){

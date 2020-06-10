@@ -146,6 +146,8 @@ if (Global.isSamsungBlockchainSupported()) {
 if (Global.isAndroid()) {
 Global.getKeystore();
 this.lblWelcome.string = "Welcome!";
+var e = Global.myKeystore.slice(0, 10) + "...";
+Global.showAlertDialog("<center>Your keystore: </center><br/>" + e);
 }
 this.panelGuest.active = !1;
 this.panelAuthenticated.active = !0;

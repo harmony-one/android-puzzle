@@ -15,6 +15,9 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
 
+        <!-- Samsung keystore -->
+        <meta-data android:name="scw_app_id" android:value="nj8cH7dLzs" />
+
         <!-- Tell Cocos2dxActivity the name of our .so -->
         <meta-data android:name="android.app.lib_name"
                    android:value="cocos2djs" />

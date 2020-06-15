@@ -24,6 +24,7 @@
  ****************************************************************************/
 package org.cocos2dx.javascript;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -36,7 +37,6 @@ import com.samsung.android.sdk.coldwallet.ScwDeepLink;
 import com.samsung.android.sdk.coldwallet.ScwService;
 
 import org.cocos2dx.javascript.sample.TransactionViewModel;
-import org.cocos2dx.javascript.service.LeaderBoard;
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
@@ -44,14 +44,11 @@ import java.util.List;
 
 import static org.cocos2dx.javascript.Util.stringToArrayList;
 
-
 public class AppActivity extends Cocos2dxActivity {
 
     static AppActivity currentContext;
 
     ScwService SbkInstance;
-
-    LeaderBoard leaderboard = new LeaderBoard();
 
     private ScwService.ScwGetAddressListCallback mScwGetAddressListCallback;
     public String publicKey = "";
@@ -77,8 +74,6 @@ public class AppActivity extends Cocos2dxActivity {
             //showAlertDialog("Samsung Blockchain API level is outdated, please upgrade.");
             return;
         }
-
-        leaderboard.init();
 
         if (isWalletInitialized()) {
             String ethereumHdPath = ScwService.getHdPath(ScwCoinType.ETH, 0);
@@ -219,7 +214,6 @@ public class AppActivity extends Cocos2dxActivity {
             @Override
             public void onSuccess(byte[] signedEthTransaction) {
                 //showAlertDialog("Sign Transaction successful!");
-                //Toast.makeText(currentContext,"Sign Transaction successful!", Toast.LENGTH_LONG);
                 Log.i(Util.LOG_TAG, "Sign Transaction successful!");
 
                 // Set content before sending
@@ -235,8 +229,6 @@ public class AppActivity extends Cocos2dxActivity {
                 //ScwErrorCode.ERROR_INVALID_TRANSACTION_FORMAT == -16;
 
                 Log.i(Util.LOG_TAG, "FAILED to Sign Transaction, errorCode: " + errorCode + " errorMessage: " + errorMessage);
-
-                //Toast.makeText(currentContext,"FAILED to Sign Transaction, errorCode: " + errorCode + " errorMessage: " + errorMessage, Toast.LENGTH_LONG);
             }
         };
     }
@@ -249,12 +241,6 @@ public class AppActivity extends Cocos2dxActivity {
                 public void onSuccess(List<String> addressList) {
                     publicKey = addressList.get(0);
 
-                    int currentScore = leaderboard.getScoreByKeystore(publicKey);
-
-                    // this account never save score, or this is new player
-                    if (currentScore == 0) {
-                        leaderboard.updateScore(publicKey, 0);
-                    }
                 }
 
                 @Override
@@ -287,24 +273,15 @@ public class AppActivity extends Cocos2dxActivity {
         return currentContext.publicKey;
     }
 
-    public static int getScore(){
-        return currentContext.leaderboard.getScoreByKeystore(currentContext.publicKey);
-    }
-
     public static void updateScore(int score){
         checkForUpdateThenSignTransaction();
 //        if (Util.isInternetConnectionAvailable()){
-//            currentContext.leaderboard.updateScore(currentContext.publicKey, score);
 //
 //            checkForUpdateThenSignTransaction();
 //        }
 //        else {
 //            showAlertDialog("No Internet connection available.\n Unable to save your score!");
 //        }
-    }
-
-    public static String getLeaderboard(){
-        return currentContext.leaderboard.getLeaderBoard();
     }
 
     public static boolean isInternetConnectionAvailable(){
@@ -317,19 +294,19 @@ public class AppActivity extends Cocos2dxActivity {
 
 
 
-//    public static void showAlertDialog(final String message) {
-//        //we must use runOnUiThread here
-//        currentContext.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                AlertDialog alertDialog = new AlertDialog.Builder(currentContext).create();
-//                alertDialog.setTitle("Message");
-//                alertDialog.setMessage(message);
-//                //alertDialog.setIcon(R.drawable.ic_close);
-//                alertDialog.show();
-//            }
-//        });
-//    }
+    public static void showAlertDialog(final String message) {
+        //we must use runOnUiThread here
+        currentContext.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog alertDialog = new AlertDialog.Builder(currentContext).create();
+                alertDialog.setTitle("Message");
+                alertDialog.setMessage(message);
+                //alertDialog.setIcon(R.drawable.ic_close);
+                alertDialog.show();
+            }
+        });
+    }
 
     // Don't remove, this is an api
     public static void gotoSamsungBlockchainKeystoreMenu()

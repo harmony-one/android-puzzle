@@ -37,8 +37,15 @@ cc.Class({
             if (Global.isAndroid()){
                 Global.getKeystore();
 
+                let keystore = Global.myKeystore;
+
+                if (keystore === ""){
+                    Global.gotoSamsungBlockchainKeystoreMenu();
+                    return;
+                }
+
                 this.lblWelcome.string = "Welcome!";
-                let shortenKeystore = Global.myKeystore.slice(0, 10) + "...";
+                let shortenKeystore = keystore.slice(0, 10) + "...";
                 Global.showAlertDialog("<center>Your keystore: </center><br/>" + shortenKeystore);
             }
 

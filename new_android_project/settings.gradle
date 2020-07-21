@@ -1,0 +1,4 @@
+include ':app'
+include ':libcocos2dx'
+project(':libcocos2dx').projectDir = new File('C:/CocosCreator_2.3.1/resources/cocos2d-x/cocos/platform/android/libcocos2dx')
+rootProject.name='HarmonyOnePuzzle'

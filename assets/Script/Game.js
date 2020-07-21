@@ -137,6 +137,7 @@ cc.Class({
             temp += value;
         }
         Global.board_state = temp;
+        Global.current_level = level;
 
         this.selectedX = level.initialSelected.x;
         this.selectedY = level.initialSelected.y;

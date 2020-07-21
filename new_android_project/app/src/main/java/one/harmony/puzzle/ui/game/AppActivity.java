@@ -291,5 +291,11 @@ public class AppActivity extends Cocos2dxActivity {
         Util.launchDeepLink(currentContext, ScwDeepLink.MAIN);
     }
 
+    public static boolean isInternetConnectionAvailable(){
+        return Util.isInternetConnectionAvailable();
+    }
 
+    public static boolean isSamsungBlockchainSupported(){
+        return KeyStoreManager.getInstance(currentContext).isSBKSupported();
+    }
 }

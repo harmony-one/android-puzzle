@@ -8,6 +8,7 @@ window.Global = {
     newScore: 0,
     board_state: "",
     player_sequence: "",
+    current_level: 0,
     dialogBox: null,
     loading: null,
     saveScoreCallback: null,
@@ -46,7 +47,7 @@ window.Global = {
         let currentScore = this.getScore();
 
         if (this.newScore > currentScore){
-            jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "updateScore", "(ILjava/lang/String;Ljava/lang/String;)V", this.newScore, this.board_state, this.player_sequence);
+            jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "updateScore", "(ILjava/lang/String;Ljava/lang/String;)V", this.current_level + "", this.player_sequence);
 
         }
     },    

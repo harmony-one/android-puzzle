@@ -25,7 +25,7 @@ window.Global = {
     },
 
     getKeystore: function(){
-        this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
+        this.myKeystore = jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getKeystore", "()Ljava/lang/String;");
 
         localStorage.setItem("my_keystore", this.myKeystore);
 
@@ -37,7 +37,7 @@ window.Global = {
     },
 
     getScore: function(){
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
+        return jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getScore", "()I");
     },
 
     updateScore: function(){
@@ -46,13 +46,17 @@ window.Global = {
         let currentScore = this.getScore();
 
         if (this.newScore > currentScore){
-            //jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "updateScore", "(I)V", this.newScore);
+            jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "updateScore", "(ILjava/lang/String;Ljava/lang/String;)V", this.newScore, this.board_state, this.player_sequence);
 
         }
-    },
+    },    
 
     getLeaderboard: function(){
-        return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
+        return jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getTopPlayers", "()Ljava/lang/String;");
+    },
+
+    updateScoreCallbac: function(data){
+
     },
 
     showAlertDialog: function(message){

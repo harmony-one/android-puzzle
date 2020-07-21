@@ -64,21 +64,21 @@ cc.Class({
 
     onSaveClicked(){ 
         if (Global.isAndroid()){
-            //Global.updateScore(); // update score & send-transaction
-            let that = this;
+            Global.updateScore(); // update score & send-transaction
+            // let that = this;
 
-            Global.restUpdateScore(function(){
-                cc.log("score updated");
+            // Global.restUpdateScore(function(){
+            //     cc.log("score updated");
 
-                that.lblWelcome.string = "Score Saved";
-                // that.lblUpdateSuccess.active = true;
-                // that.lblPoint.active = false;
+            //     that.lblWelcome.string = "Score Saved";
+            //     // that.lblUpdateSuccess.active = true;
+            //     // that.lblPoint.active = false;
 
-                // setTimeout(function() {
-                //     // that.lblUpdateSuccess.active = false;
-                //     // that.lblPoint.active = true;
-                // }, 3000);
-            });
+            //     // setTimeout(function() {
+            //     //     // that.lblUpdateSuccess.active = false;
+            //     //     // that.lblPoint.active = true;
+            //     // }, 3000);
+            // });
         }
     },
 

@@ -1,22 +1,22 @@
 window.__require = function e(t, i, o) {
-function n(c, s) {
+function n(c, a) {
 if (!i[c]) {
 if (!t[c]) {
-var a = c.split("/");
-a = a[a.length - 1];
-if (!t[a]) {
+var s = c.split("/");
+s = s[s.length - 1];
+if (!t[s]) {
 var r = "function" == typeof __require && __require;
-if (!s && r) return r(a, !0);
-if (l) return l(a, !0);
+if (!a && r) return r(s, !0);
+if (l) return l(s, !0);
 throw new Error("Cannot find module '" + c + "'");
 }
 }
-var d = i[c] = {
+var u = i[c] = {
 exports: {}
 };
-t[c][0].call(d.exports, function(e) {
+t[c][0].call(u.exports, function(e) {
 return n(t[c][1][e] || e);
-}, d, d.exports, e, t, i, o);
+}, u, u.exports, e, t, i, o);
 }
 return i[c].exports;
 }
@@ -145,9 +145,14 @@ onLoginClicked: function() {
 if (Global.isSamsungBlockchainSupported()) {
 if (Global.isAndroid()) {
 Global.getKeystore();
+var e = Global.myKeystore;
+if ("" === e) {
+Global.gotoSamsungBlockchainKeystoreMenu();
+return;
+}
 this.lblWelcome.string = "Welcome!";
-var e = Global.myKeystore.slice(0, 10) + "...";
-Global.showAlertDialog("<center>Your keystore: </center><br/>" + e);
+var t = e.slice(0, 10) + "...";
+Global.showAlertDialog("<center>Your keystore: </center><br/>" + t);
 }
 this.panelGuest.active = !1;
 this.panelAuthenticated.active = !0;
@@ -157,13 +162,7 @@ onCreateKeystoreClicked: function() {
 Global.isAndroid() && Global.gotoSamsungBlockchainKeystoreMenu();
 },
 onSaveClicked: function() {
-if (Global.isAndroid()) {
-var e = this;
-Global.restUpdateScore(function() {
-cc.log("score updated");
-e.lblWelcome.string = "Score Saved";
-});
-}
+Global.isAndroid() && Global.updateScore();
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
@@ -326,8 +325,8 @@ t += o;
 Global.board_state = t;
 this.selectedX = e.initialSelected.x;
 this.selectedY = e.initialSelected.y;
-var s = this.findBlock(this.selectedX, this.selectedY);
-null != s && s.setSelected(!0);
+var a = this.findBlock(this.selectedX, this.selectedY);
+null != a && a.setSelected(!0);
 this.lblLevel.string = this._currentLevel + 1 + "/100";
 this.btnUndo.interactable = !0;
 null != this.tween4Stopwatch && this.tween4Stopwatch.stop();
@@ -380,9 +379,9 @@ cc.log("findBlock: FAILED at index ", i);
 },
 findBlockByCoordinate: function(e) {
 for (var t = 0; t < this.listBlockScripts.length; t++) {
-var i = this.listBlockScripts[t], o = this.getNodePosition(i.x, i.y), n = cc.v2(this.nodeWidth, this.nodeHeight), l = o.x - n.x, c = o.x + n.x, s = o.y - n.y, a = o.y + n.y;
-cc.log("block" + t, o, l, c, s, a);
-if (l <= e.x && e.x <= c && s <= e.y && e.y <= a) return this.listBlockScripts[t];
+var i = this.listBlockScripts[t], o = this.getNodePosition(i.x, i.y), n = cc.v2(this.nodeWidth, this.nodeHeight), l = o.x - n.x, c = o.x + n.x, a = o.y - n.y, s = o.y + n.y;
+cc.log("block" + t, o, l, c, a, s);
+if (l <= e.x && e.x <= c && a <= e.y && e.y <= s) return this.listBlockScripts[t];
 }
 cc.log("findBlock: FAILED at coordinate ", e);
 },
@@ -532,7 +531,7 @@ var e = localStorage.getItem("my_keystore");
 return null != e && e.length > 10;
 },
 getKeystore: function() {
-this.myKeystore = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getKeystore", "()Ljava/lang/String;");
+this.myKeystore = jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getKeystore", "()Ljava/lang/String;");
 localStorage.setItem("my_keystore", this.myKeystore);
 return this.myKeystore;
 },
@@ -540,17 +539,18 @@ logout: function() {
 localStorage.setItem("my_keystore", "");
 },
 getScore: function() {
-return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getScore", "()I");
+return jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getScore", "()I");
 },
 updateScore: function() {
 if (!(this.newScore <= 0)) {
-this.getScore();
-this.newScore;
+var e = this.getScore();
+this.newScore > e && jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "updateScore", "(ILjava/lang/String;Ljava/lang/String;)V", this.newScore, this.board_state, this.player_sequence);
 }
 },
 getLeaderboard: function() {
-return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLeaderboard", "()Ljava/lang/String;");
+return jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getTopPlayers", "()Ljava/lang/String;");
 },
+updateScoreCallbac: function(e) {},
 showAlertDialog: function(e) {
 Global.dialogBox.showMessage(e);
 },
@@ -634,30 +634,19 @@ type: cc.Node
 }
 },
 start: function() {
-var e = "", t = null;
-Global.isAndroid();
-var i = this;
+var e = this;
+if (Global.isAndroid()) {
+var t = Global.getLeaderboard(), i = 1;
+(t = (t = t.replace("[", "")).replace("]", "")).split(",").forEach(function(t) {
+var o = cc.instantiate(e.prefabEntry), n = o.getComponent("Entry"), l = e.medalSprites[e.medalSprites.length - 1];
+1 != i && 2 != i || (l = e.medalSprites[i - 1]);
+var c = t.slice(0, 10) + "...";
+n.setup(i, c, 0, l);
+e.entriesRoot.addChild(o);
+i++;
+});
+}
 Global.loading = this.loading;
-Global.restGetLeaderBoard(function(o) {
-e = o;
-var n = JSON.parse(e);
-cc.log("json string", e);
-t = n.leaders;
-cc.log("Entries", t);
-t.sort(function(e, t) {
-return e.score > t.score ? -1 : 1;
-});
-var l = 1;
-t.forEach(function(e) {
-var t = cc.instantiate(i.prefabEntry), o = t.getComponent("Entry"), n = i.medalSprites[i.medalSprites.length - 1];
-1 != l && 2 != l || (n = i.medalSprites[l - 1]);
-var c = e.address.slice(0, 10) + "...", s = "0x0816c249e4ecc3f9992044a8aaa4cc13cb3a5465a35cc52b5804b98170d77040";
-void 0 != e.txn && null != e.txn && (s = e.txn);
-o.setup(l, c, e.score, n, s);
-i.entriesRoot.addChild(t);
-l++;
-});
-});
 },
 onPlayAgainClicked: function() {
 cc.director.loadScene("game");
@@ -684,55 +673,55 @@ return -1 != i && ((0 != i || 0 != Math.floor(t / 3)) && ((1 != i || 2 != Math.f
 },
 levels: function() {
 for (var e, t = new Array(100), i = 1; i < 101; i++) {
-var o = 3 * (e = this.getDifficulty(i)), n = 4 * e, l = i + 3, c = this.randRange(o, n), s = {}, a = [];
+var o = 3 * (e = this.getDifficulty(i)), n = 4 * e, l = i + 3, c = this.randRange(o, n), a = {}, s = [];
 if (1 == i) {
-a = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
-s.contents = a;
-s.initialSelected = {};
-s.initialSelected.x = 0;
-s.initialSelected.y = 0;
-t[i - 1] = s;
+s = [ 1, 0, 0, 1, 1, 0, 1, 1, 0 ];
+a.contents = s;
+a.initialSelected = {};
+a.initialSelected.x = 0;
+a.initialSelected.y = 0;
+t[i - 1] = a;
 } else {
-for (var r = 0; r < 9; r++) a.push(l);
-var d = this.randRange(0, 9), u = [];
-a[d] -= 1;
+for (var r = 0; r < 9; r++) s.push(l);
+var u = this.randRange(0, 9), d = [];
+s[u] -= 1;
 for (r = 0; r < c; r++) {
 var h = -1;
 do {
 h = this.randRange(0, 4);
-} while (!this.possible(a, d, h));
+} while (!this.possible(s, u, h));
 switch (h) {
 case 0:
-d -= 3;
-u.push('"d"');
-r + 1 != c && (a[d] -= 1);
+u -= 3;
+d.push('"d"');
+r + 1 != c && (s[u] -= 1);
 break;
 
 case 1:
-d += 3;
-u.push('"u"');
-r + 1 != c && (a[d] -= 1);
+u += 3;
+d.push('"u"');
+r + 1 != c && (s[u] -= 1);
 break;
 
 case 2:
-d -= 1;
-u.push('"r"');
-r + 1 != c && (a[d] -= 1);
+u -= 1;
+d.push('"r"');
+r + 1 != c && (s[u] -= 1);
 break;
 
 case 3:
-d += 1;
-u.push('"l"');
-r + 1 != c && (a[d] -= 1);
+u += 1;
+d.push('"l"');
+r + 1 != c && (s[u] -= 1);
 }
 }
-var p = d % 3, f = Math.floor(d / 3);
-u = u.reverse();
-s.contents = a;
-s.initialSelected = {};
-s.initialSelected.x = f;
-s.initialSelected.y = p;
-t[i - 1] = s;
+var p = u % 3, f = Math.floor(u / 3);
+d = d.reverse();
+a.contents = s;
+a.initialSelected = {};
+a.initialSelected.x = f;
+a.initialSelected.y = p;
+t[i - 1] = a;
 }
 }
 return t;

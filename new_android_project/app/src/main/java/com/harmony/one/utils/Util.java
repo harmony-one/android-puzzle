@@ -1,4 +1,4 @@
-package one.harmony.puzzle.utils;
+package com.harmony.one.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import one.harmony.puzzle.ethereum.KeyStoreManager;
+import com.harmony.one.ethereum.KeyStoreManager;
 
 public class Util {
 

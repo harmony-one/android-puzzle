@@ -1,4 +1,4 @@
-package one.harmony.puzzle.ethereum;
+package com.harmony.one.ethereum;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,9 +12,9 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
 
 import java8.util.concurrent.CompletableFuture;
-import one.harmony.puzzle.config.Constants;
-import one.harmony.puzzle.ui.game.TransactionViewModel;
-import one.harmony.puzzle.utils.Util;
+import com.harmony.one.config.Constants;
+import com.harmony.one.ui.game.TransactionViewModel;
+import com.harmony.one.utils.Util;
 
 public class NodeConnector {
 

@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-package one.harmony.puzzle.ui.game;
+package com.harmony.one.ui.game;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -45,10 +45,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import one.harmony.puzzle.ethereum.KeyStoreManager;
-import one.harmony.puzzle.ethereum.NodeConnector;
-import one.harmony.puzzle.ethereum.WalletService;
-import one.harmony.puzzle.utils.Util;
+import com.harmony.one.ethereum.KeyStoreManager;
+import com.harmony.one.ethereum.NodeConnector;
+import com.harmony.one.ethereum.WalletService;
+import com.harmony.one.utils.Util;
 
 public class AppActivity extends Cocos2dxActivity {
 

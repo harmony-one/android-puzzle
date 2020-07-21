@@ -1,4 +1,4 @@
-package one.harmony.puzzle.contract;
+package com.harmony.one.contract;
 
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;

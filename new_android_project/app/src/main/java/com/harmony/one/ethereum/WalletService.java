@@ -1,4 +1,4 @@
-package one.harmony.puzzle.ethereum;
+package com.harmony.one.ethereum;
 
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observable;
-import one.harmony.puzzle.config.Constants;
-import one.harmony.puzzle.contract.Puzzle;
+import com.harmony.one.config.Constants;
+import com.harmony.one.contract.Puzzle;
 
 public class WalletService {
 

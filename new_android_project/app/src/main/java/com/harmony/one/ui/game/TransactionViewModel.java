@@ -1,4 +1,4 @@
-package one.harmony.puzzle.ui.game;
+package com.harmony.one.ui.game;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,10 +9,10 @@ import org.web3j.utils.Convert;
 
 import java.math.BigInteger;
 
-import one.harmony.puzzle.config.Constants;
-import one.harmony.puzzle.ethereum.KeyStoreManager;
-import one.harmony.puzzle.ethereum.NodeConnector;
-import one.harmony.puzzle.utils.Util;
+import com.harmony.one.config.Constants;
+import com.harmony.one.ethereum.KeyStoreManager;
+import com.harmony.one.ethereum.NodeConnector;
+import com.harmony.one.utils.Util;
 
 
 public class TransactionViewModel {

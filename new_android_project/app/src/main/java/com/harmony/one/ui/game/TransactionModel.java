@@ -1,4 +1,4 @@
-package one.harmony.puzzle.ui.game;
+package com.harmony.one.ui.game;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
@@ -14,7 +14,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 
-import one.harmony.puzzle.config.Constants;
+import com.harmony.one.config.Constants;
 
 
 public class TransactionModel extends BaseObservable {

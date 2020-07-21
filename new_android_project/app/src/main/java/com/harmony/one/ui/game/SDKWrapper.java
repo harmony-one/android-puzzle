@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-package one.harmony.puzzle.ui.game;
+package com.harmony.one.ui.game;
 
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +38,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import one.harmony.puzzle.ui.game.service.SDKClass;
+import com.harmony.one.ui.game.service.SDKClass;
 
 public class SDKWrapper {
     private Context mainActive = null;

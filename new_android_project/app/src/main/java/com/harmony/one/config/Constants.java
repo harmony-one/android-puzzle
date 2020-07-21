@@ -1,4 +1,4 @@
-package one.harmony.puzzle.config;
+package com.harmony.one.config;
 
 import org.web3j.tx.ChainId;
 

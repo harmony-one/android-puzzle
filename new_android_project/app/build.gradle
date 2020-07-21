@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
-        applicationId "one.harmony.puzzle"
+        applicationId "com.harmony.one"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1

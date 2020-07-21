@@ -1,4 +1,4 @@
-package one.harmony.puzzle.ui.game.service;
+package com.harmony.one.ui.game.service;
 
 import android.content.Context;
 import android.content.Intent;

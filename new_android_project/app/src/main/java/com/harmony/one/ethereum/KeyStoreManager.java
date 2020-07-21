@@ -1,4 +1,4 @@
-package one.harmony.puzzle.ethereum;
+package com.harmony.one.ethereum;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,7 +6,7 @@ import android.util.Log;
 import com.samsung.android.sdk.coldwallet.ScwCoinType;
 import com.samsung.android.sdk.coldwallet.ScwService;
 
-import one.harmony.puzzle.utils.Util;
+import com.harmony.one.utils.Util;
 
 public class KeyStoreManager {
 

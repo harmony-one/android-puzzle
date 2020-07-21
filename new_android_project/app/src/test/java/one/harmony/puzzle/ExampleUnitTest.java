@@ -1,4 +1,4 @@
-package one.harmony.puzzle;
+package com.harmony.one;
 
 import org.junit.Test;
 

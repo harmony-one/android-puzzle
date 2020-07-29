@@ -26,7 +26,7 @@ window.Global = {
     },
 
     getKeystore: function(){
-        this.myKeystore = jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getKeystore", "()Ljava/lang/String;");
+        this.myKeystore = jsb.reflection.callStaticMethod("com/harmony/one/ui/game/AppActivity", "getKeystore", "()Ljava/lang/String;");
 
         localStorage.setItem("my_keystore", this.myKeystore);
 
@@ -38,22 +38,21 @@ window.Global = {
     },
 
     getScore: function(){
-        return jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getScore", "()I");
+        return jsb.reflection.callStaticMethod("com/harmony/one/ui/game/AppActivity", "getScore", "()I");
     },
 
     updateScore: function(){
         if (this.newScore <= 0) return;
 
-        let currentScore = this.getScore();
+        //let currentScore = this.getScore();
 
-        if (this.newScore > currentScore){
-            jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "updateScore", "(ILjava/lang/String;Ljava/lang/String;)V", this.current_level + "", this.player_sequence);
-
-        }
+        //if (this.newScore > currentScore){
+            jsb.reflection.callStaticMethod("com/harmony/one/ui/game/AppActivity", "updateScore", "(ILjava/lang/String;Ljava/lang/String;)V", this.newScore + "", this.player_sequence);
+        //}
     },    
 
     getLeaderboard: function(){
-        return jsb.reflection.callStaticMethod("one/harmony/puzzle/ui/game/AppActivity", "getTopPlayers", "()Ljava/lang/String;");
+        return jsb.reflection.callStaticMethod("com/harmony/one/ui/game/AppActivity", "getTopPlayers", "()Ljava/lang/String;");
     },
 
     updateScoreCallbac: function(data){

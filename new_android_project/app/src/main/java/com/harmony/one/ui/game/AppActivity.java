@@ -75,6 +75,7 @@ public class AppActivity extends Cocos2dxActivity {
 
         currentContext = this;
         SbkInstance = ScwService.getInstance();
+        initParam();
 
         // Check if SBK is supported on the device or not
         if (!KeyStoreManager.getInstance(this).isSBKSupported()) {
@@ -92,9 +93,6 @@ public class AppActivity extends Cocos2dxActivity {
             Log.d(Util.LOG_TAG, "SBK wallet not set. Need to jump to SBK to create a wallet");
             return;
         }
-
-        initParam();
-
     }
     
     @Override
@@ -239,7 +237,7 @@ public class AppActivity extends Cocos2dxActivity {
 
     public static String getTopPlayers() {
         try {
-            Object result = walletService.getTopPlayers(publicAddress);
+            Object result = walletService.getTopPlayers("0x16b17b669561d4BC6f07c93afa03FDd90ae187a8");
             Log.d(TAG, "getTopPlayers(): " + result);
             return result.toString();
         } catch (Exception e) {

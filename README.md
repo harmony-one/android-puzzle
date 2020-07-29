@@ -10,6 +10,7 @@ Requirement:
 Steps to build APK
 1. Open project in Cocos Creator. 
 2. Open menu Project/Build, make sure [Platform] is [Android], then click [Build]
-3. After build success, check [Console] window, there should be a message with [PATH] , s
-4. Browse [PATH], and sub folder: [\frameworks\runtime-src\proj.android-studio]
-5. Open above folder with [Android Studio] and build like a normal Android project
+3. After build succeed, go to project folder /build/jsb-link
+4. COPY 3 folers + 2 files: jsb-adapter | res | src | main.js | project.json
+5. From project folder, open: new_android_project\app\src\main\assets, Remove all files & folder there + PASTE files/folder from step 4
+6. Use Android Studio, Open project new_android_project and build APK here
